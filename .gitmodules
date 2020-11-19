@@ -1,0 +1,3 @@
+[submodule "Jerboa/thirdparty/spdlog"]
+	path = Jerboa/thirdparty/spdlog
+	url = https://github.com/gabime/spdlog
