@@ -1,4 +1,4 @@
 
-[submodule "Jerboa/thirdparty/jerboa-thirdparty"]
-	path = Jerboa/thirdparty/jerboa-thirdparty
+[submodule "Jerboa/thirdparty"]
+	path = Jerboa/thirdparty
 	url = https://github.com/jerboa-engine/jerboa-thirdparty
