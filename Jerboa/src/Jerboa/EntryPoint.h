@@ -8,14 +8,12 @@ extern Jerboa::Application* Jerboa::CreateApplication();
 
 int main(int argc, char** argv)
 {
-    /*
-        TODO: 
-        - Init and cleanup
-        - Assert if app is null
-    */
     Jerboa::InitializeCore();
-	Jerboa::Application* app = Jerboa::CreateApplication();
+	Jerboa::Application* app = Jerboa::CreateApplication(); 
+	JERBOA_ASSERT(app, "Jerboa::CreateApplication() must not return null");
+	
 	app->Run();
+	
 	delete app;
     Jerboa::ShutdownCore();
 }

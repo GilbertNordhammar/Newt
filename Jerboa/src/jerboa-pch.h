@@ -14,3 +14,7 @@
 #include <algorithm>
 
 #include <fstream>
+
+#include "Jerboa/Core/Base.h"
+#include "Jerboa/Core/Log.h"
+#include "Jerboa/Core/Assert.h"
