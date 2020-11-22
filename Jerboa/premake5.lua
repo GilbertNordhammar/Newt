@@ -1,3 +1,5 @@
+include "thirdparty"
+
 project "Jerboa"
 	kind "StaticLib"
 	language "C++"
@@ -9,6 +11,10 @@ project "Jerboa"
 
 	pchheader "jerboa-pch.h"
 	pchsource "src/jerboa-pch.cpp"
+	
+	defines {
+		"JERBOA_CORE"
+	}
 
 	files 
 	{ 
@@ -20,24 +26,19 @@ project "Jerboa"
 
 	includedirs
 	{
-		"src", 
-		"thirdparty",
-		-- "%{IncludeDir.GLFW}",    -- TBA
-		-- "%{IncludeDir.Glad}",
-		-- "%{IncludeDir.glm}",
-		-- "%{IncludeDir.ImGui}",
-		-- "%{prj.name}/vendor/assimp/include",
-		-- "%{prj.name}/vendor/stb/include"
+		jerboa_includedirs
 	}
+
+	--includedirs
+	--{
+	--	"src", 
+	--	"thirdparty/spdlog/include"
+	--}
     
-    
-	-- links 
-	-- { 
-	-- 	"GLFW",
-	-- 	"Glad",     -- TBA
-	-- 	"ImGui",
-	-- 	"opengl32.lib"
-	-- }
+	links 
+	{ 
+		"spdlog"
+	}
 	
 	filter "system:windows"
 		systemversion "latest"

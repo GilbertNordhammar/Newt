@@ -8,16 +8,16 @@ class SandboxApp : public Jerboa::Application
 public:
 	SandboxApp()
 	{
-		std::cout << "SanboxApp created" << std::endl;
+		JERBOA_LOG_INFO("SanboxApp created");
 	}
 
 	virtual void OnStart() {
-		std::cout << "SandboxApp started" << std::endl;
+		JERBOA_LOG_INFO("SandboxApp started");
 	}
 
 	~SandboxApp()
 	{
-		std::cout << "SanboxApp destroyed" << std::endl;
+		JERBOA_LOG_INFO("SanboxApp destroyed");
 	}
 };
 

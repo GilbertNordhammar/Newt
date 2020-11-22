@@ -17,13 +17,7 @@ project "Sandbox"
 
 	includedirs
 	{
-        "%{wks.location}/Jerboa/src",
-        "%{wks.location}/Jerboa/thirdparty"
-		-- "%{wks.location}/Hazel/vendor/spdlog/include",   -- TBA
-		-- "%{wks.location}/Hazel/src",
-		-- "%{wks.location}/Hazel/vendor",
-		-- "%{IncludeDir.glm}",
-		-- "%{IncludeDir.entt}"
+        jerboa_app_includedirs
 	}
 
 	links

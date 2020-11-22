@@ -13,10 +13,11 @@ int main(int argc, char** argv)
         - Init and cleanup
         - Assert if app is null
     */
+    Jerboa::InitializeCore();
 	Jerboa::Application* app = Jerboa::CreateApplication();
-	
 	app->Run();
 	delete app;
+    Jerboa::ShutdownCore();
 }
 
 #endif
