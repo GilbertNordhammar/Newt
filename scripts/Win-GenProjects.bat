@@ -1,4 +1,4 @@
-@REM @echo off
+@echo off
 pushd %~dp0\..\
 
 pushd Jerboa\thirdparty
