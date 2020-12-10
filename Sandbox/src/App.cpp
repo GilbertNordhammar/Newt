@@ -4,6 +4,22 @@
 static class TestEvent : public Jerboa::Event {};
 //class TestEvent {};
 
+class TestSubscriber {
+public:
+	TestSubscriber(Jerboa::EventBus* eventBus, std::string message) : mMessage(message), mTestEventObserver(eventBus) {
+		//eventBus->Subscribe(this, &TestSubscriber::OnTestEvent);
+		mTestEventObserver.OnEvent(this, &TestSubscriber::OnTestEvent);
+	}
+
+private:
+	void OnTestEvent(TestEvent* evnt) {
+		JERBOA_LOG_INFO(mMessage);
+	}
+
+	std::string mMessage;
+	Jerboa::EventObserver<TestSubscriber, TestEvent> mTestEventObserver;
+};
+
 class SandboxApp : public Jerboa::Application
 {
 public:
@@ -14,9 +30,12 @@ public:
 
 	virtual void OnStart() {
 		JERBOA_LOG_INFO("SandboxApp started");
-		mEventBus.Subscribe(this, &SandboxApp::onTestEvent);
-		mEventBus.Publish(new TestEvent());
-		//mEventBus.Unsubscribe<TestEvent>(this);
+		
+		TestSubscriber s1(&mEventBus, "S1 received TestEvent");
+		//{
+			//TestSubscriber s2(&mEventBus, "S2 received TestEvent");
+		//}
+		
 		mEventBus.Publish(new TestEvent());
 	}
 
@@ -27,10 +46,6 @@ public:
 
 
 private:
-	void onTestEvent(TestEvent* evnt) {
-		JERBOA_LOG_INFO("TestEvent recieved");
-	}
-
 	Jerboa::EventBus mEventBus;
 };
 
