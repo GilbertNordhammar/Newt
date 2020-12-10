@@ -11,11 +11,11 @@ namespace Jerboa {
     class EventObserverBase;
 
     class EventBus {
-        typedef std::function<void(Event&)> CallbackFunc;
+        typedef std::function<void(const Event&)> CallbackFunc;
         typedef std::list<CallbackFunc*> CallbackFuncList;
     public:
         template<class EventType>
-        void Publish(Event* evnt) {
+        void Publish(const Event& evnt) {
             static_assert(std::is_base_of<Event, EventType>::value, "EventType must inherit from Event");
 
             CallbackFuncList* handlers = mSubscribers[typeid(EventType)];
@@ -26,7 +26,7 @@ namespace Jerboa {
 
             for (auto& handler : *handlers) {
                 if (handler != nullptr) {
-                    (*handler)(*evnt);
+                    (*handler)(evnt);
                 }
             }
         }
@@ -68,12 +68,12 @@ namespace Jerboa {
 
     protected:
         template<class EventType>
-        void Subscribe(std::function<void(Event& evnt)>& callback) {
+        void Subscribe(std::function<void(const Event& evnt)>& callback) {
             mEventBus->Subscribe<EventType>(callback);
         }
 
         template<class EventType>
-        void Unsubscribe(std::function<void(Event& evnt)>& callback) {
+        void Unsubscribe(std::function<void(const Event& evnt)>& callback) {
             mEventBus->Unsubscribe<EventType>(callback);
         }
 
@@ -103,13 +103,13 @@ namespace Jerboa {
 
         void OnEvent(T* instance, MemberFunction memberFunction) {
             static_assert(std::is_base_of<Event, EventType>::value, "EventType must inherit from Event");
-            mCallback = [=](Event& evnt) { (instance->*memberFunction)(static_cast<const EventType&>(evnt)); };
+            mCallback = [=](const Event& evnt) { (instance->*memberFunction)(static_cast<const EventType&>(evnt)); };
             Subscribe<EventType>(mCallback);
 
             JERBOA_LOG_INFO("Subscribing");
         }
 
     private:
-        std::function<void(Event& evnt)> mCallback;
+        std::function<void(const Event& evnt)> mCallback;
     };
 };

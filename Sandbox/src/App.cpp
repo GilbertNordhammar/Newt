@@ -37,10 +37,10 @@ public:
 		TestSubscriber s1(&mEventBus, "S1 received TestEvent");
 		{
 			TestSubscriber s2(&mEventBus, "S2 received TestEvent");
-			mEventBus.Publish<TestEvent>(new TestEvent(1));
+			mEventBus.Publish<TestEvent>(TestEvent(1));
 		}
 		
-		mEventBus.Publish<TestEvent>(new TestEvent(2));
+		mEventBus.Publish<TestEvent>(TestEvent(2));
 	}
 
 	~SandboxApp()
