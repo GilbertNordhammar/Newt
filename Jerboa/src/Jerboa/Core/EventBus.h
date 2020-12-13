@@ -37,6 +37,11 @@ namespace Jerboa {
             }
         }
 
+        static EventBus* Get() {
+            static EventBus instance;
+            return &instance;
+        }
+
     private:
         void Subscribe(EventCallback& callback, std::type_index id);
         void Unsubscribe(EventCallback& callback, std::type_index id);

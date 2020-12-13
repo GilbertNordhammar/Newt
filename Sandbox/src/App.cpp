@@ -48,14 +48,16 @@ public:
 	virtual void OnStart() {
 		JERBOA_LOG_INFO("SandboxApp started");
 		
-		TestSubscriber s1(&mEventBus, "S1");
+		auto eventBus = Jerboa::EventBus::Get();
+
+		TestSubscriber s1(eventBus, "S1");
 		{
-			TestSubscriber s2(&mEventBus, "S2");
-			mEventBus.Publish(HappyEvent(1));
+			TestSubscriber s2(eventBus, "S2");
+			eventBus->Publish(HappyEvent(1));
 		}
 		
-		mEventBus.Publish(HappyEvent(2));
-		mEventBus.Publish(AngryEvent(1337));
+		eventBus->Publish(HappyEvent(2));
+		eventBus->Publish(AngryEvent(1337));
 	}
 
 	~SandboxApp()
