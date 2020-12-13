@@ -1,16 +1,17 @@
 #pragma once
 
-#include "Event.h"
 #include <typeinfo>
 #include <typeindex>
 #include <map>
 #include <unordered_map>
 #include <type_traits>
 #include <memory>
+#include <functional>
 
 namespace Jerboa {
+    class Event {};
     class EventObserverBase;
-
+    
     typedef std::function<void(const Event&)> EventCallback;
 
     class EventBus {
@@ -34,21 +35,19 @@ namespace Jerboa {
         }
 
     private:
-        template<class EventType>
-        void Subscribe(EventCallback& callback) {
-            auto callbacks = mSubscribers[typeid(EventType)];
-
+        void Subscribe(EventCallback& callback, std::type_index id) {
+            auto callbacks = mSubscribers[id];
+            
             if (callbacks == nullptr) {
                 callbacks = std::make_shared<CallbackList>();
-                mSubscribers[typeid(EventType)] = callbacks;
+                mSubscribers[id] = callbacks;
             }
 
             callbacks->push_back(&callback);
         }
 
-        template<class EventType>
-        void Unsubscribe(EventCallback& callback) {
-            auto callbacks = mSubscribers[typeid(EventType)];
+        void Unsubscribe(EventCallback& callback, std::type_index id) {
+            auto callbacks = mSubscribers[id];
 
             if (callbacks == nullptr) {
                 return;
@@ -67,14 +66,12 @@ namespace Jerboa {
         EventObserverBase(EventBus* eventBus) : mEventBus(eventBus) {}
 
     protected:
-        template<class EventType>
-        void Subscribe(EventCallback& callback) {
-            mEventBus->Subscribe<EventType>(callback);
+        void Subscribe(EventCallback& callback, std::type_index id) {
+            mEventBus->Subscribe(callback, id);
         }
 
-        template<class EventType>
-        void Unsubscribe(EventCallback& callback) {
-            mEventBus->Unsubscribe<EventType>(callback);
+        void Unsubscribe(EventCallback& callback, std::type_index id) {
+            mEventBus->Unsubscribe(callback, id);
         }
 
     private:
@@ -92,12 +89,12 @@ namespace Jerboa {
         {
             static_assert(std::is_base_of<Event, EventType>::value, "EventType must inherit from Event");
             mCallback = [=](const Event& evnt) { (instance->*memberFunction)(static_cast<const EventType&>(evnt)); };
-            Subscribe<EventType>(mCallback);
+            Subscribe(mCallback, std::type_index(typeid(EventType)));
             JERBOA_LOG_INFO("Creating EventObserver");
         }
 
         ~EventObserver() {
-            Unsubscribe<EventType>(mCallback);
+            Unsubscribe(mCallback, std::type_index(typeid(EventType)));
             JERBOA_LOG_INFO("Destroying EventObserver");
         }
 
