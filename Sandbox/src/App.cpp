@@ -6,13 +6,11 @@ public:
 	TestEvent(int value) : mValue(value) {}
 	int mValue;
 };
-//class TestEvent {};
 
 class TestSubscriber {
 public:
-	TestSubscriber(Jerboa::EventBus* eventBus, std::string message) : mMessage(message), mTestEventObserver(eventBus) {
-		mTestEventObserver.OnEvent(this, &TestSubscriber::OnTestEvent);
-	}
+	TestSubscriber(Jerboa::EventBus* eventBus, std::string message) 
+		: mMessage(message), mTestEventObserver(eventBus, this, &TestSubscriber::OnTestEvent) {}
 
 private:
 	void OnTestEvent(const TestEvent& evnt) {
@@ -37,10 +35,10 @@ public:
 		TestSubscriber s1(&mEventBus, "S1 received TestEvent");
 		{
 			TestSubscriber s2(&mEventBus, "S2 received TestEvent");
-			mEventBus.Publish<TestEvent>(TestEvent(1));
+			mEventBus.Publish(TestEvent(1));
 		}
 		
-		mEventBus.Publish<TestEvent>(TestEvent(2));
+		mEventBus.Publish(TestEvent(2));
 	}
 
 	~SandboxApp()
