@@ -19,8 +19,8 @@ class TestSubscriber {
 public:
 	TestSubscriber(Jerboa::EventBus* eventBus, std::string message) 
 		: mMessage(message), 
-		mHappyEventObserver(eventBus, this, &TestSubscriber::OnHappyEvent),
-		mAngryEventObserver(eventBus, this, &TestSubscriber::OnAngryEvent)
+		mHappyEventObserver(Jerboa::EventObserver::Create(eventBus, this, &TestSubscriber::OnHappyEvent)),
+		mAngryEventObserver(Jerboa::EventObserver::Create(eventBus, this, &TestSubscriber::OnAngryEvent))
 	{}
 
 private:
@@ -33,8 +33,8 @@ private:
 	}
 
 	std::string mMessage;
-	Jerboa::EventObserver<TestSubscriber, HappyEvent> mHappyEventObserver;
-	Jerboa::EventObserver<TestSubscriber, AngryEvent> mAngryEventObserver;
+	Jerboa::EventObserver mHappyEventObserver;
+	Jerboa::EventObserver mAngryEventObserver;
 };
 
 class SandboxApp : public Jerboa::Application
