@@ -22,9 +22,7 @@ namespace Jerboa {
     public:
         template<class EventType>
         void Publish(const EventType& evnt) {
-            static_assert(std::is_base_of<Event, EventType>::value, "EventType must inherit from Event");
-
-            auto callbacks = mSubscribers[typeid(EventType)];
+            auto callbacks = mSubscribers[GetTypeIndex<EventType>()];
 
             if (callbacks == nullptr) {
                 return;
@@ -35,6 +33,11 @@ namespace Jerboa {
                     (*callback)(evnt);
                 }
             }
+        }
+
+        template<class EventType>
+        static std::type_index GetTypeIndex() {
+            return std::type_index(typeid(EventType));
         }
 
     private:

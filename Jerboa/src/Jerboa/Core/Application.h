@@ -1,4 +1,5 @@
 #pragma once
+#include "LayerStack.h"
 
 namespace Jerboa {
     class Application
@@ -8,8 +9,12 @@ namespace Jerboa {
 
         virtual void OnStart() {}
         virtual void OnShutdown() {}
+
+        void PushLayer(Layer* layer);
+        void PushOverlay(Layer* overlay);
     private:
-        bool m_Running = true;
+        bool mRunning = true;
+        LayerStack mLayerStack;
     };
 
     // Implemented by client

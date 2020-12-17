@@ -1,41 +1,9 @@
 #include "Jerboa.h"
 #include "Jerboa/EntryPoint.h"
-
-struct TestEvent : public Jerboa::Event {
-	int mValue = 0;
-};
-struct HappyEvent : public TestEvent {
-	HappyEvent(int value) {
-		mValue = value;
-	}
-};
-struct AngryEvent : public TestEvent {
-	AngryEvent(int value) {
-		mValue = value;
-	}
-};
-
-class TestSubscriber {
-public:
-	TestSubscriber(Jerboa::EventBus* eventBus, std::string message) 
-		: mMessage(message), 
-		mHappyEventObserver(eventBus, this, &TestSubscriber::OnHappyEvent),
-		mAngryEventObserver(eventBus, this, &TestSubscriber::OnAngryEvent)
-	{}
-
-private:
-	void OnHappyEvent(const HappyEvent& evnt) {
-		JERBOA_LOG_INFO("HappyEvent | Message: {} | Value: {}", mMessage, evnt.mValue);
-	}
-
-	void OnAngryEvent(const AngryEvent& evnt) {
-		JERBOA_LOG_INFO("AngryEvent | Message: {} | Value: {}", mMessage, evnt.mValue);
-	}
-
-	std::string mMessage;
-	Jerboa::EventObserver<TestSubscriber, HappyEvent> mHappyEventObserver;
-	Jerboa::EventObserver<TestSubscriber, AngryEvent> mAngryEventObserver;
-};
+#include "Jerboa/Core/Layer.h"
+#include "TestLayer.h"
+#include "TestOverlay.h"
+#include "Events/ExternalMessageEvent.h"
 
 class SandboxApp : public Jerboa::Application
 {
@@ -48,24 +16,19 @@ public:
 	virtual void OnStart() {
 		JERBOA_LOG_INFO("SandboxApp started");
 		
-		TestSubscriber s1(&mEventBus, "S1");
-		{
-			TestSubscriber s2(&mEventBus, "S2");
-			mEventBus.Publish(HappyEvent(1));
-		}
+		auto* testOverlay = new TestOverlay();
+		PushOverlay(testOverlay);
+		PushLayer(new TestLayer());
+		PushLayer(new TestLayer());
 		
-		mEventBus.Publish(HappyEvent(2));
-		mEventBus.Publish(AngryEvent(1337));
+		testOverlay->SendMessageEvent("yoooo");
+		Jerboa::Layer::GetSharedEventBus()->Publish(ExternalMessageEvent("hiiii", "SandBoxApp"));
 	}
 
 	~SandboxApp()
 	{
 		JERBOA_LOG_INFO("SanboxApp destroyed");
 	}
-
-
-private:
-	Jerboa::EventBus mEventBus;
 };
 
 Jerboa::Application* Jerboa::CreateApplication() {
