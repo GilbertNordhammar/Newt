@@ -22,7 +22,7 @@ public:
 		PushLayer(new TestLayer());
 		
 		testOverlay->SendMessageEvent("yoooo");
-		Jerboa::Layer::PublishSharedEvent(ExternalMessageEvent("hiiii", "SandBoxApp"));
+		Jerboa::Layer::GetSharedEventBus()->Publish(ExternalMessageEvent("hiiii", "SandBoxApp"));
 	}
 
 	~SandboxApp()
