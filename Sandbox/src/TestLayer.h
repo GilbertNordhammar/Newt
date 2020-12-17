@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Jerboa.h"
+#include "Jerboa/Debug.h"
 #include "Jerboa/Core/Layer.h"
 #include "Jerboa/Event.h"
 #include "Events/MessageEvent.h"

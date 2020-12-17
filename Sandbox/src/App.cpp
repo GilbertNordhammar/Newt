@@ -1,4 +1,4 @@
-#include "Jerboa.h"
+#include "Jerboa/Debug.h"
 #include "Jerboa/EntryPoint.h"
 #include "Jerboa/Core/Layer.h"
 #include "TestLayer.h"
