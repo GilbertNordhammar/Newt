@@ -4,14 +4,20 @@
 #include "Jerboa/Core/Layer.h"
 #include "Jerboa/Event.h"
 #include "Events/MessageEvent.h"
+#include "Events/ExternalMessageEvent.h"
 
 class TestLayer : public Jerboa::Layer
 {
 public:
 	TestLayer()
-		: mMessageObserver(Jerboa::EventObserver::Create(Jerboa::EventBus::Get(), this, &TestLayer::OnMessageEvent))
+		: mMessageObserver(Jerboa::EventObserver::Create(GetSharedEventBus(), this, &TestLayer::OnMessageEvent)),
+		mExternalMessageObserver(Jerboa::EventObserver::Create(GetSharedEventBus(), this, &TestLayer::OnExternalMessageEvent))
 	{
 		mNumbering = GetNumbering();
+	}
+
+	void OnExternalMessageEvent(const ExternalMessageEvent& evnt) {
+		JERBOA_LOG_TRACE("TestLayer {} received message \"{}\" from \"{}\"", mNumbering, evnt.mMessage, evnt.mSender);
 	}
 
 	void OnMessageEvent(const MessageEvent& evnt) {
@@ -33,5 +39,6 @@ private:
 
 	int mNumbering;
 	Jerboa::EventObserver mMessageObserver;
+	Jerboa::EventObserver mExternalMessageObserver;
 };
 

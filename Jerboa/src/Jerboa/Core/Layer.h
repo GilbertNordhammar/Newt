@@ -3,10 +3,6 @@
 #include "EventBus.h"
 
 namespace Jerboa {
-	enum class EventScope {
-		Internal, Global
-	};
-
 	class Layer
 	{
 	public:
@@ -18,16 +14,23 @@ namespace Jerboa {
 		virtual void OnUpdate() {}
 
 		template<class EventType>
-		void PublishEvent(EventType evnt, EventScope scope) {
-			if (scope == EventScope.Internal)
-				mEventBus.Publish(evnt);
-			else
-				EventBus::Get()->Publish(evnt);
+		static void PublishSharedEvent(const EventType& evnt) {
+			GetSharedEventBus()->Publish(evnt);
+		}
+
+		template<class EventType>
+		void PublishInternalEvent(const EventType& evnt) {
+			mInternalEventBus.Publish(evnt);
 		}
 
 		inline const std::string& GetName() const { return mDebugName; }
 	protected:
-		EventBus mEventBus;
+		static EventBus* GetSharedEventBus() {
+			static EventBus instance;
+			return &instance;
+		}
+
+		EventBus mInternalEventBus;
 		std::string mDebugName;
 	};
 }

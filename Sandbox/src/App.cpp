@@ -3,6 +3,7 @@
 #include "Jerboa/Core/Layer.h"
 #include "TestLayer.h"
 #include "TestOverlay.h"
+#include "Events/ExternalMessageEvent.h"
 
 class SandboxApp : public Jerboa::Application
 {
@@ -19,8 +20,9 @@ public:
 		PushOverlay(testOverlay);
 		PushLayer(new TestLayer());
 		PushLayer(new TestLayer());
-
-		testOverlay->SendMessage("yoooo");
+		
+		testOverlay->SendMessageEvent("yoooo");
+		Jerboa::Layer::PublishSharedEvent(ExternalMessageEvent("hiiii", "SandBoxApp"));
 	}
 
 	~SandboxApp()
