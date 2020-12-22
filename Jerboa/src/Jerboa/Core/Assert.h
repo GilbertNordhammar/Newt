@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Log.h"
+
 #ifdef JERBOA_DEBUG
 	#define JERBOA_ASSERTS_ENABLED
 #endif

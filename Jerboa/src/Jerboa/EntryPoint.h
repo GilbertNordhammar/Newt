@@ -7,8 +7,7 @@
 
 #include "Jerboa/Core/Base.h"
 #include "Jerboa/Core/Application.h"
-
-#ifdef JERBOA_PLATFORM_WINDOWS
+#include "Jerboa/Core/Assert.h"
 
 extern Jerboa::Application* Jerboa::CreateApplication();
 
@@ -23,5 +22,3 @@ int main(int argc, char** argv)
 	delete app;
     Jerboa::ShutdownCore();
 }
-
-#endif
