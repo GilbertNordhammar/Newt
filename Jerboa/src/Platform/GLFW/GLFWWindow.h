@@ -5,10 +5,13 @@
 
 namespace Jerboa 
 {
-	class GLFWWindow : public Window
+	using NativeGLFWWindow = GLFWwindow;
+
+	class GLFW_Window : public Window
 	{
 	public:
-		GLFWWindow(const WindowProps& props);
+		GLFW_Window(const WindowProps& props);
+		~GLFW_Window();
 
 		virtual void OnUpdate() override;
 
@@ -29,8 +32,9 @@ namespace Jerboa
 		};
 
 		void Init(const WindowProps& props);
+		void ShutDown();
 
-		std::unique_ptr<GLFWWindow> mWindow;
+		NativeGLFWWindow* mWindow;
 		WindowData mData;
 		std::shared_ptr<EventBus> mEventBus;
 	};

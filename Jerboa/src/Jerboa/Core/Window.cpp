@@ -5,6 +5,6 @@
 namespace Jerboa {
 	Window* Window::Create(const WindowProps& props) 
 	{
-		return new GLFWWindow(props);
+		return new GLFW_Window(props);
 	}
 }
