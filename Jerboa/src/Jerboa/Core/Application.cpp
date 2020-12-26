@@ -2,10 +2,16 @@
 #include "Application.h"
 
 namespace Jerboa {
+    Application::Application(const ApplicationProps& props)
+        : mWindow(std::unique_ptr<Window>(Window::Create(props.windowProps))) 
+    {
+        mWindow->SetVSync(true);
+    }
+
     void Application::Run() {
         OnStart();
         while (mRunning) {
-            // TODO
+            mWindow->OnUpdate();
         }
         OnShutdown();
     }

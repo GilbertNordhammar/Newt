@@ -2,5 +2,7 @@
 #include "JerboaApp.h"
 
 Jerboa::Application* Jerboa::CreateApplication() {
-	return new JerboaClient::JerboaApp();
+	Jerboa::ApplicationProps props;
+
+	return new JerboaClient::JerboaApp(props);
 }
