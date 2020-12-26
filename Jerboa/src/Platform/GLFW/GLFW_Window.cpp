@@ -1,5 +1,5 @@
 #include "jerboa-pch.h"
-#include "GLFWWindow.h"
+#include "GLFW_Window.h"
 #include "Jerboa/Debug.h"
 
 namespace Jerboa {
