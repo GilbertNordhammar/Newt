@@ -37,7 +37,8 @@ project "Jerboa"
     
 	links 
 	{ 
-		"spdlog"
+		"spdlog",
+		"glfw"
 	}
 	
 	filter "system:windows"
