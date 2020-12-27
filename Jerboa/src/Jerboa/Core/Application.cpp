@@ -30,7 +30,7 @@ namespace Jerboa {
 
     void Application::OnWindowResize(const WindowResizeEvent& evnt)
     {
-        JERBOA_LOG_TRACE("window resized to {}x{}", evnt.width, evnt.height);
+        Layer::GetSharedEventBus()->Publish(evnt);
     }
     void Application::OnWindowClose(const WindowCloseEvent& evnt)
     {
