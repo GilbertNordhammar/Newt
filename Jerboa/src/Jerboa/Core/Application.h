@@ -3,6 +3,7 @@
 #include "Window.h"
 #include "EventObserver.h"
 #include "Events/WindowResizeEvent.h"
+#include "Events/WindowCloseEvent.h"
 
 namespace Jerboa {
     struct ApplicationProps {
@@ -23,12 +24,13 @@ namespace Jerboa {
         void PushOverlay(Layer* overlay);
     private:
         void OnWindowResize(const WindowResizeEvent& evnt);
+        void OnWindowClose(const WindowCloseEvent& evnt);
 
         std::unique_ptr<Window> mWindow;
         bool mRunning = true;
         LayerStack mLayerStack;
 
-        EventObserver mWindowResizeObserver;
+        EventObserver mWindowResizeObserver, mWindowCloseObserver;
     };
 
     // Implemented by client

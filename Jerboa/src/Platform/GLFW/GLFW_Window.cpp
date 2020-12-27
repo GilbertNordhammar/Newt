@@ -2,6 +2,7 @@
 #include "GLFW_Window.h"
 #include "Jerboa/Debug.h"
 #include "Jerboa/Core/Events/WindowResizeEvent.h"
+#include "Jerboa/Core/Events/WindowCloseEvent.h"
 
 namespace Jerboa {
 	static void GLFWErrorCallback(int error, const char* description)
@@ -61,14 +62,22 @@ namespace Jerboa {
 		glfwMakeContextCurrent(mWindow);
 		glfwSetWindowUserPointer(mWindow, &mData);
 
-		glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height)
-			{
+		glfwSetWindowSizeCallback(mWindow, [](NativeGLFWWindow* window, int width, int height)
+		{
 				auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
 
 				data.width = width;
 				data.height = height;
 				data.eventBus->Publish(WindowResizeEvent(width, height));
-			});
+		});
+
+		glfwSetWindowCloseCallback(mWindow, [](NativeGLFWWindow* window)
+		{
+			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
+
+			WindowCloseEvent event;
+			data.eventBus->Publish(WindowCloseEvent());
+		});
 	}
 
 	void GLFW_Window::ShutDown()
