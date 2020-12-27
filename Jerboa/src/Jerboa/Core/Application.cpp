@@ -3,7 +3,8 @@
 
 namespace Jerboa {
     Application::Application(const ApplicationProps& props)
-        : mWindow(std::unique_ptr<Window>(Window::Create(props.windowProps))) 
+        : mWindow(std::unique_ptr<Window>(Window::Create(props.windowProps))),
+        mWindowResizeObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnWindowResize))
     {
         mWindow->SetVSync(true);
     }
@@ -24,5 +25,10 @@ namespace Jerboa {
     void Application::PushOverlay(Layer* overlay) {
         mLayerStack.PushOverlay(overlay);
         overlay->OnAttach();
+    }
+
+    void Application::OnWindowResize(const WindowResizeEvent& evnt)
+    {
+        JERBOA_LOG_TRACE("window resized to {}x{}", evnt.width, evnt.height);
     }
 }

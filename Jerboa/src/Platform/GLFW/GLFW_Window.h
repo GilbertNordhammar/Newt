@@ -18,7 +18,7 @@ namespace Jerboa
 		virtual int GetWidth() const override { return mData.width; };
 		virtual int GetHeight() const override { return mData.height; };
 		virtual WindowPosition GetPosition() const override;
-		virtual std::weak_ptr<EventBus> GetEventBus() override { return mEventBus; };
+		virtual std::weak_ptr<EventBus> GetEventBus() override { return mData.eventBus; };
 
 		virtual void SetVSync(bool enabled) override;
 		virtual bool IsVSync() const override { return mData.VSync; };
@@ -29,6 +29,8 @@ namespace Jerboa
 			std::string title;
 			int width, height;
 			bool VSync;
+
+			std::shared_ptr<EventBus> eventBus = std::make_shared<EventBus>();
 		};
 
 		void Init(const WindowProps& props);
@@ -36,6 +38,5 @@ namespace Jerboa
 
 		NativeGLFWWindow* mWindow;
 		WindowData mData;
-		std::shared_ptr<EventBus> mEventBus;
 	};
 }

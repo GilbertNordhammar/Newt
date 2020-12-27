@@ -1,6 +1,7 @@
 #include "jerboa-pch.h"
 #include "GLFW_Window.h"
 #include "Jerboa/Debug.h"
+#include "Jerboa/Core/Events/WindowResizeEvent.h"
 
 namespace Jerboa {
 	static void GLFWErrorCallback(int error, const char* description)
@@ -58,6 +59,16 @@ namespace Jerboa {
 		JERBOA_ASSERT(mWindow, "Could not create GLFW window!");
 
 		glfwMakeContextCurrent(mWindow);
+		glfwSetWindowUserPointer(mWindow, &mData);
+
+		glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height)
+			{
+				auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
+
+				data.width = width;
+				data.height = height;
+				data.eventBus->Publish(WindowResizeEvent(width, height));
+			});
 	}
 
 	void GLFW_Window::ShutDown()
