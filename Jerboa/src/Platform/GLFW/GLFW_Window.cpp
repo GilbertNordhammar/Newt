@@ -1,8 +1,12 @@
 #include "jerboa-pch.h"
 #include "GLFW_Window.h"
 #include "Jerboa/Debug.h"
+#include "Jerboa/Core/KeyCode.h"
 #include "Jerboa/Core/Events/WindowResizeEvent.h"
 #include "Jerboa/Core/Events/WindowCloseEvent.h"
+#include "Jerboa/Core/Events/KeyPressedEvent.h"
+#include "Jerboa/Core/Events/KeyReleasedEvent.h"
+#include "Jerboa/Core/Events/KeyRepeatEvent.h"
 
 namespace Jerboa {
 	static void GLFWErrorCallback(int error, const char* description)
@@ -78,6 +82,30 @@ namespace Jerboa {
 			WindowCloseEvent event;
 			data.eventBus->Publish(WindowCloseEvent());
 		});
+
+		glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+			{
+				auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
+
+				switch (action)
+				{
+					case GLFW_PRESS:
+					{
+						data.eventBus->Publish(KeyPressedEvent(key, GetKeyName(key)));
+						break;
+					}
+					case GLFW_RELEASE:
+					{
+						data.eventBus->Publish(KeyReleasedEvent(key, GetKeyName(key)));
+						break;
+					}
+					case GLFW_REPEAT:
+					{
+						data.eventBus->Publish(KeyRepeatEvent(key, GetKeyName(key)));
+						break;
+					}
+				}
+			});
 	}
 
 	void GLFW_Window::ShutDown()
