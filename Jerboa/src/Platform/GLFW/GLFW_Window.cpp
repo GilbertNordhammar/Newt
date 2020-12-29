@@ -7,6 +7,8 @@
 #include "Jerboa/Core/Events/KeyPressedEvent.h"
 #include "Jerboa/Core/Events/KeyReleasedEvent.h"
 #include "Jerboa/Core/Events/KeyRepeatEvent.h"
+#include "Jerboa/Core/Events/MouseMovedEvent.h"
+#include "Jerboa/Core/Events/MouseScrolledEvent.h"
 
 namespace Jerboa {
 	static void GLFWErrorCallback(int error, const char* description)
@@ -85,30 +87,42 @@ namespace Jerboa {
 		});
 
 		glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
-			{
-				auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
-				auto keyCode = static_cast<KeyCode>(key);
-				auto modsKeyCode = static_cast<ModifierKeyCode>(mods);
+		{
+			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
+			auto keyCode = static_cast<KeyCode>(key);
+			auto modsKeyCode = static_cast<ModifierKeyCode>(mods);
 
-				switch (action)
+			switch (action)
+			{
+				case GLFW_PRESS:
 				{
-					case GLFW_PRESS:
-					{
-						data.eventBus->Publish(KeyPressedEvent(keyCode, modsKeyCode));
-						break;
-					}
-					case GLFW_RELEASE:
-					{
-						data.eventBus->Publish(KeyReleasedEvent(keyCode, modsKeyCode));
-						break;
-					}
-					case GLFW_REPEAT:
-					{
-						data.eventBus->Publish(KeyRepeatEvent(keyCode, modsKeyCode));
-						break;
-					}
+					data.eventBus->Publish(KeyPressedEvent(keyCode, modsKeyCode));
+					break;
 				}
-			});
+				case GLFW_RELEASE:
+				{
+					data.eventBus->Publish(KeyReleasedEvent(keyCode, modsKeyCode));
+					break;
+				}
+				case GLFW_REPEAT:
+				{
+					data.eventBus->Publish(KeyRepeatEvent(keyCode, modsKeyCode));
+					break;
+				}
+			}
+		});
+
+		glfwSetCursorPosCallback(mWindow, [](GLFWwindow* window, double x, double y)
+		{
+			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
+			data.eventBus->Publish(MouseMovedEvent(x, y));
+		});
+
+		glfwSetScrollCallback(mWindow, [](GLFWwindow* window, double xOffset, double yOffset)
+		{
+			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
+			data.eventBus->Publish(MouseScrolledEvent(xOffset, yOffset));
+		});
 	}
 
 	void GLFW_Window::ShutDown()

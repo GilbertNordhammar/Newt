@@ -8,7 +8,9 @@ namespace Jerboa {
         mWindowCloseObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnWindowClose)),
         mKeyPressedObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnKeyPressed)),
         mKeyReleasedObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnKeyReleased)),
-        mKeyRepeatObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnKeyRepeat))
+        mKeyRepeatObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnKeyRepeat)),
+        mMouseMovedObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnMouseMoved)),
+        mMouseScrolledObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnMouseScrolled))
     {
         mWindow->SetVSync(true);
     }
@@ -54,5 +56,15 @@ namespace Jerboa {
     void Application::OnKeyRepeat(const KeyRepeatEvent& evnt)
     {
         JERBOA_LOG_TRACE("Continiously pressing '{}' (mods {}), ", GetKeyName(evnt.key), evnt.modifiers);
+    }
+
+    void Application::OnMouseMoved(const MouseMovedEvent& evnt)
+    {
+        JERBOA_LOG_TRACE("Mouse moved ({}, {})", evnt.x, evnt.y);
+    }
+
+    void Application::OnMouseScrolled(const MouseScrolledEvent& evnt)
+    {
+        JERBOA_LOG_TRACE("Mouse scrolled ({}, {})", evnt.xOffset, evnt.yOffset);
     }
 }
