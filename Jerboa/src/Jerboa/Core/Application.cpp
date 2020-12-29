@@ -10,7 +10,9 @@ namespace Jerboa {
         mKeyReleasedObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnKeyReleased)),
         mKeyRepeatObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnKeyRepeat)),
         mMouseMovedObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnMouseMoved)),
-        mMouseScrolledObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnMouseScrolled))
+        mMouseScrolledObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnMouseScrolled)),
+        mMouseButtonPressedObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnMouseButtonPressed)),
+        mMouseButtonReleasedObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnMouseButtonReleased))
     {
         mWindow->SetVSync(true);
     }
@@ -66,5 +68,15 @@ namespace Jerboa {
     void Application::OnMouseScrolled(const MouseScrolledEvent& evnt)
     {
         JERBOA_LOG_TRACE("Mouse scrolled ({}, {})", evnt.xOffset, evnt.yOffset);
+    }
+
+    void Jerboa::Application::OnMouseButtonPressed(const MouseButtonPressedEvent& evnt)
+    {
+        JERBOA_LOG_TRACE("Pressed mouse button {} (modifiers {})", evnt.button, evnt.modifiers);
+    }
+
+    void Jerboa::Application::OnMouseButtonReleased(const MouseButtonReleasedEvent& evnt)
+    {
+        JERBOA_LOG_TRACE("Released mouse button {} (modifiers {})", evnt.button, evnt.modifiers);
     }
 }

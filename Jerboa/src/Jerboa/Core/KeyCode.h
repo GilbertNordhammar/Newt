@@ -134,6 +134,12 @@ namespace Jerboa {
 		Super = GLFW_MOD_SUPER
 	};
 
+	enum class MouseButtonCode : int {
+		Left = GLFW_MOUSE_BUTTON_LEFT,
+		Right = GLFW_MOUSE_BUTTON_RIGHT,
+		Middle = GLFW_MOUSE_BUTTON_MIDDLE
+	};
+
 	bool HasModifier(ModifierKeyCode keys, ModifierKeyCode key);
 	std::string GetKeyName(KeyCode key);
 } 

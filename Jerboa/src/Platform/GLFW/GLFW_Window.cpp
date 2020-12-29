@@ -9,6 +9,8 @@
 #include "Jerboa/Core/Events/KeyRepeatEvent.h"
 #include "Jerboa/Core/Events/MouseMovedEvent.h"
 #include "Jerboa/Core/Events/MouseScrolledEvent.h"
+#include "Jerboa/Core/Events/MouseButtonPressedEvent.h"
+#include "Jerboa/Core/Events/MouseButtonReleasedEvent.h"
 
 namespace Jerboa {
 	static void GLFWErrorCallback(int error, const char* description)
@@ -123,6 +125,27 @@ namespace Jerboa {
 			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
 			data.eventBus->Publish(MouseScrolledEvent(xOffset, yOffset));
 		});
+
+		glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods)
+			{
+				auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
+				auto buttonCode = static_cast<MouseButtonCode>(button);
+				auto modsKeyCode = static_cast<ModifierKeyCode>(mods);
+
+				switch (action)
+				{
+					case GLFW_PRESS:
+					{
+						data.eventBus->Publish(MouseButtonPressedEvent(buttonCode, modsKeyCode));
+						break;
+					}
+					case GLFW_RELEASE:
+					{
+						data.eventBus->Publish(MouseButtonReleasedEvent(buttonCode, modsKeyCode));
+						break;
+					}
+				}
+			});
 	}
 
 	void GLFW_Window::ShutDown()

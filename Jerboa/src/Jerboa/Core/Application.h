@@ -9,6 +9,8 @@
 #include "Events/KeyRepeatEvent.h"
 #include "Events/MouseMovedEvent.h"
 #include "Events/MouseScrolledEvent.h"
+#include "Events/MouseButtonPressedEvent.h"
+#include "Events/MouseButtonReleasedEvent.h"
 
 namespace Jerboa {
     struct ApplicationProps {
@@ -35,6 +37,8 @@ namespace Jerboa {
         void OnKeyRepeat(const KeyRepeatEvent& evnt);
         void OnMouseMoved(const MouseMovedEvent& evnt);
         void OnMouseScrolled(const MouseScrolledEvent& evnt);
+        void OnMouseButtonPressed(const MouseButtonPressedEvent& evnt);
+        void OnMouseButtonReleased(const MouseButtonReleasedEvent& evnt);
 
         std::unique_ptr<Window> mWindow;
         bool mRunning = true;
@@ -47,7 +51,9 @@ namespace Jerboa {
             mKeyReleasedObserver,
             mKeyRepeatObserver,
             mMouseMovedObserver,
-            mMouseScrolledObserver;
+            mMouseScrolledObserver,
+            mMouseButtonPressedObserver,
+            mMouseButtonReleasedObserver;
     };
 
     // Implemented by client
