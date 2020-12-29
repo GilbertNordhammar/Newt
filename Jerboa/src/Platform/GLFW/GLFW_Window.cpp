@@ -86,22 +86,26 @@ namespace Jerboa {
 		glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
 				auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
+				
+				auto keyCode = static_cast<KeyCode>(key);
+				auto modKeyCode = static_cast<ModifierKeyCode>(key);
 
+				//JERBOA_LOG_TRACE("{}", mods);
 				switch (action)
 				{
 					case GLFW_PRESS:
 					{
-						data.eventBus->Publish(KeyPressedEvent(key, GetKeyName(key)));
+						data.eventBus->Publish(KeyPressedEvent(keyCode, modKeyCode));
 						break;
 					}
 					case GLFW_RELEASE:
 					{
-						data.eventBus->Publish(KeyReleasedEvent(key, GetKeyName(key)));
+						data.eventBus->Publish(KeyReleasedEvent(keyCode, modKeyCode));
 						break;
 					}
 					case GLFW_REPEAT:
 					{
-						data.eventBus->Publish(KeyRepeatEvent(key, GetKeyName(key)));
+						data.eventBus->Publish(KeyRepeatEvent(keyCode, modKeyCode));
 						break;
 					}
 				}

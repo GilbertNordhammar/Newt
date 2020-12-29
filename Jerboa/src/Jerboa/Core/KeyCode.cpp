@@ -2,251 +2,268 @@
 #include "KeyCode.h"
 
 namespace Jerboa {
-	std::string GetKeyName(int key)
+	std::string GetKeyName(KeyCode key)
 	{
 		switch (key) {
-		case JERBOA_KEY_SPACE:
+		case KeyCode::Space:
 			return "Space";
-		case JERBOA_KEY_APOSTROPHE:
+		case KeyCode::Apostrophe:
 			return "\'";
-		case JERBOA_KEY_COMMA:
+		case KeyCode::Comma:
 			return ",";
-		case JERBOA_KEY_MINUS:
+		case KeyCode::Minus:
 			return "-";
-		case JERBOA_KEY_PERIOD:
+		case KeyCode::Period:
 			return ".";
-		case JERBOA_KEY_SLASH:
+		case KeyCode::Slash:
 			return "/";
-		case JERBOA_KEY_0:
+		case KeyCode::_0:
 			return "0";
-		case JERBOA_KEY_1:
+		case KeyCode::_1:
 			return "1";
-		case JERBOA_KEY_2:
+		case KeyCode::_2:
 			return "2";
-		case JERBOA_KEY_3:
+		case KeyCode::_3:
 			return "3";
-		case JERBOA_KEY_4:
+		case KeyCode::_4:
 			return "4";
-		case JERBOA_KEY_5:
+		case KeyCode::_5:
 			return "5";
-		case JERBOA_KEY_6:
+		case KeyCode::_6:
 			return "6";
-		case JERBOA_KEY_7:
+		case KeyCode::_7:
 			return "7";
-		case JERBOA_KEY_8:
+		case KeyCode::_8:
 			return "8";
-		case JERBOA_KEY_9:
+		case KeyCode::_9:
 			return "9";
-		case JERBOA_KEY_SEMICOLON:
+		case KeyCode::Semicolon:
 			return ";";
-		case JERBOA_KEY_EQUAL:
+		case KeyCode::Equal:
 			return "=";
-		case JERBOA_KEY_A:
+		case KeyCode::A:
 			return "A";
-		case JERBOA_KEY_B:
+		case KeyCode::B:
 			return "B";
-		case JERBOA_KEY_C:
+		case KeyCode::C:
 			return "C";
-		case JERBOA_KEY_D:
+		case KeyCode::D:
 			return "D";
-		case JERBOA_KEY_E:
+		case KeyCode::E:
 			return "E";
-		case JERBOA_KEY_F:
+		case KeyCode::F:
 			return "F";
-		case JERBOA_KEY_G:
+		case KeyCode::G:
 			return "G";
-		case JERBOA_KEY_H:
+		case KeyCode::H:
 			return "H";
-		case JERBOA_KEY_I:
+		case KeyCode::I:
 			return "I";
-		case JERBOA_KEY_J:
+		case KeyCode::J:
 			return "J";
-		case JERBOA_KEY_K:
+		case KeyCode::K:
 			return "K";
-		case JERBOA_KEY_L:
+		case KeyCode::L:
 			return "L";
-		case JERBOA_KEY_M:
+		case KeyCode::M:
 			return "M";
-		case JERBOA_KEY_N:
+		case KeyCode::N:
 			return "N";
-		case JERBOA_KEY_O:
+		case KeyCode::O:
 			return "O";
-		case JERBOA_KEY_P:
+		case KeyCode::P:
 			return "P";
-		case JERBOA_KEY_Q:
+		case KeyCode::Q:
 			return "Q";
-		case JERBOA_KEY_R:
+		case KeyCode::R:
 			return "R";
-		case JERBOA_KEY_S:
+		case KeyCode::S:
 			return "S";
-		case JERBOA_KEY_T:
+		case KeyCode::T:
 			return "T";
-		case JERBOA_KEY_U:
+		case KeyCode::U:
 			return "U";
-		case JERBOA_KEY_V:
+		case KeyCode::V:
 			return "V";
-		case JERBOA_KEY_W:
+		case KeyCode::W:
 			return "W";
-		case JERBOA_KEY_X:
+		case KeyCode::X:
 			return "X";
-		case JERBOA_KEY_Y:
+		case KeyCode::Y:
 			return "Y";
-		case JERBOA_KEY_Z:
+		case KeyCode::Z:
 			return "Z";
-		case JERBOA_KEY_LEFT_BRACKET:
+		case KeyCode::LeftBracket:
 			return "[";
-		case JERBOA_KEY_BACKSLASH:
+		case KeyCode::Backslash:
 			return "Backslash";
-		case JERBOA_KEY_RIGHT_BRACKET:
+		case KeyCode::RightBracket:
 			return "[";
-		case JERBOA_KEY_GRAVE_ACCENT:
+		case KeyCode::GraveAccent:
 			return "`";
-		case JERBOA_KEY_WORLD_1:
+		case KeyCode::World1:
 			return "World 1";
-		case JERBOA_KEY_WORLD_2:
+		case KeyCode::World2:
 			return "World 2";
-		case JERBOA_KEY_ESCAPE:
+		case KeyCode::Escape:
 			return "Esc";
-		case JERBOA_KEY_ENTER:
+		case KeyCode::Enter:
 			return "Enter";
-		case JERBOA_KEY_TAB:
+		case KeyCode::Tab:
 			return "Tab";
-		case JERBOA_KEY_BACKSPACE:
+		case KeyCode::Backspace:
 			return "Backspace";
-		case JERBOA_KEY_INSERT:
+		case KeyCode::Insert:
 			return "Insert";
-		case JERBOA_KEY_DELETE:
+		case KeyCode::Delete:
 			return "Delete";
-		case JERBOA_KEY_RIGHT:
+		case KeyCode::Right:
 			return "Right";
-		case JERBOA_KEY_LEFT:
+		case KeyCode::Left:
 			return "Left";
-		case JERBOA_KEY_DOWN:
+		case KeyCode::Down:
 			return "Down";
-		case JERBOA_KEY_UP:
+		case KeyCode::Up:
 			return "Up";
-		case JERBOA_KEY_PAGE_UP:
+		case KeyCode::PageUp:
 			return "Page Up";
-		case JERBOA_KEY_PAGE_DOWN:
+		case KeyCode::PageDown:
 			return "Page Down";
-		case JERBOA_KEY_HOME:
+		case KeyCode::Home:
 			return "Home";
-		case JERBOA_KEY_END:
+		case KeyCode::End:
 			return "End";
-		case JERBOA_KEY_CAPS_LOCK:
+		case KeyCode::CapsLock:
 			return "Caps Lock";
-		case JERBOA_KEY_SCROLL_LOCK:
+		case KeyCode::ScrollLock:
 			return "Scroll Lock";
-		case JERBOA_KEY_NUM_LOCK:
+		case KeyCode::NumLock:
 			return "Num Lock";
-		case JERBOA_KEY_PRINT_SCREEN:
+		case KeyCode::PrintScreen:
 			return "Print Screen";
-		case JERBOA_KEY_PAUSE:
+		case KeyCode::Pause:
 			return "Pause";
-		case JERBOA_KEY_F1:
+		case KeyCode::F1:
 			return "F1";
-		case JERBOA_KEY_F2:
+		case KeyCode::F2:
 			return "F2";
-		case JERBOA_KEY_F3:
+		case KeyCode::F3:
 			return "F3";
-		case JERBOA_KEY_F4:
+		case KeyCode::F4:
 			return "F4";
-		case JERBOA_KEY_F5:
+		case KeyCode::F5:
 			return "F5";
-		case JERBOA_KEY_F6:
+		case KeyCode::F6:
 			return "F6";
-		case JERBOA_KEY_F7:
+		case KeyCode::F7:
 			return "F7";
-		case JERBOA_KEY_F8:
+		case KeyCode::F8:
 			return "F8";
-		case JERBOA_KEY_F9:
+		case KeyCode::F9:
 			return "F9";
-		case JERBOA_KEY_F10:
+		case KeyCode::F10:
 			return "F10";
-		case JERBOA_KEY_F11:
+		case KeyCode::F11:
 			return "F11";
-		case JERBOA_KEY_F12:
+		case KeyCode::F12:
 			return "F12";
-		case JERBOA_KEY_F13:
+		case KeyCode::F13:
 			return "F13";
-		case JERBOA_KEY_F14:
+		case KeyCode::F14:
 			return "F14";
-		case JERBOA_KEY_F15:
+		case KeyCode::F15:
 			return "F15";
-		case JERBOA_KEY_F16:
+		case KeyCode::F16:
 			return "F16";
-		case JERBOA_KEY_F17:
+		case KeyCode::F17:
 			return "F17";
-		case JERBOA_KEY_F18:
+		case KeyCode::F18:
 			return "F18";
-		case JERBOA_KEY_F19:
+		case KeyCode::F19:
 			return "F19";
-		case JERBOA_KEY_F20:
+		case KeyCode::F20:
 			return "F20";
-		case JERBOA_KEY_F21:
+		case KeyCode::F21:
 			return "F21";
-		case JERBOA_KEY_F22:
+		case KeyCode::F22:
 			return "F22";
-		case JERBOA_KEY_F23:
+		case KeyCode::F23:
 			return "F23";
-		case JERBOA_KEY_F24:
+		case KeyCode::F24:
 			return "F24";
-		case JERBOA_KEY_F25:
+		case KeyCode::F25:
 			return "F2";
-		case JERBOA_KEY_KP_0:
+		case KeyCode::KP_0:
 			return "Keypad 0";
-		case JERBOA_KEY_KP_1:
+		case KeyCode::KP_1:
 			return "Keypad 1";
-		case JERBOA_KEY_KP_2:
+		case KeyCode::KP_2:
 			return "Keypad 2";
-		case JERBOA_KEY_KP_3:
+		case KeyCode::KP_3:
 			return "Keypad 3";
-		case JERBOA_KEY_KP_4:
+		case KeyCode::KP_4:
 			return "Keypad 4";
-		case JERBOA_KEY_KP_5:
+		case KeyCode::KP_5:
 			return "Keypad 5";
-		case JERBOA_KEY_KP_6:
+		case KeyCode::KP_6:
 			return "Keypad 6";
-		case JERBOA_KEY_KP_7:
+		case KeyCode::KP_7:
 			return "Keypad 7";
-		case JERBOA_KEY_KP_8:
+		case KeyCode::KP_8:
 			return "Keypad 8";
-		case JERBOA_KEY_KP_9:
+		case KeyCode::KP_9:
 			return "Keypad 9";
-		case JERBOA_KEY_KP_DECIMAL:
+		case KeyCode::KP_Decimal:
 			return "Keypad .";
-		case JERBOA_KEY_KP_DIVIDE:
+		case KeyCode::KP_Divide:
 			return "Keypad /";
-		case JERBOA_KEY_KP_MULTIPLY:
+		case KeyCode::KP_Multiply:
 			return "Keypad *";
-		case JERBOA_KEY_KP_SUBTRACT:
+		case KeyCode::KP_Subract:
 			return "Keypad -";
-		case JERBOA_KEY_KP_ADD:
+		case KeyCode::KP_Add:
 			return "Keypad +";
-		case JERBOA_KEY_KP_ENTER:
+		case KeyCode::KP_Enter:
 			return "Keypad Enter";
-		case JERBOA_KEY_KP_EQUAL:
+		case KeyCode::KP_Equal:
 			return "Keypad =";
-		case JERBOA_KEY_LEFT_SHIFT:
+		case KeyCode::LeftShift:
 			return "Left Shift";
-		case JERBOA_KEY_LEFT_CONTROL:
+		case KeyCode::LeftControl:
 			return "Left Ctrl";
-		case JERBOA_KEY_LEFT_ALT:
+		case KeyCode::LeftAlt:
 			return "Left Alt";
-		case JERBOA_KEY_LEFT_SUPER:
+		case KeyCode::LeftSuper:
 			return "Left Super";
-		case JERBOA_KEY_RIGHT_SHIFT:
+		case KeyCode::RightShift:
 			return "Right Shift";
-		case JERBOA_KEY_RIGHT_CONTROL:
+		case KeyCode::RightControl:
 			return "Right Ctrl";
-		case JERBOA_KEY_RIGHT_ALT:
+		case KeyCode::RightAlt:
 			return "Right Alt";
-		case JERBOA_KEY_RIGHT_SUPER:
+		case KeyCode::RightSuper:
 			return "Right Super";
-		case JERBOA_KEY_MENU:
+		case KeyCode::Menu:
 			return "Menu";
-		default:
-			return "Unknown key";
 		};
+	}
+
+	std::string GetModifierKeyName(ModifierKeyCode key)
+	{
+		switch (key) {
+		case ModifierKeyCode::Alt:
+			return "Alt";
+		case ModifierKeyCode::CapsLock:
+			return "Caps Lock";
+		case ModifierKeyCode::Control:
+			return "Control";
+		case ModifierKeyCode::NumLock:
+			return "Num Lock";
+		case ModifierKeyCode::Shift:
+			return "Shift";
+		case ModifierKeyCode::Super:
+			return "Super";
+		}
+		return std::string();
 	}
 }

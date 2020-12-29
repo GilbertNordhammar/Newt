@@ -1,18 +1,10 @@
 #pragma once
 
-#pragma once
-
-#pragma once
-
-#include "Jerboa/Core/Event.h"
-#include <string>
+#include "BaseKeyEvent.h"
 
 namespace Jerboa {
-	struct KeyRepeatEvent : Event {
-		KeyRepeatEvent(int key, std::string keyName)
-			: key(key), keyName(keyName) {}
-
-		const int key;
-		const std::string keyName;
+	struct KeyRepeatEvent : BaseKeyEvent {
+		KeyRepeatEvent(KeyCode key, ModifierKeyCode modKey)
+			: BaseKeyEvent(key, modKey) {}
 	};
 }
