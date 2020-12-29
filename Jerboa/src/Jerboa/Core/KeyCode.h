@@ -131,11 +131,9 @@ namespace Jerboa {
 		Shift = GLFW_MOD_SHIFT,
 		Control = GLFW_MOD_CONTROL,
 		Alt = GLFW_MOD_ALT,
-		Super = GLFW_MOD_SUPER,
-		CapsLock = GLFW_MOD_CAPS_LOCK,
-		NumLock = GLFW_MOD_NUM_LOCK,
+		Super = GLFW_MOD_SUPER
 	};
 
+	bool HasModifier(ModifierKeyCode keys, ModifierKeyCode key);
 	std::string GetKeyName(KeyCode key);
-	std::string GetModifierKeyName(ModifierKeyCode key);
 } 

@@ -65,6 +65,7 @@ namespace Jerboa {
 
 		glfwMakeContextCurrent(mWindow);
 		glfwSetWindowUserPointer(mWindow, &mData);
+		glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 		glfwSetWindowSizeCallback(mWindow, [](NativeGLFWWindow* window, int width, int height)
 		{
@@ -86,26 +87,24 @@ namespace Jerboa {
 		glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
 				auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
-				
 				auto keyCode = static_cast<KeyCode>(key);
-				auto modKeyCode = static_cast<ModifierKeyCode>(key);
+				auto modsKeyCode = static_cast<ModifierKeyCode>(mods);
 
-				//JERBOA_LOG_TRACE("{}", mods);
 				switch (action)
 				{
 					case GLFW_PRESS:
 					{
-						data.eventBus->Publish(KeyPressedEvent(keyCode, modKeyCode));
+						data.eventBus->Publish(KeyPressedEvent(keyCode, modsKeyCode));
 						break;
 					}
 					case GLFW_RELEASE:
 					{
-						data.eventBus->Publish(KeyReleasedEvent(keyCode, modKeyCode));
+						data.eventBus->Publish(KeyReleasedEvent(keyCode, modsKeyCode));
 						break;
 					}
 					case GLFW_REPEAT:
 					{
-						data.eventBus->Publish(KeyRepeatEvent(keyCode, modKeyCode));
+						data.eventBus->Publish(KeyRepeatEvent(keyCode, modsKeyCode));
 						break;
 					}
 				}

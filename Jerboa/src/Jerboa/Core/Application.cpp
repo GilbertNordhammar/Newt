@@ -43,16 +43,16 @@ namespace Jerboa {
 
     void Application::OnKeyPressed(const KeyPressedEvent& evnt)
     {
-        JERBOA_LOG_TRACE("Pressed '{}' ({})", GetKeyName(evnt.key), evnt.key);
+        JERBOA_LOG_TRACE("Pressed '{}' (mods {}), ", GetKeyName(evnt.key), evnt.modifiers);
     }
 
     void Application::OnKeyReleased(const KeyReleasedEvent& evnt)
     {
-        JERBOA_LOG_TRACE("Released '{}' ({})", GetKeyName(evnt.key), evnt.key);
+        JERBOA_LOG_TRACE("Released '{}' (mods {}), ", GetKeyName(evnt.key), evnt.modifiers);
     }
 
     void Application::OnKeyRepeat(const KeyRepeatEvent& evnt)
     {
-        JERBOA_LOG_TRACE("Continiously pressing '{}' ({})", GetKeyName(evnt.key), evnt.key);
+        JERBOA_LOG_TRACE("Continiously pressing '{}' (mods {}), ", GetKeyName(evnt.key), evnt.modifiers);
     }
 }

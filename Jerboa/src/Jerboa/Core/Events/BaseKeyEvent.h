@@ -5,11 +5,11 @@
 
 namespace Jerboa {
 	struct BaseKeyEvent : Event {
-		BaseKeyEvent(KeyCode key, ModifierKeyCode modKey)
-			: key(key), modKey(modKey) {}
+		BaseKeyEvent(KeyCode key, ModifierKeyCode mods)
+			: key(key), modifiers(mods) {}
 
 		const KeyCode key;
-		const ModifierKeyCode modKey;
+		const ModifierKeyCode modifiers;
 
 		virtual ~BaseKeyEvent() = 0 {}
 	};

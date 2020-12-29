@@ -248,22 +248,8 @@ namespace Jerboa {
 		};
 	}
 
-	std::string GetModifierKeyName(ModifierKeyCode key)
+	bool HasModifier(ModifierKeyCode keys, ModifierKeyCode key)
 	{
-		switch (key) {
-		case ModifierKeyCode::Alt:
-			return "Alt";
-		case ModifierKeyCode::CapsLock:
-			return "Caps Lock";
-		case ModifierKeyCode::Control:
-			return "Control";
-		case ModifierKeyCode::NumLock:
-			return "Num Lock";
-		case ModifierKeyCode::Shift:
-			return "Shift";
-		case ModifierKeyCode::Super:
-			return "Super";
-		}
-		return std::string();
+		return (static_cast<int>(keys) & static_cast<int>(key)) > 0;
 	}
 }
