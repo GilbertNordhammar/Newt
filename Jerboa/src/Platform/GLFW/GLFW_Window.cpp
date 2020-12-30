@@ -38,8 +38,9 @@ namespace Jerboa {
 
 	WindowPosition GLFW_Window::GetPosition() const
 	{
-		// TODO
-		return WindowPosition();
+		int x, y;
+		glfwGetWindowPos(mWindow, &x, &y);
+		return { x, y };
 	}
 
 	void GLFW_Window::SetVSync(bool enabled)

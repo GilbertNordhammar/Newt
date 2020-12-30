@@ -19,7 +19,7 @@ namespace Jerboa {
 	};
 
 	struct WindowPosition {
-		float x, y;
+		int x, y;
 	};
 
 	// Interface representing a desktop system based Window
