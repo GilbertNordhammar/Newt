@@ -1,7 +1,11 @@
 #include "jerboa-pch.h"
 #include "GLFW_Window.h"
+
+#include "glad/glad.h"
+
 #include "Jerboa/Debug.h"
 #include "Jerboa/Core/KeyCode.h"
+
 #include "Jerboa/Core/Events/WindowResizeEvent.h"
 #include "Jerboa/Core/Events/WindowCloseEvent.h"
 #include "Jerboa/Core/Events/KeyPressedEvent.h"
@@ -32,6 +36,9 @@ namespace Jerboa {
 
 	void GLFW_Window::OnUpdate()
 	{
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 		glfwSwapBuffers(mWindow);
 		glfwPollEvents();
 	}
@@ -71,7 +78,12 @@ namespace Jerboa {
 		glfwMakeContextCurrent(mWindow);
 		glfwSetWindowUserPointer(mWindow, &mData);
 		glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		
+		// Initialzing OpenGL
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		JERBOA_ASSERT(status, "Failed to initialize Glad!");
 
+		// Setting various callback functions for GLFW
 		glfwSetWindowSizeCallback(mWindow, [](NativeGLFWWindow* window, int width, int height)
 		{
 				auto& data = *((WindowData*)glfwGetWindowUserPointer(window));

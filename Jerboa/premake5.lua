@@ -28,17 +28,12 @@ project "Jerboa"
 	{
 		jerboa_includedirs
 	}
-
-	--includedirs
-	--{
-	--	"src", 
-	--	"thirdparty/spdlog/include"
-	--}
     
 	links 
 	{ 
 		"spdlog",
-		"glfw"
+		"glfw",
+		"glad"
 	}
 	
 	filter "system:windows"

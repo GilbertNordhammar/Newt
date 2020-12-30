@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Jerboa/Core/Window.h"
+
+#define GLFW_INCLUDE_NONE // glad throws a compiler error without this being defined
 #include "GLFW/glfw3.h"
 
 namespace Jerboa 
