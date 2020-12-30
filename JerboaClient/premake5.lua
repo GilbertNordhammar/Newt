@@ -1,7 +1,5 @@
-include "thirdparty"
-
-project "Jerboa"
-	kind "StaticLib"
+project "JerboaClient"
+	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
 	staticruntime "on"
@@ -9,15 +7,8 @@ project "Jerboa"
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
-	pchheader "jerboa-pch.h"
-	pchsource "src/jerboa-pch.cpp"
-	
-	defines {
-		"JERBOA_CORE"
-	}
-
-	files 
-	{ 
+	files
+	{
 		"src/**.h", 
 		"src/**.c", 
 		"src/**.hpp", 
@@ -26,21 +17,14 @@ project "Jerboa"
 
 	includedirs
 	{
-		jerboa_includedirs
+        jerboa_app_includedirs
 	}
 
-	--includedirs
-	--{
-	--	"src", 
-	--	"thirdparty/spdlog/include"
-	--}
-    
-	links 
-	{ 
-		"spdlog",
-		"glfw"
+	links
+	{
+		"Jerboa"
 	}
-	
+
 	filter "system:windows"
 		systemversion "latest"
 		
