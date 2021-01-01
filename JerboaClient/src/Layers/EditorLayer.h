@@ -11,6 +11,7 @@ namespace JerboaClient {
 	public:
 		EditorLayer();
 
+		virtual void OnUpdate();
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
 	private:

@@ -1,6 +1,9 @@
 #include "jerboa-pch.h"
 #include "Application.h"
 
+#include "Jerboa/UI/ImGui/ImGuiApp.h"
+
+
 namespace Jerboa {
     Application::Application(const ApplicationProps& props)
         : mWindow(std::unique_ptr<Window>(Window::Create(props.windowProps))),
@@ -18,10 +21,29 @@ namespace Jerboa {
     }
 
     void Application::Run() {
-        OnStart();
+        Init();
         while (mRunning) {
-            mWindow->OnUpdate();
+            mWindow->Clear();
+
+            for (Layer* layer : mLayerStack)
+                layer->OnUpdate();
+
+            mWindow->Update();
         }
+        ShutDown();
+    }
+
+    void Application::Init()
+    {
+        JERBOA_LOG_INFO("Initializing application");
+        UI::ImGuiApp::Initialize(mWindow.get());
+
+        OnInit();
+    }
+
+    void Application::ShutDown()
+    {
+        JERBOA_LOG_INFO("Shutting down application");
         OnShutdown();
     }
 

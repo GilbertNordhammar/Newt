@@ -33,7 +33,8 @@ project "Jerboa"
 	{ 
 		"spdlog",
 		"glfw",
-		"glad"
+		"glad",
+		"ImGui"
 	}
 	
 	filter "system:windows"

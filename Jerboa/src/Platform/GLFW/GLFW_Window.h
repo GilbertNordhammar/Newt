@@ -15,7 +15,8 @@ namespace Jerboa
 		GLFW_Window(const WindowProps& props);
 		~GLFW_Window();
 
-		virtual void OnUpdate() override;
+		virtual void Update() override;
+		virtual void Clear() override;
 
 		virtual int GetWidth() const override { return mData.width; };
 		virtual int GetHeight() const override { return mData.height; };
@@ -25,6 +26,7 @@ namespace Jerboa
 		virtual void SetVSync(bool enabled) override;
 		virtual bool IsVSync() const override { return mData.VSync; };
 
+		virtual void* GetNativeWindow() const { return mWindow; }
 	private:
 		struct WindowData
 		{

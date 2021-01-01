@@ -17,7 +17,10 @@ jerboa_includedirs =  {
 	"src", 
 	"thirdparty/spdlog/include", 
 	"thirdparty/glfw/include", 
-	"thirdparty/glad/include" }
+	"thirdparty/glad/include",
+	"thirdparty/imgui",
+	"thirdparty/imgui/examples"
+}
 
 jerboa_app_includedirs = {}
 for _, v in pairs(jerboa_includedirs) do

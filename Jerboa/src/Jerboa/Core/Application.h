@@ -24,12 +24,15 @@ namespace Jerboa {
 
         void Run();
 
-        virtual void OnStart() {}
+        virtual void OnInit() {}
         virtual void OnShutdown() {}
 
         void PushLayer(Layer* layer);
         void PushOverlay(Layer* overlay);
     private:
+        void Init();
+        void ShutDown();
+
         void OnWindowResize(const WindowResizeEvent& evnt);
         void OnWindowClose(const WindowCloseEvent& evnt);
         void OnKeyPressed(const KeyPressedEvent& evnt);

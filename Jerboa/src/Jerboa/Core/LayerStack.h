@@ -16,6 +16,8 @@ namespace Jerboa {
 		void RemoveOverlay(Layer* overlay);
 
 		const std::vector<Layer*>& GetStack() const { return mStack; }
+		std::vector<Layer*>::iterator begin() { return mStack.begin(); }
+		std::vector<Layer*>::iterator end() { return mStack.end(); }
 	private:
 		std::vector<Layer*> mStack;
 		unsigned int mLayerInsertIndex = 0;
