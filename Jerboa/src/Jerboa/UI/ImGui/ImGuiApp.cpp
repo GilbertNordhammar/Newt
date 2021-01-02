@@ -1,5 +1,6 @@
 #include "jerboa-pch.h"
 #include "ImGuiApp.h"
+#include "GLFW/glfw3.h"
 
 namespace Jerboa::UI {
 	void ImGuiApp::Initialize(Window* window) {
@@ -17,7 +18,7 @@ namespace Jerboa::UI {
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // TODO: Enable at a later point
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // TODO: Enable at a later point
 		
 		auto glfwWindow = static_cast<GLFWwindow*>(window->GetNativeWindow());
 		ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
@@ -42,5 +43,14 @@ namespace Jerboa::UI {
 	{
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			GLFWwindow* backup_current_context = glfwGetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(backup_current_context);
+		}
 	}
 }
