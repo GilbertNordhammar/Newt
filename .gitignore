@@ -15,5 +15,8 @@ bin-int/
 **.vcxproj.filters
 **.vcxproj.user
 
+# Automatically generated files
+*.ini
+
 # Won't be ignored
 !thirdparty/bin/*

@@ -28,7 +28,8 @@ namespace Jerboa {
 	public:
 		virtual ~Window() {}
 
-		virtual void OnUpdate() = 0;
+		virtual void Update() = 0;
+		virtual void Clear() = 0;
 
 		virtual int GetWidth() const = 0;
 		virtual int GetHeight() const = 0;
@@ -38,6 +39,8 @@ namespace Jerboa {
 		virtual std::weak_ptr<EventBus> GetEventBus() = 0;
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
+
+		virtual void* GetNativeWindow() const = 0;
 
 		static Window* Create(const WindowProps& props = WindowProps());
 	};

@@ -8,7 +8,7 @@ namespace JerboaClient {
 		JerboaApp(const Jerboa::ApplicationProps& props)
 			: Application(props) {}
 
-		virtual void OnStart() {
+		virtual void OnInit() {
 			PushLayer(new EditorLayer());
 		}
 	};

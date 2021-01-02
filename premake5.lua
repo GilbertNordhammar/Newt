@@ -13,7 +13,14 @@ workspace "Jerboa"
 	  
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-jerboa_includedirs =  { "src", "thirdparty/spdlog/include", "thirdparty/glfw/include" }
+jerboa_includedirs =  { 
+	"src", 
+	"thirdparty/spdlog/include", 
+	"thirdparty/glfw/include", 
+	"thirdparty/glad/include",
+	"thirdparty/imgui",
+	"thirdparty/imgui/backends"
+}
 
 jerboa_app_includedirs = {}
 for _, v in pairs(jerboa_includedirs) do
