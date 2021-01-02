@@ -11,7 +11,19 @@ namespace JerboaClient {
 	void EditorLayer::OnUpdate()
 	{
 		Jerboa::UI::ImGuiApp::BeginFrame();
+
 		ImGui::ShowDemoWindow();
+
+		//ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+
+		ImGui::Begin("Window 1");
+		ImGui::Button("Hello");
+		ImGui::End();
+
+		ImGui::Begin("Window 2");
+		ImGui::Button("Hello");
+		ImGui::End();
+		
 		Jerboa::UI::ImGuiApp::EndFrame();
 	}
 
