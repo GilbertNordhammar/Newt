@@ -33,6 +33,8 @@ namespace Jerboa {
         void Init();
         void ShutDown();
 
+        void RenderImGui();
+
         void OnWindowResize(const WindowResizeEvent& evnt);
         void OnWindowClose(const WindowCloseEvent& evnt);
         void OnKeyPressed(const KeyPressedEvent& evnt);

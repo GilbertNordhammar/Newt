@@ -7,11 +7,8 @@ namespace JerboaClient {
 		: mWindowResizeObserver(Jerboa::EventObserver::Create(GetSharedEventBus(), this, &EditorLayer::OnWindowResize))
 	{}
 
-
-	void EditorLayer::OnUpdate()
+	void EditorLayer::OnImGuiRender()
 	{
-		Jerboa::UI::ImGuiApp::BeginFrame();
-
 		ImGui::ShowDemoWindow();
 
 		//ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
@@ -23,8 +20,11 @@ namespace JerboaClient {
 		ImGui::Begin("Window 2");
 		ImGui::Button("Hello");
 		ImGui::End();
-		
-		Jerboa::UI::ImGuiApp::EndFrame();
+	}
+
+	void EditorLayer::OnUpdate()
+	{
+		// TBA
 	}
 
 	void EditorLayer::OnAttach() {
@@ -34,6 +34,7 @@ namespace JerboaClient {
 	void EditorLayer::OnDetach() {
 		JERBOA_LOG_INFO("EditorLayer deattached");
 	}
+	
 	void EditorLayer::OnWindowResize(const Jerboa::WindowResizeEvent& evnt)
 	{
 		JERBOA_LOG_TRACE("window resized to {}x{}", evnt.width, evnt.height);

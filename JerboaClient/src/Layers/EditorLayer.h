@@ -11,9 +11,10 @@ namespace JerboaClient {
 	public:
 		EditorLayer();
 
-		virtual void OnUpdate();
+		virtual void OnUpdate() override;
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
+		virtual void OnImGuiRender() override;
 	private:
 		void OnWindowResize(const Jerboa::WindowResizeEvent& evnt);
 

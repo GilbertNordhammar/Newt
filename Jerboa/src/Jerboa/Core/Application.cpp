@@ -27,6 +27,8 @@ namespace Jerboa {
             for (Layer* layer : mLayerStack)
                 layer->OnUpdate();
 
+            RenderImGui();
+
             mWindow->Update();
         }
         ShutDown();
@@ -48,6 +50,16 @@ namespace Jerboa {
         UI::ImGuiApp::ShutDown();
 
         OnShutdown();
+    }
+
+    void Application::RenderImGui()
+    {
+        Jerboa::UI::ImGuiApp::BeginFrame();
+        
+        for (Layer* layer : mLayerStack)
+            layer->OnImGuiRender();
+
+        Jerboa::UI::ImGuiApp::EndFrame();
     }
 
     void Application::PushLayer(Layer* layer) {
