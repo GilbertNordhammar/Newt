@@ -11,6 +11,7 @@ namespace Jerboa::UI {
 	class ImGuiApp {
 	public:
 		static void Initialize(Window* window);
+		static void ShutDown();
 		static void BeginFrame();
 		static void EndFrame();
 	};

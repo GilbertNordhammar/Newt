@@ -36,6 +36,7 @@ namespace Jerboa {
     void Application::Init()
     {
         JERBOA_LOG_INFO("Initializing application");
+        
         UI::ImGuiApp::Initialize(mWindow.get());
 
         OnInit();
@@ -44,6 +45,9 @@ namespace Jerboa {
     void Application::ShutDown()
     {
         JERBOA_LOG_INFO("Shutting down application");
+
+        UI::ImGuiApp::ShutDown();
+
         OnShutdown();
     }
 

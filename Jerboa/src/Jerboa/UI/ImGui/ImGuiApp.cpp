@@ -24,6 +24,13 @@ namespace Jerboa::UI {
 		ImGui_ImplOpenGL3_Init("#version 330");
 	}
 
+	void ImGuiApp::ShutDown()
+	{
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
+	}
+
 	void ImGuiApp::BeginFrame()
 	{
 		ImGui_ImplOpenGL3_NewFrame();
