@@ -8,12 +8,11 @@
 #include "Jerboa/Debug.h"
 
 namespace Jerboa::UI {
-	class ImGuiApp {
-	public:
-		static void Initialize(Window* window);
-		static void ShutDown();
-		static void BeginFrame();
-		static void EndFrame();
+	namespace ImGuiApp {
+		void Initialize(Window* window);
+		void ShutDown();
+		void BeginFrame();
+		void EndFrame();
 	};
 }
 

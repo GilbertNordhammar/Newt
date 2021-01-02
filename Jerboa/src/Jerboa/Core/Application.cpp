@@ -3,7 +3,6 @@
 
 #include "Jerboa/UI/ImGui/ImGuiApp.h"
 
-
 namespace Jerboa {
     Application::Application(const ApplicationProps& props)
         : mWindow(std::unique_ptr<Window>(Window::Create(props.windowProps))),
