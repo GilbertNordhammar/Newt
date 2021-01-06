@@ -34,7 +34,8 @@ project "Jerboa"
 		"spdlog",
 		"glfw",
 		"glad",
-		"ImGui"
+		"ImGui",
+		"assimp"
 	}
 	
 	filter "system:windows"

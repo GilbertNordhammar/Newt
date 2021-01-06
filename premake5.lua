@@ -19,7 +19,11 @@ jerboa_includedirs =  {
 	"thirdparty/glfw/include", 
 	"thirdparty/glad/include",
 	"thirdparty/imgui",
-	"thirdparty/imgui/backends"
+	"thirdparty/imgui/backends",
+	"thirdparty/assimp/include",
+	"thirdparty/assimp/build/include",
+	"thirdparty/glm",
+	"thirdparty/stb"
 }
 
 jerboa_app_includedirs = {}

@@ -36,11 +36,26 @@ project "JerboaClient"
 	filter "configurations:Debug"
 		defines "JERBOA_DEBUG"
 		symbols "On"
+
+		postbuildcommands 
+		{
+	   		'{COPY} "%{wks.location}/Jerboa/thirdparty/assimp/build/code/Debug/assimp-vc142-mtd.dll" "%{cfg.targetdir}"',
+		}
 				
 	filter "configurations:Staging"
 		defines "JERBOA_STAGING"
 		optimize "On"
 
+		postbuildcommands 
+		{
+	   		'{COPY} "%{wks.location}/Jerboa/thirdparty/assimp/build/code/RelWithDebInfo/assimp-vc142-mt.dll" "%{cfg.targetdir}"',
+		}
+
 	filter "configurations:Release"
 		defines "JERBOA_RELEASE"
 		optimize "On"
+
+		postbuildcommands 
+		{
+	   		'{COPY} "%{wks.location}/Jerboa/thirdparty/assimp/build/code/Release/assimp-vc142-mt.dll" "%{cfg.targetdir}"',
+		}
