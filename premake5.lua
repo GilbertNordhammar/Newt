@@ -14,22 +14,17 @@ workspace "Jerboa"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 jerboa_includedirs =  { 
-	"src", 
-	"thirdparty/spdlog/include", 
-	"thirdparty/glfw/include", 
-	"thirdparty/glad/include",
-	"thirdparty/imgui",
-	"thirdparty/imgui/backends",
-	"thirdparty/assimp/include",
-	"thirdparty/assimp/build/include",
-	"thirdparty/glm",
-	"thirdparty/stb"
+	"%{wks.location}/Jerboa/src", 
+	"%{wks.location}/Jerboa/thirdparty/spdlog/include", 
+	"%{wks.location}/Jerboa/thirdparty/glfw/include", 
+	"%{wks.location}/Jerboa/thirdparty/glad/include",
+	"%{wks.location}/Jerboa/thirdparty/imgui",
+	"%{wks.location}/Jerboa/thirdparty/imgui/backends",
+	"%{wks.location}/Jerboa/thirdparty/assimp/include",
+	"%{wks.location}/Jerboa/thirdparty/assimp/build/include",
+	"%{wks.location}/Jerboa/thirdparty/glm",
+	"%{wks.location}/Jerboa/thirdparty/stb"
 }
-
-jerboa_app_includedirs = {}
-for _, v in pairs(jerboa_includedirs) do
-	table.insert(jerboa_app_includedirs, "%{wks.location}/Jerboa/" .. v)
-end
 
 include "Jerboa"
 include "Sandbox"

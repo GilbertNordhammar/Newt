@@ -17,7 +17,7 @@ project "JerboaClient"
 
 	includedirs
 	{
-        jerboa_app_includedirs
+        jerboa_includedirs
 	}
 
 	links
