@@ -6,7 +6,10 @@ namespace Jerboa {
 	(
 		GenerateObjectFunc genObjFunc,
 		DeleteObjectFunc delObjFunc
-	) : GenerateObjects(genObjFunc), DeleteObjects(delObjFunc) {}
+	) : DeleteObjects(delObjFunc) 
+	{
+		genObjFunc(&mObject);
+	}
 
 	OpenGL_Object::OpenGL_Object(OpenGL_Object&& other)
 	{
@@ -22,12 +25,10 @@ namespace Jerboa {
 	{
 		CleanUp();
 		mObject = std::move(other.mObject);
-		GenerateObjects = std::move(other.GenerateObjects);
 		DeleteObjects = std::move(other.DeleteObjects);
 
 		other.mObject = 0;
-		other.GenerateObjects = nullptr;
-		other.GenerateObjects = nullptr;
+		other.DeleteObjects = nullptr;
 	}
 
 	void OpenGL_Object::CleanUp()

@@ -14,7 +14,7 @@ namespace Jerboa {
 		virtual void UnBind() override;
 		virtual void SetLayout() override;
 
-		OpenGL_Buffer mVertexBuffer;
+		OpenGL_Buffer mBuffer;
 	};
 }
  

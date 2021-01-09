@@ -25,7 +25,6 @@ namespace Jerboa {
 		void Move(OpenGL_Object& other);
 		
 		GLuint mObject = 0;
-		GenerateObjectFunc GenerateObjects;
 		DeleteObjectFunc DeleteObjects;
 	};
 }

@@ -29,9 +29,7 @@ namespace Jerboa {
     void Application::Run() {
         Init();
 
-        //auto vao = OpenGL_VertexArray();
-        GLuint vao;
-        glGenVertexArrays(1, &vao);
+        auto vao = OpenGL_VertexArray();
         glBindVertexArray(vao);
 
         float vertices[] = {
@@ -40,19 +38,10 @@ namespace Jerboa {
              0.0f,  0.5f, 0.0f
         };
 
-        GLuint vbo;
-        glGenBuffers(1, &vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-
-        /*auto vertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices), VertexBufferUsage::Static, 
+        auto vertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices), VertexBufferUsage::Static, 
             VertexBufferLayout({
                 VertexBufferElement(ShaderDataType::Float3, false)
             }));
-        vertexBuffer->Bind();*/
 
         auto shader = Shader::Create("assets/shaders/Test.vert", "assets/shaders/Test.frag");
         shader->Use();
@@ -60,7 +49,7 @@ namespace Jerboa {
         while (mRunning) {
             Renderer::Clear();
 
-            Renderer::Draw(3);
+            Renderer::Draw(sizeof(vertices) / sizeof(vertices[0]));
 
             for (Layer* layer : mLayerStack)
                 layer->OnUpdate();
