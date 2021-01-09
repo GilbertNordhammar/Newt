@@ -1,7 +1,14 @@
 #include "jerboa-pch.h"
 #include "Application.h"
-
+#include "Jerboa/Rendering/Renderer.h"
 #include "Jerboa/UI/ImGui/ImGuiApp.h"
+
+#include "Jerboa/Rendering/Renderer.h"
+#include "Jerboa/Rendering/VertexBuffer.h"
+
+#include "Jerboa/Rendering/Shader.h"
+
+#include "Jerboa/Platform/OpenGL/OpenGL_VertexArray.h"
 
 namespace Jerboa {
     Application::Application(const ApplicationProps& props)
@@ -21,8 +28,39 @@ namespace Jerboa {
 
     void Application::Run() {
         Init();
+
+        //auto vao = OpenGL_VertexArray();
+        GLuint vao;
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
+
+        float vertices[] = {
+            -0.5f, -0.5f, 0.0f,
+             0.5f, -0.5f, 0.0f,
+             0.0f,  0.5f, 0.0f
+        };
+
+        GLuint vbo;
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+
+        /*auto vertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices), VertexBufferUsage::Static, 
+            VertexBufferLayout({
+                VertexBufferElement(ShaderDataType::Float3, false)
+            }));
+        vertexBuffer->Bind();*/
+
+        auto shader = Shader::Create("assets/shaders/Test.vert", "assets/shaders/Test.frag");
+        shader->Use();
+
         while (mRunning) {
-            mWindow->Clear();
+            Renderer::Clear();
+
+            Renderer::Draw(3);
 
             for (Layer* layer : mLayerStack)
                 layer->OnUpdate();

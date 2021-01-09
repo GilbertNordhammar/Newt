@@ -25,6 +25,11 @@ project "JerboaClient"
 		"Jerboa"
 	}
 
+	postbuildcommands 
+	{
+		'{COPY} "assets" "%{cfg.targetdir}/assets"'
+	}
+
 	filter "system:windows"
 		systemversion "latest"
 		

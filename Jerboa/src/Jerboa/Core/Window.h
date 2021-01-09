@@ -29,7 +29,6 @@ namespace Jerboa {
 		virtual ~Window() {}
 
 		virtual void Update() = 0;
-		virtual void Clear() = 0;
 
 		virtual int GetWidth() const = 0;
 		virtual int GetHeight() const = 0;

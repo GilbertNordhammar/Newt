@@ -16,7 +16,6 @@ namespace Jerboa
 		~GLFW_Window();
 
 		virtual void Update() override;
-		virtual void Clear() override;
 
 		virtual int GetWidth() const override { return mData.width; };
 		virtual int GetHeight() const override { return mData.height; };

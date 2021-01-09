@@ -1,5 +1,6 @@
 #pragma once
 #include "LayerStack.h"
+#include "glad/glad.h"
 #include "Window.h"
 #include "EventObserver.h"
 #include "Events/WindowResizeEvent.h"
