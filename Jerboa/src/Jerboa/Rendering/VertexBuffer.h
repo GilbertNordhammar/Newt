@@ -16,7 +16,7 @@ namespace Jerboa {
 
 	class VertexBufferElement {
 	public:
-		VertexBufferElement(ShaderDataType type, bool normalized)
+		VertexBufferElement(ShaderDataType type, bool normalized = false)
 			: Type(type), Normalized(normalized), Size(GetSize(type)), ComponentCount(GetComponentCount(type))
 		{}
 
@@ -78,6 +78,7 @@ namespace Jerboa {
 		std::vector<VertexBufferElement>::iterator begin() { return mElements.begin(); }
 		std::vector<VertexBufferElement>::iterator end() { return mElements.end(); }
 
+		int GetStride() const { return mStride; }
 	private:
 		void CalcOffsetAndStride() {
 			int offset = 0;

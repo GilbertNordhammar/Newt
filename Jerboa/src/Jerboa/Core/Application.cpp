@@ -33,15 +33,17 @@ namespace Jerboa {
         glBindVertexArray(vao);
 
         float vertices[] = {
-            -0.5f, -0.5f, 0.0f,
-             0.5f, -0.5f, 0.0f,
-             0.0f,  0.5f, 0.0f
+            // pos                  // color    
+            -0.5f, -0.5f, 0.0f,     0.0, 0.0, 1.0,
+             0.5f, -0.5f, 0.0f,     0.0, 1.0, 0.0,
+             0.0f,  0.5f, 0.0f,     1.0, 0.0, 0.0
         };
 
         auto vertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices), VertexBufferUsage::Static, 
-            VertexBufferLayout({
-                VertexBufferElement(ShaderDataType::Float3, false)
-            }));
+        {
+            { ShaderDataType::Float3 },
+            { ShaderDataType::Float3 }
+        });
 
         auto shader = Shader::Create("assets/shaders/Test.vert", "assets/shaders/Test.frag");
         shader->Use();

@@ -33,10 +33,7 @@ namespace Jerboa {
 
 	OpenGL_VertexBuffer::OpenGL_VertexBuffer(void* data, uint32_t size, VertexBufferUsage usage, VertexBufferLayout layout)
 	{
-		/*GLuint vbo;
-		glGenBuffers(1, &vbo);*/
 		glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
-		//glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, size, data, GetOpenGLUsage(usage));
 
 		int index = 0;
@@ -47,9 +44,10 @@ namespace Jerboa {
 				elem.ComponentCount, 
 				GetOpenGLBaseType(elem.Type), 
 				elem.Normalized ? GL_TRUE : GL_FALSE, 
-				elem.Size, 
-				(void *) elem.Offset
+				layout.GetStride(), 
+				(void*) elem.Offset
 			);
+			index++;
 		}
 	}
 	void OpenGL_VertexBuffer::Bind()
