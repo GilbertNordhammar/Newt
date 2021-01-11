@@ -5,6 +5,7 @@
 
 #include "Jerboa/Rendering/Renderer.h"
 #include "Jerboa/Rendering/VertexBuffer.h"
+#include "Jerboa/Rendering/IndexBuffer.h"
 
 #include "Jerboa/Rendering/Shader.h"
 
@@ -34,7 +35,7 @@ namespace Jerboa {
 
         float vertices[] = {
             // pos                  // color    
-            -0.5f, -0.5f, 0.0f,     0.0, 0.0, 1.0,
+            -0.5f, -0.5f, 0.0f,     1.0, 1.0, 1.0,
              0.5f, -0.5f, 0.0f,     0.0, 1.0, 0.0,
              0.0f,  0.5f, 0.0f,     1.0, 0.0, 0.0
         };
@@ -44,6 +45,9 @@ namespace Jerboa {
             { ShaderDataType::Float3 },
             { ShaderDataType::Float3 }
         });
+        
+        uint32_t indices[] = { 0, 1, 2 };
+        auto indexBuffer = IndexBuffer::Create(indices, sizeof(indices));
 
         auto shader = Shader::Create("assets/shaders/Test.vert", "assets/shaders/Test.frag");
         shader->Use();
@@ -51,7 +55,7 @@ namespace Jerboa {
         while (mRunning) {
             Renderer::Clear();
 
-            Renderer::Draw(sizeof(vertices) / sizeof(vertices[0]));
+            Renderer::Draw(indexBuffer->GetCount());
 
             for (Layer* layer : mLayerStack)
                 layer->OnUpdate();

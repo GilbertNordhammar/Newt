@@ -102,11 +102,13 @@ namespace Jerboa {
 	class VertexBuffer
 	{
 	public:
-		static std::shared_ptr<VertexBuffer> Create(void* data, uint32_t size, VertexBufferUsage usage, VertexBufferLayout layout);
+		static std::shared_ptr<VertexBuffer> Create(float* data, uint32_t size, VertexBufferUsage usage, VertexBufferLayout layout);
 		
 		virtual void Bind() = 0;
 		virtual void UnBind() = 0;
-		virtual void SetLayout() = 0;
+		virtual const VertexBufferUsage& GetUsage() const = 0;
+		virtual const VertexBufferLayout& GetLayout() const = 0;
+		virtual uint32_t GetSize() const = 0;
 		
 		virtual ~VertexBuffer() = 0 {}
 	};

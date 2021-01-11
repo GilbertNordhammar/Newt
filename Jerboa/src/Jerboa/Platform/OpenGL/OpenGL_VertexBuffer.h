@@ -8,13 +8,19 @@ namespace Jerboa {
 	class OpenGL_VertexBuffer : public VertexBuffer
 	{
 	public:
-		OpenGL_VertexBuffer(void* data, uint32_t size, VertexBufferUsage usage, VertexBufferLayout layout);
-	private:
+		OpenGL_VertexBuffer(float* data, uint32_t size, VertexBufferUsage usage, VertexBufferLayout layout);
+
 		virtual void Bind() override;
 		virtual void UnBind() override;
-		virtual void SetLayout() override;
+		virtual const VertexBufferUsage& GetUsage() const override { return mUsage; };
+		virtual const VertexBufferLayout& GetLayout() const override { return mLayout; };
+		virtual uint32_t GetSize() const override { return mSize; }
 
+	private:
 		OpenGL_Buffer mBuffer;
+		VertexBufferUsage mUsage;
+		VertexBufferLayout mLayout;
+		uint32_t mSize = 0;
 	};
 }
  

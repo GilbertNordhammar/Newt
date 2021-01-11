@@ -10,7 +10,7 @@ namespace Jerboa {
 			static void EndPass();
 			static void Clear();
 			static void Submit(std::shared_ptr<VertexBuffer> vertexBuffer);
-			static void Draw(int nVertices); //temporary
+			static void Draw(int count); //temporary
 	};
 }
 

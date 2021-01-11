@@ -19,7 +19,9 @@ namespace Jerboa {
 
 		OpenGL_Object& operator=(OpenGL_Object& other) = delete;
 		OpenGL_Object& operator=(OpenGL_Object&& other) noexcept;
-		operator GLuint() { return mObject; }
+		
+		operator GLuint() const { return mObject; }
+
 	protected:
 		void CleanUp();
 		void Move(OpenGL_Object& other);

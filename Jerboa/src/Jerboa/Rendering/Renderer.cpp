@@ -25,8 +25,8 @@ namespace Jerboa {
 		// TODO
 	}
 
-	void Renderer::Draw(int nVertices)
+	void Renderer::Draw(int count)
 	{
-		glDrawArrays(GL_TRIANGLES, 0, nVertices);
+		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
 	}
 }
