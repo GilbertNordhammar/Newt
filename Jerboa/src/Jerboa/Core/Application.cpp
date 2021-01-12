@@ -52,7 +52,7 @@ namespace Jerboa {
         auto indexBuffer = IndexBuffer::Create(indices, sizeof(indices));
 
         auto shader = Shader::Create("assets/shaders/Test.vert", "assets/shaders/Test.frag");
-        shader->Use();
+        shader->Bind();
 
         while (mRunning) {
             Renderer::Clear();
