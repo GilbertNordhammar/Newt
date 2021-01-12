@@ -1,12 +1,14 @@
 #include "jerboa-pch.h"
 #include "Application.h"
-#include "Jerboa/Rendering/Renderer.h"
+
+#include "Jerboa/Platform/Platform.h"
+
 #include "Jerboa/UI/ImGui/ImGuiApp.h"
 
 #include "Jerboa/Rendering/Renderer.h"
+#include "Jerboa/Rendering/Renderer.h"
 #include "Jerboa/Rendering/VertexBuffer.h"
 #include "Jerboa/Rendering/IndexBuffer.h"
-
 #include "Jerboa/Rendering/Shader.h"
 
 #include "Jerboa/Platform/OpenGL/OpenGL_VertexArray.h"
@@ -71,6 +73,7 @@ namespace Jerboa {
     {
         JERBOA_LOG_INFO("Initializing application");
         
+        Platform::SetRenderAPI(RenderAPI::OpenGL);
         UI::ImGuiApp::Initialize(mWindow.get());
 
         OnInit();
