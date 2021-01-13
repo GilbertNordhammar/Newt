@@ -10,6 +10,7 @@
 #include "Jerboa/Rendering/VertexBuffer.h"
 #include "Jerboa/Rendering/IndexBuffer.h"
 #include "Jerboa/Rendering/Shader.h"
+#include "Jerboa/Rendering//Texture.h"
 
 #include "Jerboa/Platform/OpenGL/OpenGL_VertexArray.h"
 
@@ -36,16 +37,16 @@ namespace Jerboa {
         glBindVertexArray(vao);
 
         float vertices[] = {
-            // pos                  // color    
-            -0.5f, -0.5f, 0.0f,     1.0, 1.0, 1.0,
-             0.5f, -0.5f, 0.0f,     0.0, 1.0, 0.0,
-             0.0f,  0.5f, 0.0f,     1.0, 0.0, 0.0
+            // pos                  // tex coords
+            -0.5f, -0.5f, 0.0f,     0.0f, 0.0f,
+             0.5f, -0.5f, 0.0f,     1.0f, 0.0f,
+             0.0f,  0.5f, 0.0f,     0.5f, 1.0f,
         };
 
         auto vertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices), VertexBufferUsage::Static, 
         {
             { ShaderDataType::Float3 },
-            { ShaderDataType::Float3 }
+            { ShaderDataType::Float2 }
         });
         
         uint32_t indices[] = { 0, 1, 2 };
@@ -53,6 +54,10 @@ namespace Jerboa {
 
         auto shader = Shader::Create("assets/shaders/Test.vert", "assets/shaders/Test.frag");
         shader->Bind();
+
+        shader->SetInt("texture_diffuse", 0);
+        auto texture = Texture2D::Create("assets/textures/cartoony-brown-stone.png", TextureType::Diffuse);
+        texture->Bind(0);
 
         while (mRunning) {
             Renderer::Clear();
