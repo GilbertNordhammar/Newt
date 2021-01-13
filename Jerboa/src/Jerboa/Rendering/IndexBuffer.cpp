@@ -15,7 +15,7 @@ namespace Jerboa {
 				indexBuffer = std::make_shared<OpenGL_IndexBuffer>(data, size);
 		}
 
-		JERBOA_ASSERT(indexBuffer, "Implementation is missing for 'IndexBuffer' or render API is not set");
+		JERBOA_ASSERT(indexBuffer, "Implementation is missing or render API is not set");
 		return std::make_shared<OpenGL_IndexBuffer>(data, size);
 	}
 }

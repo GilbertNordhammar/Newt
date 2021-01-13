@@ -16,7 +16,6 @@ namespace Jerboa {
 				texture = std::make_shared<OpenGL_Texture2D>(path, type);
 		}
 
-
 		JERBOA_ASSERT(texture, "Implementation is missing or render API is not set");
 		return texture;
 	}

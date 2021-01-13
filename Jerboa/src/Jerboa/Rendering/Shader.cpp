@@ -15,7 +15,7 @@ namespace Jerboa {
 				shader = std::make_shared<OpenGL_Shader>(vertexPath, fragmentPath);
 		}
 
-		JERBOA_ASSERT(shader, "Implementation is missing for 'Shader' or render API is not set");
+		JERBOA_ASSERT(shader, "Implementation is missing or render API is not set");
 		return shader;
 	}
 }

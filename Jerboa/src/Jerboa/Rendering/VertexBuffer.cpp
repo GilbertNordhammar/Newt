@@ -16,7 +16,7 @@ namespace Jerboa {
 				vertexBuffer = std::make_shared<OpenGL_VertexBuffer>(data, size, usage, layout);
 		}
 
-		JERBOA_ASSERT(vertexBuffer, "Implementation is missing for 'VertexBuffer' or render API is not set");
+		JERBOA_ASSERT(vertexBuffer, "Implementation is missing or render API is not set");
 		return vertexBuffer;
 	}
 }
