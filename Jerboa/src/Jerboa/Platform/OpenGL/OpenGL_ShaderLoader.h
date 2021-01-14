@@ -6,6 +6,10 @@
 #include <iostream>
 
 namespace Jerboa {
+	enum class ShaderType {
+		None, Vertex, Fragment, Geometry
+	};
+
 	class OpenGL_ShaderLoader
 	{
 	public:
@@ -14,12 +18,32 @@ namespace Jerboa {
 			const std::string& vertexPath,
 			const std::string& fragmentPath,
 			const std::string& geometryPath);
-		static std::string RetrieveCode(const std::string& path, std::string includeIndentifier = "#include");
+
+		static GLuint Load(const std::string& path);
 	private:
+		static GLuint CreateShader(
+			const std::string& vertexCode,				 
+			const std::string& fragmentCode,
+			const std::string& geometryCode);
+		
+		static GLuint CreateShaderProgram(
+			GLuint vertexShaderId,
+			GLuint fragmentShaderId,
+			GLuint geometryShaderId = 0);
+		static GLuint CreateComponentShader(const std::string& shaderCode, GLenum shaderType);
+		
+		static ShaderType IdentifyShaderType(std::ifstream& file);
+		
+		static std::string GetShaderCode(std::ifstream& file, const std::string path, const std::string& endOfShaderIdentifier = "");
+		static std::string GetShaderCode(const std::string path);
 		static std::string GetIncludePath(const std::string& lineBuffer, const std::string& includeIndentifier, const std::string& shaderPath);
-		static void CreateAndLinkProgram();
-		static unsigned int CreateAndCompileShader(std::string shaderCode, GLenum shaderType);
-		static void CheckCompileErrors(GLuint shader, GLenum shaderType, const std::string& shaderPath);
+
+		static void DeleteShaders(GLuint vertexShaderId,
+								   GLuint fragmentShaderId,
+								   GLuint geometryShaderId = 0);
+		
+		static void CheckCompileErrors(GLuint shader, const std::string& shaderPath);
 		static void CheckLinkErrors(GLuint program);
+
 	};
 }

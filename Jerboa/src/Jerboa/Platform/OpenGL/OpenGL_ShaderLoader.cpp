@@ -2,6 +2,7 @@
 #include "OpenGL_ShaderLoader.h"
 
 #include "Jerboa/Debug.h"
+#include "Jerboa/Core/String.h"
 
 namespace Jerboa {
 	//static const std::string SHADER_LIB_PATH = fileUtils::getFullResourcesPath("shaders/lib/");
@@ -12,82 +13,161 @@ namespace Jerboa {
 		const std::string& fragmentPath,
 		const std::string& geometryPath)
 	{
-		std::string vertexCode;
-		vertexCode = RetrieveCode(vertexPath);
-
-		std::string fragmentCode;
-		fragmentCode = RetrieveCode(fragmentPath);
-
+		std::string vertexCode = GetShaderCode(vertexPath);
+		std::string fragmentCode = GetShaderCode(fragmentPath);
 		std::string geometryCode;
 		if (!geometryPath.empty())
-		{
-			geometryCode = RetrieveCode(geometryPath);
-		}
+			geometryCode = GetShaderCode(geometryPath);
 
-		unsigned int vertexId = CreateAndCompileShader(vertexCode, GL_VERTEX_SHADER);
-		unsigned int fragmentId = CreateAndCompileShader(fragmentCode, GL_FRAGMENT_SHADER);
-		unsigned int geometryId = 0;
-		if (!geometryPath.empty()) {
-			geometryId = CreateAndCompileShader(geometryCode, GL_GEOMETRY_SHADER);
-		}
-
-
-//#if !defined(_RELEASE)
-		CheckCompileErrors(vertexId, GL_VERTEX_SHADER, vertexPath);
-		CheckCompileErrors(fragmentId, GL_FRAGMENT_SHADER, fragmentPath);
-		if (geometryId != 0)
-			CheckCompileErrors(geometryId, GL_GEOMETRY_SHADER, geometryPath);
-//#endif
-
-		GLuint programID = glCreateProgram();
-		glAttachShader(programID, vertexId);
-		glAttachShader(programID, fragmentId);
-		if (geometryId != 0)
-			glAttachShader(programID, geometryId);
-
-		glLinkProgram(programID);
-//#if !defined(_RELEASE)
-		CheckLinkErrors(programID);
-//#endif
-
-		glDeleteShader(vertexId);
-		glDeleteShader(fragmentId);
-		if (!geometryPath.empty())
-			glDeleteShader(geometryId);
-
-		return programID;
+		return CreateShader(vertexCode, fragmentCode, geometryCode);
 	}
 
-	std::string OpenGL_ShaderLoader::RetrieveCode(const std::string& path, std::string includeIndentifier)
+	GLuint OpenGL_ShaderLoader::Load(const std::string& path)
 	{
-		includeIndentifier += ' ';
+		std::string vertexCode;
+		std::string fragmentCode;
+		std::string geometryCode;
 
-		std::string sourceCode = "";
 		std::ifstream file(path);
-		
+
 		if (!file.is_open())
 		{
 			JERBOA_LOG_ERROR("ERROR: could not open the shader at: {}", path);
-			return sourceCode;
 		}
 
-		std::string lineBuffer;
-		while (std::getline(file, lineBuffer))
-		{
-			bool isInclude = lineBuffer.compare(0, includeIndentifier.length(), includeIndentifier) == 0;
-			if (isInclude)
-			{
-				auto includePath = GetIncludePath(lineBuffer, includeIndentifier, path);
-				sourceCode += RetrieveCode(includePath);
-			}
-			else {
-				sourceCode += lineBuffer + '\n';
+		while (!file.eof()) {
+			auto shaderType = IdentifyShaderType(file);
+			switch (shaderType) {
+				case ShaderType::Vertex:
+					vertexCode = GetShaderCode(file, path, "#end vertex");
+					break;
+				case ShaderType::Fragment:
+					fragmentCode = GetShaderCode(file, path, "#end fragment");
+					break;
+				case ShaderType::Geometry:
+					geometryCode = GetShaderCode(file, path, "#end geometry");
+					break;
+				default:
+					JERBOA_LOG_ERROR("Missing or invalid shader type declaration in {0}", path);
+					break;
 			}
 		}
 
 		file.close();
 
+		return CreateShader(vertexCode, fragmentCode, geometryCode);
+	}
+
+	GLuint OpenGL_ShaderLoader::CreateShader(const std::string& vertexCode, const std::string& fragmentCode, const std::string& geometryCode)
+	{
+		unsigned int vertexId = CreateComponentShader(vertexCode, GL_VERTEX_SHADER);
+		unsigned int fragmentId = CreateComponentShader(fragmentCode, GL_FRAGMENT_SHADER);
+		unsigned int geometryId = 0;
+		if (!geometryCode.empty()) {
+			geometryId = CreateComponentShader(geometryCode, GL_GEOMETRY_SHADER);
+		}
+
+		GLuint programID = CreateShaderProgram(vertexId, fragmentId, geometryId);
+
+		CheckLinkErrors(programID);
+		CheckCompileErrors(vertexId, "vertex");
+		CheckCompileErrors(fragmentId, "fragment");
+		if (geometryId != 0)
+			CheckCompileErrors(geometryId, "geometry");
+
+		DeleteShaders(vertexId, fragmentId, geometryId);
+
+		return programID;
+	}
+
+	ShaderType OpenGL_ShaderLoader::IdentifyShaderType(std::ifstream& file)
+	{
+		ShaderType shaderType = ShaderType::None;
+
+		std::string line;
+
+		do {
+			std::getline(file, line);
+			line = String::Trim(line, " \t");
+		} while (!file.eof() && line.size() == 0);
+
+		if (!file.eof()) {
+			if (line == "#begin vertex")
+				shaderType = ShaderType::Vertex;
+			else if (line == "#begin fragment")
+				shaderType = ShaderType::Fragment;
+			else if (line == "#begin geometry")
+				shaderType = ShaderType::Geometry;
+		}
+
+		return shaderType;
+	}
+
+	std::string OpenGL_ShaderLoader::GetShaderCode(std::ifstream& file, const std::string path, const std::string& endOfShaderIdentifier)
+	{
+		std::string sourceCode;
+		std::string line;
+
+		while (std::getline(file, line))
+		{
+			if (!endOfShaderIdentifier.empty()) {
+				bool endOfShader = String::Trim(line, " \t").compare(0, endOfShaderIdentifier.size(), endOfShaderIdentifier) == 0;
+				if (endOfShader) {
+					break;
+				}
+			}
+
+			const char* includeIdentifier = "#include ";
+			int length = sizeof(includeIdentifier) / sizeof(char);
+			bool isInclude = line.compare(0, length, includeIdentifier) == 0;
+			if (isInclude)
+			{
+				auto includePath = GetIncludePath(line, includeIdentifier, path);
+				sourceCode += GetShaderCode(file, path, endOfShaderIdentifier);
+			}
+			else {
+				sourceCode += line + '\n';
+			}
+		}
+
 		return sourceCode;
+	}
+
+	std::string OpenGL_ShaderLoader::GetShaderCode(const std::string path)
+	{
+		std::ifstream file(path);
+
+		if (!file.is_open())
+		{
+			JERBOA_LOG_ERROR("ERROR: could not open the shader at: {}", path);
+		}
+
+		std::string code = GetShaderCode(file, path);
+
+		file.close();
+
+		return code;
+	}
+
+	GLuint OpenGL_ShaderLoader::CreateShaderProgram(GLuint vertexShaderId, GLuint fragmentShaderId, GLuint geometryShaderId)
+	{
+		GLuint programID = glCreateProgram();
+		glAttachShader(programID, vertexShaderId);
+		glAttachShader(programID, fragmentShaderId);
+		if (geometryShaderId != 0)
+			glAttachShader(programID, geometryShaderId);
+
+		glLinkProgram(programID);
+
+		return programID;
+	}
+
+	void OpenGL_ShaderLoader::DeleteShaders(GLuint vertexShaderId, GLuint fragmentShaderId, GLuint geometryShaderId)
+	{
+		glDeleteShader(vertexShaderId);
+		glDeleteShader(fragmentShaderId);
+		if (geometryShaderId != 0)
+			glDeleteShader(geometryShaderId);
 	}
 
 	std::string OpenGL_ShaderLoader::GetIncludePath(const std::string& lineBuffer, const std::string& includeIndentifier, const std::string& shaderPath) {
@@ -119,16 +199,16 @@ namespace Jerboa {
 		return includeLine;
 	}
 
-	unsigned int OpenGL_ShaderLoader::CreateAndCompileShader(std::string shaderCode, GLenum shaderType) {
+	GLuint OpenGL_ShaderLoader::CreateComponentShader(const std::string& shaderCode, GLenum shaderType) {
 		const char* gShaderCode = shaderCode.c_str();
-		unsigned int shaderID = glCreateShader(shaderType);
+		auto shaderID = glCreateShader(shaderType);
 		glShaderSource(shaderID, 1, &gShaderCode, NULL);
 		glCompileShader(shaderID);
 
 		return shaderID;
 	}
 
-	void OpenGL_ShaderLoader::CheckCompileErrors(GLuint shader, GLenum shaderType, const std::string& shaderPath)
+	void OpenGL_ShaderLoader::CheckCompileErrors(GLuint shader, const std::string& shaderType)
 	{
 		GLint success;
 		GLchar infoLog[1024];
@@ -137,7 +217,7 @@ namespace Jerboa {
 		if (!success)
 		{
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			JERBOA_LOG_ERROR("SHADER_COMPILATION_ERROR \nPath: {0}\nErrors: {1}", shaderPath, infoLog);
+			JERBOA_LOG_ERROR("Failed to compile {0} shader!\n{1}", shaderType, infoLog);
 		}
 	}
 

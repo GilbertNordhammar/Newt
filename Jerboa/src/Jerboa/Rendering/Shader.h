@@ -12,6 +12,7 @@ namespace Jerboa {
 			const std::string& vertexPath,
 			const std::string& fragmentPath
 		);
+        static std::shared_ptr<Shader> Shader::Create(const std::string& path);
 
 		virtual void Bind() = 0;
 

@@ -13,6 +13,7 @@ namespace Jerboa {
         OpenGL_Shader(const std::string& vertexPath,
             const std::string& fragmentPath,
             const std::string& geometryPath = "");
+        OpenGL_Shader(const std::string& path);
 
         OpenGL_Shader(const OpenGL_Shader& other);
         OpenGL_Shader(OpenGL_Shader&& other) noexcept;

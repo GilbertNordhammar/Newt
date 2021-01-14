@@ -53,7 +53,8 @@ namespace Jerboa {
         uint32_t indices[] = { 0, 1, 2, /**/ 2, 3, 0 };
         auto indexBuffer = IndexBuffer::Create(indices, sizeof(indices));
 
-        auto shader = Shader::Create("assets/shaders/Test.vert", "assets/shaders/Test.frag");
+        //auto shader = Shader::Create("assets/shaders/Test.vert", "assets/shaders/Test.frag");
+        auto shader = Shader::Create("assets/shaders/Test.glsl");
         shader->Bind();
 
         shader->SetInt("texture_diffuse", 0);

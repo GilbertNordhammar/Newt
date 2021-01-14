@@ -1,5 +1,6 @@
 #include "jerboa-pch.h"
 #include "OpenGL_Shader.h"
+
 #include "OpenGL_ShaderLoader.h"
 
 namespace Jerboa {
@@ -11,6 +12,11 @@ namespace Jerboa {
 	{
 		mProgramID = OpenGL_ShaderLoader::Load(vertexPath, fragmentPath, geometryPath);
 		//ShaderGlobals::Get().LinkGlobals(mProgramID);
+	}
+
+	OpenGL_Shader::OpenGL_Shader(const std::string& path)
+	{
+		mProgramID = OpenGL_ShaderLoader::Load(path);
 	}
 
 	OpenGL_Shader::OpenGL_Shader(const OpenGL_Shader& other)
