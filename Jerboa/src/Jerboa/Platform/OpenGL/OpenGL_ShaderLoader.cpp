@@ -4,9 +4,10 @@
 #include "Jerboa/Debug.h"
 #include "Jerboa/Core/String.h"
 
+#include <filesystem>
+
 namespace Jerboa {
-	//static const std::string SHADER_LIB_PATH = fileUtils::getFullResourcesPath("shaders/lib/");
-	static const std::string SHADER_LIB_PATH = "assets/shaders/lib/";
+	static const std::string CURRENT_PATH = std::filesystem::current_path().string() + "/";
 
 	GLuint OpenGL_ShaderLoader::Load(
 		const std::string& vertexPath,
@@ -59,9 +60,6 @@ namespace Jerboa {
 		}
 
 		file.close();
-
-		JERBOA_LOG_TRACE(vertexCode);
-		JERBOA_LOG_TRACE(fragmentCode);
 
 		return CreateShader(vertexCode, fragmentCode, geometryCode);
 	}
@@ -130,7 +128,7 @@ namespace Jerboa {
 			bool isInclude = line.compare(0, length, includeIdentifier) == 0;
 			if (isInclude)
 			{
-				auto includePath = GetIncludePath(line, includeIdentifier, path);
+				auto includePath = GetIncludePath(line, includeIdentifier, CURRENT_PATH + path);
 
 				std::ifstream includeFile(includePath);
 				if (!includeFile.is_open())
@@ -189,9 +187,12 @@ namespace Jerboa {
 	std::string OpenGL_ShaderLoader::GetIncludePath(const std::string& lineBuffer, const std::string& includeIndentifier, const std::string& shaderPath) {
 		std::string includeLine = lineBuffer;
 		includeLine.erase(0, includeIndentifier.size());
-
+		
+		char shaderLibPath[256];
+		strcpy(shaderLibPath, CURRENT_PATH.c_str());
+		strcat(shaderLibPath, "assets/shaders/Jerboa/");
 		if (includeLine.front() == '<' && includeLine.back() == '>') {
-			includeLine = SHADER_LIB_PATH + includeLine.substr(1, includeLine.size() - 2); // -2 because last character is '\0'
+			includeLine = shaderLibPath + includeLine.substr(1, includeLine.size() - 2); // -2 because last character is '\0'
 		}
 		else {
 			std::string folderPath = shaderPath;

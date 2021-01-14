@@ -16,7 +16,9 @@ void main()
 #begin fragment
 #version 330 core
 
-#include ../shaders/Test_Include.glsl
+//#include ../shaders/Jerboa/Test_Include.glsl
+//#include Jerboa/Test_Include.glsl
+#include <Test_Include.glsl>
 
 out vec4 FragColor;
 
