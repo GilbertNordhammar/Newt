@@ -13,6 +13,9 @@ namespace Jerboa {
 		const std::string& fragmentPath,
 		const std::string& geometryPath)
 	{
+		JERBOA_LOG_INFO("Loading shader from files:\n - Vertex: {0}\n - Fragment: {1}\n - Geometry: {2}", 
+			vertexPath, fragmentPath, geometryPath.empty() ? "<None>" : geometryPath);
+
 		std::string vertexCode = GetShaderCode(vertexPath);
 		std::string fragmentCode = GetShaderCode(fragmentPath);
 		std::string geometryCode;
@@ -24,6 +27,8 @@ namespace Jerboa {
 
 	GLuint OpenGL_ShaderLoader::Load(const std::string& path)
 	{
+		JERBOA_LOG_INFO("Loading shader from \"{0}\"", path);
+
 		std::string vertexCode;
 		std::string fragmentCode;
 		std::string geometryCode;
@@ -54,6 +59,9 @@ namespace Jerboa {
 		}
 
 		file.close();
+
+		JERBOA_LOG_TRACE(vertexCode);
+		JERBOA_LOG_TRACE(fragmentCode);
 
 		return CreateShader(vertexCode, fragmentCode, geometryCode);
 	}
@@ -117,13 +125,21 @@ namespace Jerboa {
 				}
 			}
 
-			const char* includeIdentifier = "#include ";
-			int length = sizeof(includeIdentifier) / sizeof(char);
+			char includeIdentifier[] = "#include ";
+			int length = sizeof(includeIdentifier) / sizeof(char) - 1;
 			bool isInclude = line.compare(0, length, includeIdentifier) == 0;
 			if (isInclude)
 			{
 				auto includePath = GetIncludePath(line, includeIdentifier, path);
-				sourceCode += GetShaderCode(file, path, endOfShaderIdentifier);
+
+				std::ifstream includeFile(includePath);
+				if (!includeFile.is_open())
+				{
+					JERBOA_LOG_ERROR("Could not open the included file at {}", path);
+				}
+
+				sourceCode += GetShaderCode(includeFile, includePath, endOfShaderIdentifier);
+				includeFile.close();
 			}
 			else {
 				sourceCode += line + '\n';
@@ -139,7 +155,7 @@ namespace Jerboa {
 
 		if (!file.is_open())
 		{
-			JERBOA_LOG_ERROR("ERROR: could not open the shader at: {}", path);
+			JERBOA_LOG_ERROR("Could not open the shader at {}", path);
 		}
 
 		std::string code = GetShaderCode(file, path);

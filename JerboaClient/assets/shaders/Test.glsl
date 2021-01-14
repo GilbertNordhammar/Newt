@@ -16,11 +16,11 @@ void main()
 #begin fragment
 #version 330 core
 
+#include ../shaders/Test_Include.glsl
+
 out vec4 FragColor;
 
 in vec2 vTexCoords;
-
-uniform sampler2D tex_diffuse0;
 
 void main()
 {
