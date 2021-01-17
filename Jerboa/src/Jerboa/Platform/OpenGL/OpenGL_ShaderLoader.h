@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <string>
 #include <fstream>
-#include <iostream>
+#include <vector>
 
 namespace Jerboa {
 	enum class ShaderType {
@@ -34,8 +34,10 @@ namespace Jerboa {
 		
 		static ShaderType IdentifyShaderType(std::ifstream& file);
 		
-		static std::string GetShaderCode(std::ifstream& file, const std::string path, const std::string& endOfShaderIdentifier = "");
-		static std::string GetShaderCode(const std::string path);
+		static std::string GetShaderCode(
+			std::ifstream& file, const std::string& absPath, 
+			std::vector<std::string>& out_accumulatedPaths, const std::string& endOfShaderIdentifier = "");
+		static std::string GetShaderCode(const std::string& path);
 		static std::string GetIncludePath(const std::string& lineBuffer, const std::string& includeIndentifier, const std::string& shaderPath);
 
 		static void DeleteShaders(GLuint vertexShaderId,

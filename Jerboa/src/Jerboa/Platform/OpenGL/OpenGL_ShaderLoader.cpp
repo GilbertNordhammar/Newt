@@ -5,9 +5,10 @@
 #include "Jerboa/Core/String.h"
 
 #include <filesystem>
+#include <algorithm>
 
 namespace Jerboa {
-	static const std::string CURRENT_PATH = std::filesystem::current_path().string() + "/";
+	static const std::string CURRENT_DIR_PATH = std::filesystem::current_path().string() + "/";
 
 	GLuint OpenGL_ShaderLoader::Load(
 		const std::string& vertexPath,
@@ -41,17 +42,19 @@ namespace Jerboa {
 			JERBOA_LOG_ERROR("ERROR: could not open the shader at: {}", path);
 		}
 
+		std::string absPath = CURRENT_DIR_PATH + path;
 		while (!file.eof()) {
 			auto shaderType = IdentifyShaderType(file);
+			std::vector<std::string> accumulatedPaths;
 			switch (shaderType) {
 				case ShaderType::Vertex:
-					vertexCode = GetShaderCode(file, path, "#end vertex");
+					vertexCode = GetShaderCode(file, absPath, accumulatedPaths, "#end vertex");
 					break;
 				case ShaderType::Fragment:
-					fragmentCode = GetShaderCode(file, path, "#end fragment");
+					fragmentCode = GetShaderCode(file, absPath, accumulatedPaths, "#end fragment");
 					break;
 				case ShaderType::Geometry:
-					geometryCode = GetShaderCode(file, path, "#end geometry");
+					geometryCode = GetShaderCode(file, absPath, accumulatedPaths, "#end geometry");
 					break;
 				default:
 					JERBOA_LOG_ERROR("Missing or invalid shader type declaration in {0}", path);
@@ -109,8 +112,14 @@ namespace Jerboa {
 		return shaderType;
 	}
 
-	std::string OpenGL_ShaderLoader::GetShaderCode(std::ifstream& file, const std::string path, const std::string& endOfShaderIdentifier)
+	std::string OpenGL_ShaderLoader::GetShaderCode(
+		std::ifstream& file, const std::string& absPath, 
+		std::vector<std::string>& out_accumulatedPaths, const std::string& endOfShaderIdentifier)
 	{
+		bool alreadyParsed = std::find(out_accumulatedPaths.begin(), out_accumulatedPaths.end(), absPath) != out_accumulatedPaths.end();
+		if (!alreadyParsed)
+			out_accumulatedPaths.push_back(absPath);
+
 		std::string sourceCode;
 		std::string line;
 
@@ -128,16 +137,20 @@ namespace Jerboa {
 			bool isInclude = line.compare(0, length, includeIdentifier) == 0;
 			if (isInclude)
 			{
-				auto includePath = GetIncludePath(line, includeIdentifier, CURRENT_PATH + path);
+				line = String::Trim(line, " \t");
+				auto includePath = GetIncludePath(line, includeIdentifier, absPath);
 
-				std::ifstream includeFile(includePath);
-				if (!includeFile.is_open())
-				{
-					JERBOA_LOG_ERROR("Could not open the included file at {}", path);
+				bool alreadyIncluded = std::find(out_accumulatedPaths.begin(), out_accumulatedPaths.end(), includePath) != out_accumulatedPaths.end();
+				if (!alreadyIncluded) {
+					std::ifstream includeFile(includePath);
+					if (!includeFile.is_open())
+					{
+						JERBOA_LOG_ERROR("Could not open included file at line \"{0}\"", line);
+					}
+
+					sourceCode += GetShaderCode(includeFile, includePath, out_accumulatedPaths, endOfShaderIdentifier);
+					includeFile.close();
 				}
-
-				sourceCode += GetShaderCode(includeFile, includePath, endOfShaderIdentifier);
-				includeFile.close();
 			}
 			else {
 				sourceCode += line + '\n';
@@ -147,7 +160,7 @@ namespace Jerboa {
 		return sourceCode;
 	}
 
-	std::string OpenGL_ShaderLoader::GetShaderCode(const std::string path)
+	std::string OpenGL_ShaderLoader::GetShaderCode(const std::string& path)
 	{
 		std::ifstream file(path);
 
@@ -156,7 +169,8 @@ namespace Jerboa {
 			JERBOA_LOG_ERROR("Could not open the shader at {}", path);
 		}
 
-		std::string code = GetShaderCode(file, path);
+		std::vector<std::string> accumulatedPaths;
+		std::string code = GetShaderCode(file, path, accumulatedPaths);
 
 		file.close();
 
@@ -189,7 +203,7 @@ namespace Jerboa {
 		includeLine.erase(0, includeIndentifier.size());
 		
 		char shaderLibPath[256];
-		strcpy(shaderLibPath, CURRENT_PATH.c_str());
+		strcpy(shaderLibPath, CURRENT_DIR_PATH.c_str());
 		strcat(shaderLibPath, "assets/shaders/Jerboa/");
 		if (includeLine.front() == '<' && includeLine.back() == '>') {
 			includeLine = shaderLibPath + includeLine.substr(1, includeLine.size() - 2); // -2 because last character is '\0'

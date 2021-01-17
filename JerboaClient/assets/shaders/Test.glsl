@@ -16,9 +16,12 @@ void main()
 #begin fragment
 #version 330 core
 
-//#include ../shaders/Jerboa/Test_Include.glsl
-//#include Jerboa/Test_Include.glsl
-#include <Test_Include.glsl>
+//#include ../shaders/Jerboa/TestInclude.glsl
+//#include Jerboa/TestInclude.glsl
+#include <TestInclude.glsl>
+
+//including TestInclude2.glsl here and in TestInclude.glsl to test include guard
+#include <TestInclude2.glsl> 
 
 out vec4 FragColor;
 
@@ -26,6 +29,7 @@ in vec2 vTexCoords;
 
 void main()
 {
+    vec4 col_copy = col_test;
     vec4 col_diffuse = texture(tex_diffuse0, vTexCoords);
     FragColor = vec4(col_diffuse.rgb, 1.0f);
 } 
