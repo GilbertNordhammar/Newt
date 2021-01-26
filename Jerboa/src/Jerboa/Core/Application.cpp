@@ -10,13 +10,15 @@
 #include "Jerboa/Rendering/VertexBuffer.h"
 #include "Jerboa/Rendering/IndexBuffer.h"
 #include "Jerboa/Rendering/Shader.h"
-#include "Jerboa/Rendering//Texture.h"
+#include "Jerboa/Rendering/Texture.h"
 
 #include "Jerboa/Platform/OpenGL/OpenGL_VertexArray.h"
 
+#include "Jerboa/Rendering/Camera.h"
+
 namespace Jerboa {
     Application::Application(const ApplicationProps& props)
-        : mWindow(std::unique_ptr<Window>(Window::Create(props.windowProps))),
+        : mWindow(Window::Create(props.windowProps)),
         mWindowResizeObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnWindowResize)),
         mWindowCloseObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnWindowClose)),
         mKeyPressedObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnKeyPressed)),
@@ -33,15 +35,57 @@ namespace Jerboa {
     void Application::Run() {
         Init();
 
+        //auto camera = Camera(glm::vec3(0, 0, -10), glm::vec3(glm::pi<float>() / 4, glm::pi<float>() / 4, 0), CameraType::Perspective, glm::pi<float>() / 4);
+        auto camera = Camera(glm::vec3(-1, 0, 5), CameraType::Perspective, glm::pi<float>() / 4);
+        //
+        auto& trans = camera.GetTransform();
+        auto& ori = camera.GetTransform().GetOrientation();
+        auto rot = trans.GetOrientationEuler();
+        auto rotDeg = glm::degrees(rot);
+        JERBOA_LOG_WARN("quat x: {0}, y: {1}, z: {2}, w: {3}", ori.x, ori.y, ori.z, ori.w);
+        JERBOA_LOG_WARN("rot x: {0}, y: {1}, z: {2}", rot.x, rot.y, rot.z);
+        JERBOA_LOG_WARN("rotDeg x: {0}, y: {1}, z: {2}\n", rotDeg.x, rotDeg.y, rotDeg.z);
+
+        trans.Rotate(glm::vec3(glm::half_pi<float>(), 0, 0));
+
+        rot = trans.GetOrientationEuler();
+        rotDeg = glm::degrees(rot);
+        JERBOA_LOG_WARN("quat x: {0}, y: {1}, z: {2}, w: {3}", ori.x, ori.y, ori.z, ori.w);
+        JERBOA_LOG_WARN("rot x: {0}, y: {1}, z: {2}", rot.x, rot.y, rot.z);
+        JERBOA_LOG_WARN("rotDeg x: {0}, y: {1}, z: {2}\n", rotDeg.x, rotDeg.y, rotDeg.z);
+
+        trans.Rotate(glm::half_pi<float>(), glm::vec3(0.3, 0.3, 0));
+
+        rot = trans.GetOrientationEuler();
+        rotDeg = glm::degrees(rot);
+        JERBOA_LOG_WARN("quat x: {0}, y: {1}, z: {2}, w: {3}", ori.x, ori.y, ori.z, ori.w);
+        JERBOA_LOG_WARN("rot x: {0}, y: {1}, z: {2}", rot.x, rot.y, rot.z);
+        JERBOA_LOG_WARN("rotDeg x: {0}, y: {1}, z: {2}\n", rotDeg.x, rotDeg.y, rotDeg.z);
+
         auto vao = OpenGL_VertexArray();
         glBindVertexArray(vao);
 
+        //float vertices[] = {
+        //    // pos                  // tex coords
+        //    -0.5f, -0.5f, -0.5f,     0.0f, 0.0f,     // 0 left bottom  
+        //     0.5f, -0.5f, -0.5f,     1.0f, 0.0f,     // 1 right bottom
+        //     0.5f,  0.5f, -0.5f,     1.0f, 1.0f,     // 2 right top
+        //    -0.5f,  0.5f, -0.5f,     0.0f, 1.0f      // 3 left top
+        //};
+
         float vertices[] = {
             // pos                  // tex coords
-            -0.5f, -0.5f, 0.0f,     0.0f, 0.0f,     // 0 left bottom  
-             0.5f, -0.5f, 0.0f,     1.0f, 0.0f,     // 1 right bottom
-             0.5f,  0.5f, 0.0f,     1.0f, 1.0f,     // 2 right top
-            -0.5f,  0.5f, 0.0f,     0.0f, 1.0f      // 3 left top
+                // back
+            -0.5f, -0.5f, -0.5f,     0.0f, 0.0f,     // 0 left bottom  
+             0.5f, -0.5f, -0.5f,     1.0f, 0.0f,     // 1 right bottom
+             0.5f,  0.5f, -0.5f,     1.0f, 1.0f,     // 2 right top
+            -0.5f,  0.5f, -0.5f,     0.0f, 1.0f,     // 3 left top
+
+                // right
+            0.5f, -0.5f, -0.5f,     0.0f, 0.0f,     // 4 left bottom  
+            0.5f, -0.5f,  0.5f,     1.0f, 0.0f,     // 5 right bottom
+            0.5f,  0.5f,  0.5f,     1.0f, 1.0f,     // 6 right top
+            0.5f,  0.5f, -0.5f,     0.0f, 1.0f      // 7 left top
         };
 
         auto vertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices), VertexBufferUsage::Static, 
@@ -50,13 +94,18 @@ namespace Jerboa {
             { ShaderDataType::Float2 }
         });
         
-        uint32_t indices[] = { 0, 1, 2, /**/ 2, 3, 0 };
+        uint32_t indices[] = { 
+            0, 1, 2, /**/ 2, 3, 0,  // back
+            4, 5, 6, /**/ 6, 7, 4   // right
+        };
         auto indexBuffer = IndexBuffer::Create(indices, sizeof(indices));
 
         //auto shader = Shader::Create("assets/shaders/Test.vert", "assets/shaders/Test.frag");
         auto shader = Shader::Create("assets/shaders/Test.glsl");
         shader->Bind();
 
+        shader->SetMat4("mat_V", camera.GetViewMatrix());
+        shader->SetMat4("mat_P", camera.GetProjectionMatrix());
         shader->SetInt("texture_diffuse", 0);
         auto texture = Texture2D::Create("assets/textures/cartoony-brown-stone.png", TextureType::Diffuse);
         texture->Bind(0);
@@ -81,7 +130,7 @@ namespace Jerboa {
         JERBOA_LOG_INFO("Initializing application");
         
         Platform::SetRenderAPI(RenderAPI::OpenGL);
-        UI::ImGuiApp::Initialize(mWindow.get());
+        UI::ImGuiApp::Initialize(mWindow);
 
         OnInit();
     }

@@ -1,4 +1,5 @@
 #include "jerboa-pch.h"
+
 #include "Base.h"
 #include "Log.h"
 
@@ -17,5 +18,12 @@ namespace Jerboa {
 	void ShutdownCore()
 	{
 		JERBOA_LOG_TRACE("Shutting down...");
+	}
+
+	bool DecimalEquals(float first, float second, float deviation)
+	{
+		auto difference = std::abs(first - second);
+		deviation = abs(deviation);
+		return difference > (-deviation) && difference < deviation;
 	}
 }

@@ -6,10 +6,13 @@ layout (location = 1) in vec2 aTexCoords;
 
 out vec2 vTexCoords;
 
+uniform mat4 mat_V;
+uniform mat4 mat_P;
+
 void main()
 {
     vTexCoords = aTexCoords;
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+    gl_Position = mat_P * mat_V *vec4(aPos, 1.0);
 }
 #end vertex
 

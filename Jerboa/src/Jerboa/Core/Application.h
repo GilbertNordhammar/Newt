@@ -1,6 +1,8 @@
 #pragma once
 #include "LayerStack.h"
+
 #include "glad/glad.h"
+
 #include "Window.h"
 #include "EventObserver.h"
 #include "Events/WindowResizeEvent.h"
@@ -12,6 +14,8 @@
 #include "Events/MouseScrolledEvent.h"
 #include "Events/MouseButtonPressedEvent.h"
 #include "Events/MouseButtonReleasedEvent.h"
+
+#include <memory>
 
 namespace Jerboa {
     struct ApplicationProps {
@@ -46,7 +50,7 @@ namespace Jerboa {
         void OnMouseButtonPressed(const MouseButtonPressedEvent& evnt);
         void OnMouseButtonReleased(const MouseButtonReleasedEvent& evnt);
 
-        std::unique_ptr<Window> mWindow;
+        Window* mWindow;
         bool mRunning = true;
         LayerStack mLayerStack;
 

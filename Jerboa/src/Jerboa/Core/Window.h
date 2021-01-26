@@ -33,15 +33,19 @@ namespace Jerboa {
 		virtual int GetWidth() const = 0;
 		virtual int GetHeight() const = 0;
 		virtual WindowPosition GetPosition() const = 0;
-
-		// Window attributes
+		virtual void* GetNativeWindow() const = 0;
 		virtual std::weak_ptr<EventBus> GetEventBus() = 0;
+
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 
-		virtual void* GetNativeWindow() const = 0;
+
+		float GetAspectRatio() { return GetWidth() / GetHeight(); }
 
 		static Window* Create(const WindowProps& props = WindowProps());
+		static Window* Get();
+	private:
+		static std::shared_ptr<Window> sWindow;
 	};
 }
 
