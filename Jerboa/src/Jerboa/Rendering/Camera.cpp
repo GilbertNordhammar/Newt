@@ -33,6 +33,7 @@ namespace Jerboa {
 		viewMatrix = glm::inverse(viewMatrix);
 		return viewMatrix;
 	}
+
 	const glm::mat4 Camera::GetProjectionMatrix() const
 	{
 		return glm::perspective(mFov, Window::Get()->GetAspectRatio(), 0.1f, 100.0f);

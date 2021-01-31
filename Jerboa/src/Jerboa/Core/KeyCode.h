@@ -5,6 +5,7 @@
 
 namespace Jerboa {
 	enum class KeyCode : int {
+		None = GLFW_KEY_SPACE - 1,
 		Space = GLFW_KEY_SPACE,
 		Apostrophe = GLFW_KEY_APOSTROPHE,
 		Comma = GLFW_KEY_COMMA,
@@ -125,6 +126,7 @@ namespace Jerboa {
 		RightAlt = GLFW_KEY_RIGHT_ALT,
 		RightSuper = GLFW_KEY_RIGHT_SUPER,
 		Menu = GLFW_KEY_MENU,
+		LastKey = GLFW_KEY_LAST
 	};
 
 	enum class ModifierKeyCode : int {

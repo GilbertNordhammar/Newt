@@ -2,8 +2,9 @@
 #include "EventBus.h"
 #include "EventObserverBase.h"
 
-namespace Jerboa {
+#include <memory>
 
+namespace Jerboa {
     class EventObserver : EventObserverBase {
     public:
         template<class EventType, class T>
@@ -15,6 +16,18 @@ namespace Jerboa {
             );
         }
 
+        
+        template<class EventType, class T>
+        static std::unique_ptr<EventObserver> CreatePtr(EventBus* eventBus, T* instance, void (T::* memberFunction)(const EventType&)) {
+            return std::unique_ptr<EventObserver>( // Not as safe as std::make_unique, but then the constructor would need to be public
+                new EventObserver(
+                    eventBus,
+                    [=](const Event& evnt) { (instance->*memberFunction)(static_cast<const EventType&>(evnt)); },
+                    EventBus::GetTypeIndex<EventType>()
+                )
+            );
+        }
+        
         ~EventObserver();
 
     private:

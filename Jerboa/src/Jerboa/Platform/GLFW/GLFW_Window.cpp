@@ -40,11 +40,27 @@ namespace Jerboa {
 		glfwPollEvents();
 	}
 
-	WindowPosition GLFW_Window::GetPosition() const
+	glm::ivec2 GLFW_Window::GetPosition() const
 	{
 		int x, y;
 		glfwGetWindowPos(mWindow, &x, &y);
 		return { x, y };
+	}
+
+	void GLFW_Window::SetCursorMode(CursorMode mode)
+	{
+		mData.cursorMode = mode;
+		int glfwMode = 0;
+		if (mode == CursorMode::Normal)
+			glfwMode = GLFW_CURSOR_NORMAL;
+		else if (mode == CursorMode::Hidden)
+			glfwMode = GLFW_CURSOR_HIDDEN;
+		else if (mode == CursorMode::Disabled)
+			glfwMode = GLFW_CURSOR_DISABLED;
+		
+		JERBOA_ASSERT(glfwMode, "CursorMode value is not handled!");
+
+		glfwSetInputMode(mWindow, GLFW_CURSOR, glfwMode);
 	}
 
 	void GLFW_Window::SetVSync(bool enabled)
@@ -58,6 +74,7 @@ namespace Jerboa {
 		mData.height = props.height;
 		mData.width = props.width;
 		mData.title = mData.title;
+		mData.cursorMode = props.cursorMode;
 
 		JERBOA_LOG_INFO("Creating window \"{0}\" ({1}x{2})", props.title, props.width, props.height);
 
@@ -74,23 +91,24 @@ namespace Jerboa {
 
 		glfwMakeContextCurrent(mWindow);
 		glfwSetWindowUserPointer(mWindow, &mData);
-		glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		SetCursorMode(mData.cursorMode);
 		
 		// Initialzing OpenGL
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		JERBOA_ASSERT(status, "Failed to initialize Glad!");
 
 		// Setting various callback functions for GLFW
-		glfwSetWindowSizeCallback(mWindow, [](NativeGLFWWindow* window, int width, int height)
+		glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height)
 		{
-				auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
+			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
+			glViewport(0, 0, width, height);
 
-				data.width = width;
-				data.height = height;
-				data.eventBus->Publish(WindowResizeEvent(width, height));
+			data.width = width;
+			data.height = height;
+			data.eventBus->Publish(WindowResizeEvent(width, height));
 		});
 
-		glfwSetWindowCloseCallback(mWindow, [](NativeGLFWWindow* window)
+		glfwSetWindowCloseCallback(mWindow, [](GLFWwindow* window)
 		{
 			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
 
@@ -137,25 +155,25 @@ namespace Jerboa {
 		});
 
 		glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods)
-			{
-				auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
-				auto buttonCode = static_cast<MouseButtonCode>(button);
-				auto modsKeyCode = static_cast<ModifierKeyCode>(mods);
+		{
+			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
+			auto buttonCode = static_cast<MouseButtonCode>(button);
+			auto modsKeyCode = static_cast<ModifierKeyCode>(mods);
 
-				switch (action)
+			switch (action)
+			{
+				case GLFW_PRESS:
 				{
-					case GLFW_PRESS:
-					{
-						data.eventBus->Publish(MouseButtonPressedEvent(buttonCode, modsKeyCode));
-						break;
-					}
-					case GLFW_RELEASE:
-					{
-						data.eventBus->Publish(MouseButtonReleasedEvent(buttonCode, modsKeyCode));
-						break;
-					}
+					data.eventBus->Publish(MouseButtonPressedEvent(buttonCode, modsKeyCode));
+					break;
 				}
-			});
+				case GLFW_RELEASE:
+				{
+					data.eventBus->Publish(MouseButtonReleasedEvent(buttonCode, modsKeyCode));
+					break;
+				}
+			}
+		});
 	}
 
 	void GLFW_Window::ShutDown()

@@ -1,25 +1,29 @@
 #pragma once
 
 #include "EventBus.h"
+
+#include "glm/vec2.hpp"
+
 #include <memory>
 
 namespace Jerboa {
+	enum class CursorMode {
+		Normal, Disabled, Hidden
+	};
 
 	struct WindowProps
 	{
 		std::string title;
 		unsigned int width;
 		unsigned int height;
+		CursorMode cursorMode = CursorMode::Normal;
 
-		WindowProps(const std::string& title = "Jerboa",
+		WindowProps(
+			const std::string& title = "Jerboa",
 			unsigned int width = 1280,
 			unsigned int height = 720)
 			: title(title), width(width), height(height)
 		{}
-	};
-
-	struct WindowPosition {
-		int x, y;
 	};
 
 	// Interface representing a desktop system based Window
@@ -32,15 +36,17 @@ namespace Jerboa {
 
 		virtual int GetWidth() const = 0;
 		virtual int GetHeight() const = 0;
-		virtual WindowPosition GetPosition() const = 0;
+		virtual glm::ivec2 GetPosition() const = 0;
 		virtual void* GetNativeWindow() const = 0;
 		virtual std::weak_ptr<EventBus> GetEventBus() = 0;
+
+		virtual CursorMode GetCursorMode() = 0;
+		virtual void SetCursorMode(CursorMode mode) = 0;
 
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 
-
-		float GetAspectRatio() { return GetWidth() / GetHeight(); }
+		float GetAspectRatio() { return (float) GetWidth() / (float) GetHeight(); }
 
 		static Window* Create(const WindowProps& props = WindowProps());
 		static Window* Get();

@@ -20,7 +20,7 @@ namespace Jerboa::UI {
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // TODO: Enable at a later point
 		
-		auto glfwWindow = static_cast<GLFWwindow*>(window->GetNativeWindow());
+		auto glfwWindow = static_cast<GLFWwindow*>(window->GetNativeWindow()); // TODO: Make API check
 		ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
 		ImGui_ImplOpenGL3_Init("#version 330");
 	}

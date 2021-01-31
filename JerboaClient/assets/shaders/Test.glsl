@@ -12,7 +12,7 @@ uniform mat4 mat_P;
 void main()
 {
     vTexCoords = aTexCoords;
-    gl_Position = mat_P * mat_V *vec4(aPos, 1.0);
+    gl_Position = mat_P * mat_V * vec4(aPos, 1.0);
 }
 #end vertex
 
@@ -32,7 +32,6 @@ in vec2 vTexCoords;
 
 void main()
 {
-    vec4 col_copy = col_test;
     vec4 col_diffuse = texture(tex_diffuse0, vTexCoords);
     FragColor = vec4(col_diffuse.rgb, 1.0f);
 } 

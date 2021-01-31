@@ -7,8 +7,6 @@
 
 namespace Jerboa 
 {
-	using NativeGLFWWindow = GLFWwindow;
-
 	class GLFW_Window : public Window
 	{
 	public:
@@ -19,8 +17,11 @@ namespace Jerboa
 
 		virtual int GetWidth() const override { return mData.width; };
 		virtual int GetHeight() const override { return mData.height; };
-		virtual WindowPosition GetPosition() const override;
+		virtual glm::ivec2 GetPosition() const override;
 		virtual std::weak_ptr<EventBus> GetEventBus() override { return mData.eventBus; };
+
+		virtual CursorMode GetCursorMode() override { return mData.cursorMode; }
+		virtual void SetCursorMode(CursorMode mode) override;
 
 		virtual void SetVSync(bool enabled) override;
 		virtual bool IsVSync() const override { return mData.VSync; };
@@ -32,6 +33,7 @@ namespace Jerboa
 			std::string title;
 			int width, height;
 			bool VSync;
+			CursorMode cursorMode;
 
 			std::shared_ptr<EventBus> eventBus = std::make_shared<EventBus>();
 		};
@@ -39,7 +41,7 @@ namespace Jerboa
 		void Init(const WindowProps& props);
 		void ShutDown();
 
-		NativeGLFWWindow* mWindow;
+		GLFWwindow* mWindow;
 		WindowData mData;
 	};
 }

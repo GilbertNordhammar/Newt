@@ -8,17 +8,17 @@
 
 namespace Jerboa {
 	Transform::Transform()
-		: mPosition(glm::vec3(0)), mOrientation(glm::vec3(0))
+		: Transform(glm::vec3(0), glm::quat())
 	{
 	}
 
 	Transform::Transform(const glm::vec3& position)
-		: mPosition(position), mOrientation(glm::vec3(0))
+		: Transform(position, glm::quat())
 	{	
 	}
 
-	Transform::Transform(const glm::vec3& position, const glm::quat& mOrientation)
-		: mPosition(position), mOrientation(mOrientation)
+	Transform::Transform(const glm::vec3& position, const glm::quat& orientation)
+		: mPosition(position), mOrientation(glm::normalize(orientation))
 	{
 	}
 
@@ -32,9 +32,9 @@ namespace Jerboa {
 	{
 	}
 
-	void Transform::Rotate(const glm::quat& mRotation)
+	void Transform::Rotate(const glm::quat& rotation)
 	{
-		mOrientation = mRotation * mOrientation;
+		mOrientation = glm::normalize(rotation) * mOrientation;
 	}
 
 	void Transform::Rotate(const glm::vec3& rotation)
@@ -47,7 +47,22 @@ namespace Jerboa {
 		float deviation = 0.0001;
 		if (DecimalEquals(axis.x, 0, deviation) && DecimalEquals(axis.y, 0, deviation) && DecimalEquals(axis.z, 0, deviation))
 			return;
-
+		
 		mOrientation = glm::rotate(mOrientation, angle, axis);
+	}
+
+	const glm::vec3 Transform::GetForward() const
+	{
+		return glm::rotate(mOrientation, GetWorldForward());;
+	}
+
+	const glm::vec3 Transform::GetUp() const
+	{
+		return glm::rotate(mOrientation, GetWorldUp());
+	}
+
+	const glm::vec3 Transform::GetRight() const
+	{
+		return glm::rotate(mOrientation, GetWorldRight());
 	}
 }

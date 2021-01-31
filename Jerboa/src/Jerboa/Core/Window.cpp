@@ -11,7 +11,7 @@ namespace Jerboa {
 	{
 		JERBOA_ASSERT(!sWindow, "Can't create multiple windows");
 		sWindow = std::make_shared<GLFW_Window>(props);
-
+		
 		return sWindow.get();
 	}
 

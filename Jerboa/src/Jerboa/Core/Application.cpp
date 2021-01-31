@@ -2,19 +2,9 @@
 #include "Application.h"
 
 #include "Jerboa/Platform/Platform.h"
-
 #include "Jerboa/UI/ImGui/ImGuiApp.h"
-
 #include "Jerboa/Rendering/Renderer.h"
-#include "Jerboa/Rendering/Renderer.h"
-#include "Jerboa/Rendering/VertexBuffer.h"
-#include "Jerboa/Rendering/IndexBuffer.h"
-#include "Jerboa/Rendering/Shader.h"
-#include "Jerboa/Rendering/Texture.h"
-
-#include "Jerboa/Platform/OpenGL/OpenGL_VertexArray.h"
-
-#include "Jerboa/Rendering/Camera.h"
+#include "Jerboa/Core/Input.h"
 
 namespace Jerboa {
     Application::Application(const ApplicationProps& props)
@@ -35,85 +25,8 @@ namespace Jerboa {
     void Application::Run() {
         Init();
 
-        //auto camera = Camera(glm::vec3(0, 0, -10), glm::vec3(glm::pi<float>() / 4, glm::pi<float>() / 4, 0), CameraType::Perspective, glm::pi<float>() / 4);
-        auto camera = Camera(glm::vec3(-1, 0, 5), CameraType::Perspective, glm::pi<float>() / 4);
-        //
-        auto& trans = camera.GetTransform();
-        auto& ori = camera.GetTransform().GetOrientation();
-        auto rot = trans.GetOrientationEuler();
-        auto rotDeg = glm::degrees(rot);
-        JERBOA_LOG_WARN("quat x: {0}, y: {1}, z: {2}, w: {3}", ori.x, ori.y, ori.z, ori.w);
-        JERBOA_LOG_WARN("rot x: {0}, y: {1}, z: {2}", rot.x, rot.y, rot.z);
-        JERBOA_LOG_WARN("rotDeg x: {0}, y: {1}, z: {2}\n", rotDeg.x, rotDeg.y, rotDeg.z);
-
-        trans.Rotate(glm::vec3(glm::half_pi<float>(), 0, 0));
-
-        rot = trans.GetOrientationEuler();
-        rotDeg = glm::degrees(rot);
-        JERBOA_LOG_WARN("quat x: {0}, y: {1}, z: {2}, w: {3}", ori.x, ori.y, ori.z, ori.w);
-        JERBOA_LOG_WARN("rot x: {0}, y: {1}, z: {2}", rot.x, rot.y, rot.z);
-        JERBOA_LOG_WARN("rotDeg x: {0}, y: {1}, z: {2}\n", rotDeg.x, rotDeg.y, rotDeg.z);
-
-        trans.Rotate(glm::half_pi<float>(), glm::vec3(0.3, 0.3, 0));
-
-        rot = trans.GetOrientationEuler();
-        rotDeg = glm::degrees(rot);
-        JERBOA_LOG_WARN("quat x: {0}, y: {1}, z: {2}, w: {3}", ori.x, ori.y, ori.z, ori.w);
-        JERBOA_LOG_WARN("rot x: {0}, y: {1}, z: {2}", rot.x, rot.y, rot.z);
-        JERBOA_LOG_WARN("rotDeg x: {0}, y: {1}, z: {2}\n", rotDeg.x, rotDeg.y, rotDeg.z);
-
-        auto vao = OpenGL_VertexArray();
-        glBindVertexArray(vao);
-
-        //float vertices[] = {
-        //    // pos                  // tex coords
-        //    -0.5f, -0.5f, -0.5f,     0.0f, 0.0f,     // 0 left bottom  
-        //     0.5f, -0.5f, -0.5f,     1.0f, 0.0f,     // 1 right bottom
-        //     0.5f,  0.5f, -0.5f,     1.0f, 1.0f,     // 2 right top
-        //    -0.5f,  0.5f, -0.5f,     0.0f, 1.0f      // 3 left top
-        //};
-
-        float vertices[] = {
-            // pos                  // tex coords
-                // back
-            -0.5f, -0.5f, -0.5f,     0.0f, 0.0f,     // 0 left bottom  
-             0.5f, -0.5f, -0.5f,     1.0f, 0.0f,     // 1 right bottom
-             0.5f,  0.5f, -0.5f,     1.0f, 1.0f,     // 2 right top
-            -0.5f,  0.5f, -0.5f,     0.0f, 1.0f,     // 3 left top
-
-                // right
-            0.5f, -0.5f, -0.5f,     0.0f, 0.0f,     // 4 left bottom  
-            0.5f, -0.5f,  0.5f,     1.0f, 0.0f,     // 5 right bottom
-            0.5f,  0.5f,  0.5f,     1.0f, 1.0f,     // 6 right top
-            0.5f,  0.5f, -0.5f,     0.0f, 1.0f      // 7 left top
-        };
-
-        auto vertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices), VertexBufferUsage::Static, 
-        {
-            { ShaderDataType::Float3 },
-            { ShaderDataType::Float2 }
-        });
-        
-        uint32_t indices[] = { 
-            0, 1, 2, /**/ 2, 3, 0,  // back
-            4, 5, 6, /**/ 6, 7, 4   // right
-        };
-        auto indexBuffer = IndexBuffer::Create(indices, sizeof(indices));
-
-        //auto shader = Shader::Create("assets/shaders/Test.vert", "assets/shaders/Test.frag");
-        auto shader = Shader::Create("assets/shaders/Test.glsl");
-        shader->Bind();
-
-        shader->SetMat4("mat_V", camera.GetViewMatrix());
-        shader->SetMat4("mat_P", camera.GetProjectionMatrix());
-        shader->SetInt("texture_diffuse", 0);
-        auto texture = Texture2D::Create("assets/textures/cartoony-brown-stone.png", TextureType::Diffuse);
-        texture->Bind(0);
-
         while (mRunning) {
             Renderer::Clear();
-
-            Renderer::Draw(indexBuffer->GetCount());
 
             for (Layer* layer : mLayerStack)
                 layer->OnUpdate();
@@ -121,6 +34,7 @@ namespace Jerboa {
             RenderImGui();
 
             mWindow->Update();
+            InputInternals::Update();
         }
         ShutDown();
     }
@@ -131,6 +45,7 @@ namespace Jerboa {
         
         Platform::SetRenderAPI(RenderAPI::OpenGL);
         UI::ImGuiApp::Initialize(mWindow);
+        InputInternals::Init();
 
         OnInit();
     }
@@ -176,36 +91,43 @@ namespace Jerboa {
 
     void Application::OnKeyPressed(const KeyPressedEvent& evnt)
     {
-        JERBOA_LOG_TRACE("Pressed '{}' (mods {}), ", GetKeyName(evnt.key), evnt.modifiers);
+        Layer::GetSharedEventBus()->Publish(evnt);
+        //JERBOA_LOG_TRACE("Pressed '{}' (mods {}), ", GetKeyName(evnt.key), evnt.modifiers);
     }
 
     void Application::OnKeyReleased(const KeyReleasedEvent& evnt)
     {
-        JERBOA_LOG_TRACE("Released '{}' (mods {}), ", GetKeyName(evnt.key), evnt.modifiers);
+        Layer::GetSharedEventBus()->Publish(evnt);
+        //JERBOA_LOG_TRACE("Released '{}' (mods {}), ", GetKeyName(evnt.key), evnt.modifiers);
     }
 
     void Application::OnKeyRepeat(const KeyRepeatEvent& evnt)
     {
-        JERBOA_LOG_TRACE("Continiously pressing '{}' (mods {}), ", GetKeyName(evnt.key), evnt.modifiers);
+        Layer::GetSharedEventBus()->Publish(evnt);
+        //JERBOA_LOG_TRACE("Continiously pressing '{}' (mods {}), ", GetKeyName(evnt.key), evnt.modifiers);
     }
 
     void Application::OnMouseMoved(const MouseMovedEvent& evnt)
     {
-        JERBOA_LOG_TRACE("Mouse moved ({}, {})", evnt.x, evnt.y);
+        Layer::GetSharedEventBus()->Publish(evnt);
+        //JERBOA_LOG_TRACE("Mouse moved ({}, {})", evnt.x, evnt.y);
     }
 
     void Application::OnMouseScrolled(const MouseScrolledEvent& evnt)
     {
-        JERBOA_LOG_TRACE("Mouse scrolled ({}, {})", evnt.xOffset, evnt.yOffset);
+        Layer::GetSharedEventBus()->Publish(evnt);
+        //JERBOA_LOG_TRACE("Mouse scrolled ({}, {})", evnt.xOffset, evnt.yOffset);
     }
 
     void Jerboa::Application::OnMouseButtonPressed(const MouseButtonPressedEvent& evnt)
     {
-        JERBOA_LOG_TRACE("Pressed mouse button {} (modifiers {})", evnt.button, evnt.modifiers);
+        Layer::GetSharedEventBus()->Publish(evnt);
+        //JERBOA_LOG_TRACE("Pressed mouse button {} (modifiers {})", evnt.button, evnt.modifiers);
     }
 
     void Jerboa::Application::OnMouseButtonReleased(const MouseButtonReleasedEvent& evnt)
     {
-        JERBOA_LOG_TRACE("Released mouse button {} (modifiers {})", evnt.button, evnt.modifiers);
+        Layer::GetSharedEventBus()->Publish(evnt);
+        //JERBOA_LOG_TRACE("Released mouse button {} (modifiers {})", evnt.button, evnt.modifiers);
     }
 }
