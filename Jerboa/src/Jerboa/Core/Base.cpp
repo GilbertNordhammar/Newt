@@ -2,6 +2,7 @@
 
 #include "Base.h"
 #include "Log.h"
+#include "Window.h"
 
 #define HAZEL_BUILD_ID "v0.1a"
 
@@ -10,6 +11,7 @@ namespace Jerboa {
 	void InitializeCore()
 	{
 		Log::Init();
+		Window::SetApi(WindowApi::GLFW); // TODO: Make this configurable
 
 		JERBOA_LOG_TRACE("Jerboa Engine {}", HAZEL_BUILD_ID);
 		JERBOA_LOG_TRACE("Initializing...");

@@ -6,12 +6,19 @@
 
 namespace Jerboa {
 	std::shared_ptr<Window> Window::sWindow;
+	WindowApi Window::sWindowApi = WindowApi::None;
 
 	Window* Window::Create(const WindowProps& props)
 	{
 		JERBOA_ASSERT(!sWindow, "Can't create multiple windows");
-		sWindow = std::make_shared<GLFW_Window>(props);
-		
+
+		switch (GetApi()) {
+			case WindowApi::GLFW: 
+				sWindow = std::make_shared<GLFW_Window>(props); 
+				break;
+		}
+
+		JERBOA_ASSERT(sWindow, "Window API has not been set or the set API is not handled");
 		return sWindow.get();
 	}
 

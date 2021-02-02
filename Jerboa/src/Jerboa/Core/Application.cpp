@@ -5,6 +5,7 @@
 #include "Jerboa/UI/ImGui/ImGuiApp.h"
 #include "Jerboa/Rendering/Renderer.h"
 #include "Jerboa/Core/Input.h"
+#include "Jerboa/Core/Time.h"
 
 namespace Jerboa {
     Application::Application(const ApplicationProps& props)
@@ -35,24 +36,25 @@ namespace Jerboa {
 
             mWindow->Update();
             InputInternals::Update();
+            TimeInternals::Update();
         }
         ShutDown();
     }
 
     void Application::Init()
     {
-        JERBOA_LOG_INFO("Initializing application");
+        JERBOA_LOG_INFO("Initializing application...");
         
         Platform::SetRenderAPI(RenderAPI::OpenGL);
-        UI::ImGuiApp::Initialize(mWindow);
         InputInternals::Init();
+        UI::ImGuiApp::Init(mWindow);
 
         OnInit();
     }
 
     void Application::ShutDown()
     {
-        JERBOA_LOG_INFO("Shutting down application");
+        JERBOA_LOG_INFO("Shutting down application...");
 
         UI::ImGuiApp::ShutDown();
 

@@ -7,6 +7,10 @@
 #include <memory>
 
 namespace Jerboa {
+	enum class WindowApi {
+		None, GLFW
+	};
+
 	enum class CursorMode {
 		Normal, Disabled, Hidden
 	};
@@ -48,10 +52,14 @@ namespace Jerboa {
 
 		float GetAspectRatio() { return (float) GetWidth() / (float) GetHeight(); }
 
+		static void SetApi(WindowApi api) { sWindowApi = api; }
+		static WindowApi GetApi() { return sWindowApi; }
+
 		static Window* Create(const WindowProps& props = WindowProps());
 		static Window* Get();
 	private:
 		static std::shared_ptr<Window> sWindow;
+		static WindowApi sWindowApi;
 	};
 }
 

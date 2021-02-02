@@ -4,6 +4,7 @@
 #include "Jerboa/UI/ImGui/ImGuiApp.h"
 
 #include "Jerboa/Core/Input.h"
+#include "Jerboa/Core/Time.h"
 
 #include "Jerboa/Rendering/Renderer.h"
 
@@ -31,16 +32,10 @@ namespace JerboaClient {
 
 	void EditorLayer::OnUpdate()
 	{
-        // TODO: Move timestamp calculations into engine
-        static double lastTimeStamp = 0;
-        auto timeStamp = glfwGetTime(); // TODO: Don't use glfw directly
-        float deltaTime = timeStamp - lastTimeStamp;
-        lastTimeStamp = timeStamp;
-
         auto& trans = mCamera.GetTransform();
 
         auto mouseMovement = Jerboa::Input::GetMouseMovement();
-        auto rotation = mouseMovement * deltaTime * 100.0f;
+        auto rotation = mouseMovement * Jerboa::Time::GetDeltaTime() * 100.0f;
         auto ori = glm::quat(-Jerboa::Transform::GetWorldUp() * rotation.x) * trans.GetOrientation();
         ori = ori * glm::quat(-Jerboa::Transform::GetWorldRight() * rotation.y);
         trans.SetOrientation(ori);

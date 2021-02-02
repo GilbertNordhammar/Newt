@@ -6,6 +6,7 @@
 	#define JERBOA_ASSERTS_ENABLED
 #endif
 
+// TODO: __debugbreak() is specific to MSVC, so change it depending on platform
 #ifdef JERBOA_ASSERTS_ENABLED
 	#define JERBOA_ASSERT(condition, message) { \
 		if(!(condition)) { \

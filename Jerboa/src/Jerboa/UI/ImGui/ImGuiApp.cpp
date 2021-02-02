@@ -3,7 +3,7 @@
 #include "GLFW/glfw3.h"
 
 namespace Jerboa::UI {
-	void ImGuiApp::Initialize(Window* window) {
+	void ImGuiApp::Init(Window* window) {
 		static bool initialized = false;
 		JERBOA_ASSERT(!initialized, "ImGuiApp::Initialize() should only be called once");
 		if (initialized)

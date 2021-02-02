@@ -9,7 +9,7 @@
 
 namespace Jerboa::UI {
 	namespace ImGuiApp {
-		void Initialize(Window* window);
+		void Init(Window* window);
 		void ShutDown();
 		void BeginFrame();
 		void EndFrame();
