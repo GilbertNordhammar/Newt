@@ -35,9 +35,21 @@ namespace JerboaClient {
         auto& trans = mCamera.GetTransform();
 
         auto mouseMovement = Jerboa::Input::GetMouseMovement();
-        auto rotation = mouseMovement * Jerboa::Time::GetDeltaTime() * 100.0f;
-        auto ori = glm::quat(-Jerboa::Transform::GetWorldUp() * rotation.x) * trans.GetOrientation();
-        ori = ori * glm::quat(-Jerboa::Transform::GetWorldRight() * rotation.y);
+        auto rotation = -mouseMovement * Jerboa::Time::GetDeltaTime() * 100.0f;
+        auto ori = glm::quat(Jerboa::Transform::GetWorldUp() * rotation.x) * trans.GetOrientation();
+        ori = ori * glm::quat(Jerboa::Transform::GetWorldRight() * rotation.y);
+
+        auto pitch = glm::atan(2 * ori.x * ori.w - 2 * ori.y * ori.z, 1 - 2 * ori.x * ori.x - 2 * ori.z * ori.z);
+        auto pitchLimit = glm::radians(89.0);
+        if (pitch > pitchLimit) {
+            float pitchDiff = pitch - pitchLimit;
+            ori = ori * glm::quat(Jerboa::Transform::GetWorldRight() * -pitchDiff);
+        }
+        else if (pitch < -pitchLimit) {
+            float pitchDiff = pitch - (-pitchLimit);
+            ori = ori * glm::quat(Jerboa::Transform::GetWorldRight() * -pitchDiff);
+        }
+
         trans.SetOrientation(ori);
 
         float moveSpeed = 0.1;
