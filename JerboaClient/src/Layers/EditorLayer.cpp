@@ -109,6 +109,9 @@ namespace JerboaClient {
 
         // TODO: Remove explicit OpenGL calls
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+
         glBindVertexArray(mBoxVao);
 
         float vertices[] = {
@@ -136,7 +139,19 @@ namespace JerboaClient {
             -0.5f, -0.5f, -0.5f,     0.0f, 0.0f,     // 12 left bottom  
             -0.5f, -0.5f,  0.5f,     1.0f, 0.0f,     // 13 right bottom
             -0.5f,  0.5f,  0.5f,     1.0f, 1.0f,     // 14 right top
-            -0.5f,  0.5f, -0.5f,     0.0f, 1.0f      // 15 left top
+            -0.5f,  0.5f, -0.5f,     0.0f, 1.0f,      // 15 left top
+
+               // top
+           -0.5f,  0.5f,  0.5f,     0.0f, 0.0f,     // 16 left bottom
+            0.5f,  0.5f,  0.5f,     1.0f, 0.0f,     // 17 right bottom
+           -0.5f,  0.5f, -0.5f,     0.0f, 1.0f,     // 18 left top
+            0.5f,  0.5f, -0.5f,     1.0f, 1.0f,     // 19 right top
+
+                // bottom
+           -0.5f,  -0.5f,  0.5f,     0.0f, 0.0f,     // 20 left bottom
+            0.5f,  -0.5f,  0.5f,     1.0f, 0.0f,     // 21 right bottom
+           -0.5f,  -0.5f, -0.5f,     0.0f, 1.0f,     // 22 left top
+            0.5f,  -0.5f, -0.5f,     1.0f, 1.0f,     // 23 right top
         };
 
         mBoxVertexBuffer = Jerboa::VertexBuffer::Create(vertices, sizeof(vertices), Jerboa::VertexBufferUsage::Static,
@@ -146,10 +161,12 @@ namespace JerboaClient {
         });
 
         uint32_t indices[] = {
-            0, 1, 2, /**/ 2, 3, 0,  // front
-            4, 5, 6, /**/ 6, 7, 4,   // back,
-            8, 9, 10, /**/ 10, 11, 8,   // right
-            12, 13, 14, /**/ 14, 15, 12   // left
+            0, 1, 2, /**/ 2, 3, 0, // front
+            4, 6, 5, /**/ 6, 4, 7,   // back,
+            8, 10, 9, /**/ 10, 8, 11,  // right
+            12, 13, 14, /**/ 14, 15, 12,   // left
+            16, 19, 18 /**/, 16, 17, 19, // top
+            20, 22, 23, /**/ 20, 23, 21 // bottom
         };
         mBoxIndexBuffer = Jerboa::IndexBuffer::Create(indices, sizeof(indices));
 
