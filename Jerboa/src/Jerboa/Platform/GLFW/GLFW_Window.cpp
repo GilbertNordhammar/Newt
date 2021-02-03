@@ -178,7 +178,7 @@ namespace Jerboa {
 
 	void GLFW_Window::ShutDown()
 	{
-		glfwTerminate(); // maybe put this at the very end of the program in case there are multiple windows
+		glfwTerminate();
 	}
 }
 

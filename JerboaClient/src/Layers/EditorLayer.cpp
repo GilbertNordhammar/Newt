@@ -8,6 +8,8 @@
 
 #include "Jerboa/Rendering/Renderer.h"
 
+#include <random>
+
 namespace JerboaClient {
 	EditorLayer::EditorLayer()
 		: mWindowResizeObserver(Jerboa::EventObserver::Create(GetSharedEventBus(), this, &EditorLayer::OnWindowResize)),
@@ -74,14 +76,19 @@ namespace JerboaClient {
             Jerboa::Window::Get()->SetCursorMode(Jerboa::CursorMode::Normal);
 
         mTestShader->Bind();
-        mTestShader->SetMat4("mat_V", mCamera.GetViewMatrix());
-        mTestShader->SetMat4("mat_P", mCamera.GetProjectionMatrix());
+        mTestShader->SetMat4("mat_view", mCamera.GetViewMatrix());
+        mTestShader->SetMat4("mat_projection", mCamera.GetProjectionMatrix());
+        mTestShader->SetMat4("mat_VP", mCamera.GetProjectionMatrix() * mCamera.GetViewMatrix());
         mTestShader->SetInt("texture_diffuse", 0);
-        mTestTexture->Bind(0);
+        mBoxTexture->Bind(0);
 
-        glBindVertexArray(mVao);
-        
-        Jerboa::Renderer::Draw(mIndexBuffer->GetCount());
+        glBindVertexArray(mBoxVao);
+        for (auto bt : mBoxTransforms) {
+            auto modelMatrix = glm::translate(glm::mat4(1.0), bt.GetPosition());
+            modelMatrix = modelMatrix * glm::toMat4(bt.GetOrientation());
+            mTestShader->SetMat4("mat_model", modelMatrix);
+            Jerboa::Renderer::Draw(mBoxIndexBuffer->GetCount());
+        }
 	}
 
 	void EditorLayer::OnAttach() {
@@ -89,9 +96,20 @@ namespace JerboaClient {
 
         Jerboa::Window::Get()->SetCursorMode(Jerboa::CursorMode::Disabled);
         
+        const int nBoxes = 10;
+        mBoxTransforms.reserve(nBoxes);
+        
+        for (int i = 0; i < nBoxes; i++) {
+            std::random_device rand;
+            std::uniform_real_distribution<float> dist(-5, 5);
+            auto position = glm::vec3(dist(rand), dist(rand), dist(rand));
+            auto rotation = glm::vec3(dist(rand), dist(rand), dist(rand));
+            mBoxTransforms.emplace_back(position, rotation);
+        }
+
         // TODO: Remove explicit OpenGL calls
         glEnable(GL_DEPTH_TEST);
-        glBindVertexArray(mVao);
+        glBindVertexArray(mBoxVao);
 
         float vertices[] = {
             // pos                  // tex coords
@@ -121,7 +139,7 @@ namespace JerboaClient {
             -0.5f,  0.5f, -0.5f,     0.0f, 1.0f      // 15 left top
         };
 
-        mVertexBuffer = Jerboa::VertexBuffer::Create(vertices, sizeof(vertices), Jerboa::VertexBufferUsage::Static,
+        mBoxVertexBuffer = Jerboa::VertexBuffer::Create(vertices, sizeof(vertices), Jerboa::VertexBufferUsage::Static,
         {
             { Jerboa::ShaderDataType::Float3 },
             { Jerboa::ShaderDataType::Float2 }
@@ -133,10 +151,10 @@ namespace JerboaClient {
             8, 9, 10, /**/ 10, 11, 8,   // right
             12, 13, 14, /**/ 14, 15, 12   // left
         };
-        mIndexBuffer = Jerboa::IndexBuffer::Create(indices, sizeof(indices));
+        mBoxIndexBuffer = Jerboa::IndexBuffer::Create(indices, sizeof(indices));
 
         mTestShader = Jerboa::Shader::Create("assets/shaders/Test.glsl");
-        mTestTexture = Jerboa::Texture2D::Create("assets/textures/steel-wooden-container/diffuse.png", Jerboa::TextureType::Diffuse);
+        mBoxTexture = Jerboa::Texture2D::Create("assets/textures/steel-wooden-container/diffuse.png", Jerboa::TextureType::Diffuse);
 	}
 
 	void EditorLayer::OnDetach() {
