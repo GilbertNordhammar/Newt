@@ -36,23 +36,25 @@ namespace JerboaClient {
 	{
         auto& trans = mCamera.GetTransform();
 
-        auto mouseMovement = Jerboa::Input::GetMouseMovement();
-        auto rotation = -mouseMovement * Jerboa::Time::GetDeltaTime() * 100.0f;
-        auto ori = glm::quat(Jerboa::Transform::GetWorldUp() * rotation.x) * trans.GetOrientation();
-        ori = ori * glm::quat(Jerboa::Transform::GetWorldRight() * rotation.y);
+        if (Jerboa::Window::Get()->GetCursorMode() == Jerboa::CursorMode::Disabled) {
+            auto mouseMovement = Jerboa::Input::GetMouseMovement();
+            auto rotation = -mouseMovement * Jerboa::Time::GetDeltaTime() * 100.0f;
+            auto ori = glm::quat(Jerboa::Transform::GetWorldUp() * rotation.x) * trans.GetOrientation();
+            ori = ori * glm::quat(Jerboa::Transform::GetWorldRight() * rotation.y);
 
-        auto pitch = glm::atan(2 * ori.x * ori.w - 2 * ori.y * ori.z, 1 - 2 * ori.x * ori.x - 2 * ori.z * ori.z);
-        auto pitchLimit = glm::radians(89.0);
-        if (pitch > pitchLimit) {
-            float pitchDiff = pitch - pitchLimit;
-            ori = ori * glm::quat(Jerboa::Transform::GetWorldRight() * -pitchDiff);
-        }
-        else if (pitch < -pitchLimit) {
-            float pitchDiff = pitch - (-pitchLimit);
-            ori = ori * glm::quat(Jerboa::Transform::GetWorldRight() * -pitchDiff);
-        }
+            auto pitch = glm::atan(2 * ori.x * ori.w - 2 * ori.y * ori.z, 1 - 2 * ori.x * ori.x - 2 * ori.z * ori.z);
+            auto pitchLimit = glm::radians(89.0);
+            if (pitch > pitchLimit) {
+                float pitchDiff = pitch - pitchLimit;
+                ori = ori * glm::quat(Jerboa::Transform::GetWorldRight() * -pitchDiff);
+            }
+            else if (pitch < -pitchLimit) {
+                float pitchDiff = pitch - (-pitchLimit);
+                ori = ori * glm::quat(Jerboa::Transform::GetWorldRight() * -pitchDiff);
+            }
 
-        trans.SetOrientation(ori);
+            trans.SetOrientation(ori);
+        }
 
         float moveSpeed = 0.1;
         if (Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::W)) 
@@ -102,7 +104,7 @@ namespace JerboaClient {
         for (int i = 0; i < nBoxes; i++) {
             std::random_device rand;
             std::uniform_real_distribution<float> dist(-5, 5);
-            auto position = glm::vec3(dist(rand), dist(rand), dist(rand));
+            auto position = glm::vec3(dist(rand), dist(rand), dist(rand) - 5);
             auto rotation = glm::vec3(dist(rand), dist(rand), dist(rand));
             mBoxTransforms.emplace_back(position, rotation);
         }
