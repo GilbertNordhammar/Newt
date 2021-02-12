@@ -7,6 +7,7 @@
 #include "Jerboa/Core/Time.h"
 
 #include "Jerboa/Rendering/Renderer.h"
+#include "Jerboa/Rendering/PrimitiveFactory.h"
 
 #include <random>
 
@@ -35,13 +36,13 @@ namespace JerboaClient {
 	void EditorLayer::OnUpdate()
 	{
         auto& trans = mCamera.GetTransform();
-
+        
         if (Jerboa::Window::Get()->GetCursorMode() == Jerboa::CursorMode::Disabled) {
             auto mouseMovement = Jerboa::Input::GetMouseMovement();
             auto rotation = -mouseMovement * Jerboa::Time::GetDeltaTime() * 100.0f;
             auto ori = glm::quat(Jerboa::Transform::GetWorldUp() * rotation.x) * trans.GetOrientation();
             ori = ori * glm::quat(Jerboa::Transform::GetWorldRight() * rotation.y);
-
+            
             auto pitch = glm::atan(2 * ori.x * ori.w - 2 * ori.y * ori.z, 1 - 2 * ori.x * ori.x - 2 * ori.z * ori.z);
             auto pitchLimit = glm::radians(89.0);
             if (pitch > pitchLimit) {
@@ -84,12 +85,16 @@ namespace JerboaClient {
         mTestShader->SetInt("texture_diffuse", 0);
         mBoxTexture->Bind(0);
 
-        glBindVertexArray(mBoxVao);
         for (auto bt : mBoxTransforms) {
             auto modelMatrix = glm::translate(glm::mat4(1.0), bt.GetPosition());
             modelMatrix = modelMatrix * glm::toMat4(bt.GetOrientation());
             mTestShader->SetMat4("mat_model", modelMatrix);
-            Jerboa::Renderer::Draw(mBoxIndexBuffer->GetCount());
+
+            glBindVertexArray(mSphereVao);
+            Jerboa::Renderer::Draw(mSphereIndexBuffer->GetCount());
+
+            /*glBindVertexArray(mBoxVao);
+            Jerboa::Renderer::Draw(mBoxIndexBuffer->GetCount());*/
         }
 	}
 
@@ -113,6 +118,23 @@ namespace JerboaClient {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
+
+        glBindVertexArray(mSphereVao);
+
+        std::vector<float> sphereVertices;
+        std::vector<uint32_t> sphereIndices;
+        Jerboa::PrimitiveFactory::GenerateUVSphere(8, 8, sphereVertices, sphereIndices);
+       
+        int verticesSize = sphereVertices.size() * sizeof(sphereVertices[0]);
+        mSphereVertexBuffer = Jerboa::VertexBuffer::Create(sphereVertices.data(), verticesSize, Jerboa::VertexBufferUsage::Static,
+        {
+            { Jerboa::ShaderDataType::Float3 }, // pos
+            { Jerboa::ShaderDataType::Float2 }, // UV
+            { Jerboa::ShaderDataType::Float3 }, // normal
+        });
+
+        int indicesSize = sphereIndices.size() * sizeof(sphereIndices[0]);
+        mSphereIndexBuffer = Jerboa::IndexBuffer::Create(sphereIndices.data(), indicesSize);
 
         glBindVertexArray(mBoxVao);
 

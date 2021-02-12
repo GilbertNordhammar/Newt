@@ -2,9 +2,10 @@
 #version 330 core
 
 layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoords;
+layout (location = 1) in vec2 aTexCoord;
+layout (location = 2) in vec2 aNormal;
 
-out vec2 vTexCoords;
+out vec2 vTexCoord;
 
 uniform mat4 mat_VP;
 uniform mat4 mat_model;
@@ -13,9 +14,8 @@ uniform mat4 mat_projection;
 
 void main()
 {
-    vTexCoords = aTexCoords;
+    vTexCoord = aTexCoord;
     gl_Position = mat_VP * mat_model * vec4(aPos, 1.0);
-
 }
 #end vertex
 
@@ -31,11 +31,11 @@ void main()
 
 out vec4 FragColor;
 
-in vec2 vTexCoords;
+in vec2 vTexCoord;
 
 void main()
 {
-    vec4 col_diffuse = texture(tex_diffuse0, vTexCoords);
+    vec4 col_diffuse = texture(tex_diffuse0, vTexCoord);
     FragColor = vec4(col_diffuse.rgb, 1.0f);
 } 
 #end fragment

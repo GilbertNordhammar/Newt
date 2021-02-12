@@ -39,6 +39,10 @@ namespace JerboaClient {
 		std::shared_ptr<Jerboa::IndexBuffer> mBoxIndexBuffer;
 		std::shared_ptr<Jerboa::Texture2D> mBoxTexture;
 
+		std::shared_ptr<Jerboa::VertexBuffer> mSphereVertexBuffer;
+		std::shared_ptr<Jerboa::IndexBuffer> mSphereIndexBuffer;
+		Jerboa::OpenGL_VertexArray mSphereVao;
+
 		Jerboa::EventObserver mWindowResizeObserver;
 	};
 }
