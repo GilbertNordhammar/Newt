@@ -120,7 +120,7 @@ namespace JerboaClient {
 
         std::vector<float> sphereVertices;
         std::vector<uint32_t> sphereIndices;
-        Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, sphereVertices, sphereIndices);
+        Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, 1.0f, sphereVertices, sphereIndices);
        
         int verticesSize = sphereVertices.size() * sizeof(sphereVertices[0]);
         mSphereVertexBuffer = Jerboa::VertexBuffer::Create(sphereVertices.data(), verticesSize, Jerboa::VertexBufferUsage::Static,
