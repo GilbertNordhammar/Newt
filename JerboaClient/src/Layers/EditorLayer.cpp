@@ -87,7 +87,7 @@ namespace JerboaClient {
 
         for (auto bt : mTransforms) {
             auto modelMatrix = glm::translate(glm::mat4(1.0), bt.GetPosition());
-            modelMatrix = modelMatrix * glm::toMat4(bt.GetOrientation());
+            //modelMatrix = modelMatrix * glm::toMat4(bt.GetOrientation());
             mTestShader->SetMat4("mat_model", modelMatrix);
 
             glBindVertexArray(mSphereVao);
@@ -114,12 +114,13 @@ namespace JerboaClient {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
+        glFrontFace(GL_CCW);
 
         glBindVertexArray(mSphereVao);
 
         std::vector<float> sphereVertices;
         std::vector<uint32_t> sphereIndices;
-        Jerboa::PrimitiveFactory::GenerateUVSphere(16, 16, sphereVertices, sphereIndices);
+        Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, sphereVertices, sphereIndices);
        
         int verticesSize = sphereVertices.size() * sizeof(sphereVertices[0]);
         mSphereVertexBuffer = Jerboa::VertexBuffer::Create(sphereVertices.data(), verticesSize, Jerboa::VertexBufferUsage::Static,
@@ -133,7 +134,7 @@ namespace JerboaClient {
         mSphereIndexBuffer = Jerboa::IndexBuffer::Create(sphereIndices.data(), indicesSize);
 
         mTestShader = Jerboa::Shader::Create("assets/shaders/Test.glsl");
-        mAlbedoTexture = Jerboa::Texture2D::Create("assets/textures/pbr/stone-wall-1k/diffuse.png", Jerboa::TextureType::Diffuse);
+        mAlbedoTexture = Jerboa::Texture2D::Create("assets/textures/misc/earth.jpg", Jerboa::TextureType::Diffuse);
 	}
 
 	void EditorLayer::OnDetach() {
