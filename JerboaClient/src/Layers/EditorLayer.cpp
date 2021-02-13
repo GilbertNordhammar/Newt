@@ -83,18 +83,15 @@ namespace JerboaClient {
         mTestShader->SetMat4("mat_projection", mCamera.GetProjectionMatrix());
         mTestShader->SetMat4("mat_VP", mCamera.GetProjectionMatrix() * mCamera.GetViewMatrix());
         mTestShader->SetInt("texture_diffuse", 0);
-        mBoxTexture->Bind(0);
+        mAlbedoTexture->Bind(0);
 
-        for (auto bt : mBoxTransforms) {
+        for (auto bt : mTransforms) {
             auto modelMatrix = glm::translate(glm::mat4(1.0), bt.GetPosition());
             modelMatrix = modelMatrix * glm::toMat4(bt.GetOrientation());
             mTestShader->SetMat4("mat_model", modelMatrix);
 
             glBindVertexArray(mSphereVao);
             Jerboa::Renderer::Draw(mSphereIndexBuffer->GetCount());
-
-            /*glBindVertexArray(mBoxVao);
-            Jerboa::Renderer::Draw(mBoxIndexBuffer->GetCount());*/
         }
 	}
 
@@ -103,15 +100,14 @@ namespace JerboaClient {
 
         Jerboa::Window::Get()->SetCursorMode(Jerboa::CursorMode::Disabled);
         
-        const int nBoxes = 10;
-        mBoxTransforms.reserve(nBoxes);
-        
-        for (int i = 0; i < nBoxes; i++) {
+        const int nSpheres = 10;
+        mTransforms.reserve(nSpheres);
+        for (int i = 0; i < nSpheres; i++) {
             std::random_device rand;
             std::uniform_real_distribution<float> dist(-5, 5);
             auto position = glm::vec3(dist(rand), dist(rand), dist(rand) - 5);
             auto rotation = glm::vec3(dist(rand), dist(rand), dist(rand));
-            mBoxTransforms.emplace_back(position, rotation);
+            mTransforms.emplace_back(position, rotation);
         }
 
         // TODO: Remove explicit OpenGL calls
@@ -123,7 +119,7 @@ namespace JerboaClient {
 
         std::vector<float> sphereVertices;
         std::vector<uint32_t> sphereIndices;
-        Jerboa::PrimitiveFactory::GenerateUVSphere(8, 8, sphereVertices, sphereIndices);
+        Jerboa::PrimitiveFactory::GenerateUVSphere(16, 16, sphereVertices, sphereIndices);
        
         int verticesSize = sphereVertices.size() * sizeof(sphereVertices[0]);
         mSphereVertexBuffer = Jerboa::VertexBuffer::Create(sphereVertices.data(), verticesSize, Jerboa::VertexBufferUsage::Static,
@@ -136,66 +132,8 @@ namespace JerboaClient {
         int indicesSize = sphereIndices.size() * sizeof(sphereIndices[0]);
         mSphereIndexBuffer = Jerboa::IndexBuffer::Create(sphereIndices.data(), indicesSize);
 
-        glBindVertexArray(mBoxVao);
-
-        float vertices[] = {
-            // pos                  // tex coords
-
-                // front
-            -0.5f, -0.5f, 0.5f,     0.0f, 0.0f,     // 0 left bottom  
-             0.5f, -0.5f, 0.5f,     1.0f, 0.0f,     // 1 right bottom
-             0.5f,  0.5f, 0.5f,     1.0f, 1.0f,     // 2 right top
-            -0.5f,  0.5f, 0.5f,     0.0f, 1.0f,     // 3 left top
-
-                // back
-            -0.5f, -0.5f, -0.5f,     0.0f, 0.0f,     // 4 left bottom  
-             0.5f, -0.5f, -0.5f,     1.0f, 0.0f,     // 5 right bottom
-             0.5f,  0.5f, -0.5f,     1.0f, 1.0f,     // 6 right top
-            -0.5f,  0.5f, -0.5f,     0.0f, 1.0f,     // 7 left top
-
-                // right
-            0.5f, -0.5f, -0.5f,     0.0f, 0.0f,     // 8 left bottom  
-            0.5f, -0.5f,  0.5f,     1.0f, 0.0f,     // 9 right bottom
-            0.5f,  0.5f,  0.5f,     1.0f, 1.0f,     // 10 right top
-            0.5f,  0.5f, -0.5f,     0.0f, 1.0f,      // 11 left top
-
-                // left
-            -0.5f, -0.5f, -0.5f,     0.0f, 0.0f,     // 12 left bottom  
-            -0.5f, -0.5f,  0.5f,     1.0f, 0.0f,     // 13 right bottom
-            -0.5f,  0.5f,  0.5f,     1.0f, 1.0f,     // 14 right top
-            -0.5f,  0.5f, -0.5f,     0.0f, 1.0f,      // 15 left top
-
-               // top
-           -0.5f,  0.5f,  0.5f,     0.0f, 0.0f,     // 16 left bottom
-            0.5f,  0.5f,  0.5f,     1.0f, 0.0f,     // 17 right bottom
-           -0.5f,  0.5f, -0.5f,     0.0f, 1.0f,     // 18 left top
-            0.5f,  0.5f, -0.5f,     1.0f, 1.0f,     // 19 right top
-
-                // bottom
-           -0.5f,  -0.5f,  0.5f,     0.0f, 0.0f,     // 20 left bottom
-            0.5f,  -0.5f,  0.5f,     1.0f, 0.0f,     // 21 right bottom
-           -0.5f,  -0.5f, -0.5f,     0.0f, 1.0f,     // 22 left top
-            0.5f,  -0.5f, -0.5f,     1.0f, 1.0f,     // 23 right top
-        };
-
-        mBoxVertexBuffer = Jerboa::VertexBuffer::Create(vertices, sizeof(vertices), Jerboa::VertexBufferUsage::Static,
-        {
-            { Jerboa::ShaderDataType::Float3 },
-            { Jerboa::ShaderDataType::Float2 }
-        });
-
-        uint32_t indices[] = {
-            0, 1, 2, /**/ 2, 3, 0, // front
-            4, 6, 5, /**/ 6, 4, 7,   // back,
-            8, 10, 9, /**/ 10, 8, 11,  // right
-            12, 13, 14, /**/ 14, 15, 12,   // left
-            16, 19, 18 /**/, 16, 17, 19, // top
-            20, 22, 23, /**/ 20, 23, 21 // bottom
-        };
-        mBoxIndexBuffer = Jerboa::IndexBuffer::Create(indices, sizeof(indices));
-
         mTestShader = Jerboa::Shader::Create("assets/shaders/Test.glsl");
-        mBoxTexture = Jerboa::Texture2D::Create("assets/textures/steel-wooden-container/diffuse.png", Jerboa::TextureType::Diffuse);
+        mAlbedoTexture = Jerboa::Texture2D::Create("assets/textures/pbr/stone-wall-1k/diffuse.png", Jerboa::TextureType::Diffuse);
 	}
 
 	void EditorLayer::OnDetach() {

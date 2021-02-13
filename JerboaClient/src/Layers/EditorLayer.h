@@ -33,12 +33,8 @@ namespace JerboaClient {
 		Jerboa::Camera mCamera;
 		std::shared_ptr<Jerboa::Shader> mTestShader;
 
-		std::vector<Jerboa::Transform> mBoxTransforms;
-		Jerboa::OpenGL_VertexArray mBoxVao;
-		std::shared_ptr<Jerboa::VertexBuffer> mBoxVertexBuffer;
-		std::shared_ptr<Jerboa::IndexBuffer> mBoxIndexBuffer;
-		std::shared_ptr<Jerboa::Texture2D> mBoxTexture;
-
+		std::vector<Jerboa::Transform> mTransforms;
+		std::shared_ptr<Jerboa::Texture2D> mAlbedoTexture;
 		std::shared_ptr<Jerboa::VertexBuffer> mSphereVertexBuffer;
 		std::shared_ptr<Jerboa::IndexBuffer> mSphereIndexBuffer;
 		Jerboa::OpenGL_VertexArray mSphereVao;
