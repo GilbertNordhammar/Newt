@@ -5,7 +5,7 @@
 #include "glm/gtc/constants.hpp"
 
 namespace Jerboa::PrimitiveFactory {
-	void GenerateUVSphere(int nRings, int nSegments, float radius, std::vector<float>& out_vertices, std::vector<uint32_t>& out_indices)
+	void GenerateUVSphere(int nRings, int nSegments, float radius, glm::vec2 uvScale, std::vector<float>& out_vertices, std::vector<uint32_t>& out_indices)
 	{
 		const int MIN_RINGS = 3, MIN_SEGMENTS = 3;
 
@@ -31,6 +31,7 @@ namespace Jerboa::PrimitiveFactory {
 				float x = xz * glm::cos(segmentAngle);
 
 				glm::vec2 texCoord = { (float)j / nSegments, 1 - (float)i / nRings };
+				texCoord *= uvScale;
 				glm::vec3 normal = { x, y, z };
 				glm::vec3 pos = normal * radius;
 				out_vertices.insert(out_vertices.end(), { pos.x, pos.y, pos.z, texCoord.x, texCoord.y, normal.x, normal.y, normal.z });

@@ -20,27 +20,37 @@ namespace JerboaClient {
 
 	void EditorLayer::OnImGuiRender()
 	{
-		ImGui::ShowDemoWindow();
+		//ImGui::ShowDemoWindow();
 
 		//ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
-		ImGui::Begin("Window 1");
-		ImGui::Button("Hello");
-		ImGui::End();
+		ImGui::Begin("Point light properties");
 
-		ImGui::Begin("Window 2");
-		ImGui::Button("Hello");
+        static ImVec4 color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+        static ImGuiColorEditFlags flags;
+        flags |= ImGuiColorEditFlags_DisplayRGB;
+        ImGui::ColorPicker3("Color", (float*)& color, flags);
+
+        static float power = 0.2;
+        //ImGui::InputFloat("Power", &power);
+        ImGui::SliderFloat("Power", &power, 0.0f, 2.0f);
+        
+        for (auto& pl : mPointLights) {
+            pl.SetColor(glm::vec3(color.x, color.y, color.z));
+            pl.SetPower(power);
+        }
+        JERBOA_LOG_TRACE("{} {}", mPointLights[0].GetPower(), power);
 		ImGui::End();
 	}
 
 	void EditorLayer::OnUpdate()
 	{
-        auto& trans = mCamera.GetTransform();
+        auto& camTrans = mCamera.GetTransform();
         
         if (Jerboa::Window::Get()->GetCursorMode() == Jerboa::CursorMode::Disabled) {
             auto mouseMovement = Jerboa::Input::GetMouseMovement();
             auto rotation = -mouseMovement * Jerboa::Time::GetDeltaTime() * 100.0f;
-            auto ori = glm::quat(Jerboa::Transform::GetWorldUp() * rotation.x) * trans.GetOrientation();
+            auto ori = glm::quat(Jerboa::Transform::GetWorldUp() * rotation.x) * camTrans.GetOrientation();
             ori = ori * glm::quat(Jerboa::Transform::GetWorldRight() * rotation.y);
             
             auto pitch = glm::atan(2 * ori.x * ori.w - 2 * ori.y * ori.z, 1 - 2 * ori.x * ori.x - 2 * ori.z * ori.z);
@@ -54,41 +64,85 @@ namespace JerboaClient {
                 ori = ori * glm::quat(Jerboa::Transform::GetWorldRight() * -pitchDiff);
             }
 
-            trans.SetOrientation(ori);
+            camTrans.SetOrientation(ori);
         }
 
         float moveSpeed = 0.1;
         if (Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::W)) 
-            trans.SetPosition(trans.GetPosition() + trans.GetForward() * moveSpeed);
+            camTrans.SetPosition(camTrans.GetPosition() + camTrans.GetForward() * moveSpeed);
         else if (Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::S))
-            trans.SetPosition(trans.GetPosition() - trans.GetForward() * moveSpeed);
+            camTrans.SetPosition(camTrans.GetPosition() - camTrans.GetForward() * moveSpeed);
 
         if (Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::D))
-            trans.SetPosition(trans.GetPosition() + trans.GetRight() * moveSpeed);
+            camTrans.SetPosition(camTrans.GetPosition() + camTrans.GetRight() * moveSpeed);
         else if (Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::A))
-            trans.SetPosition(trans.GetPosition() - trans.GetRight() * moveSpeed);
+            camTrans.SetPosition(camTrans.GetPosition() - camTrans.GetRight() * moveSpeed);
 
         if (Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::E))
-            trans.SetPosition(trans.GetPosition() + trans.GetUp() * moveSpeed);
+            camTrans.SetPosition(camTrans.GetPosition() + camTrans.GetUp() * moveSpeed);
         else if (Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::Q))
-            trans.SetPosition(trans.GetPosition() - trans.GetUp() * moveSpeed);
+            camTrans.SetPosition(camTrans.GetPosition() - camTrans.GetUp() * moveSpeed);
 
         if (Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::_1))
             Jerboa::Window::Get()->SetCursorMode(Jerboa::CursorMode::Disabled);
         else if (Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::_2))
             Jerboa::Window::Get()->SetCursorMode(Jerboa::CursorMode::Normal);
 
-        mTestShader->Bind();
-        mTestShader->SetMat4("mat_view", mCamera.GetViewMatrix());
-        mTestShader->SetMat4("mat_projection", mCamera.GetProjectionMatrix());
-        mTestShader->SetMat4("mat_VP", mCamera.GetProjectionMatrix() * mCamera.GetViewMatrix());
-        mTestShader->SetInt("texture_diffuse", 0);
-        mAlbedoTexture->Bind(0);
+        // Drawing point light represenations
+        mPointLightShader->Bind();
+        mPointLightShader->SetMat4("mat_VP", mCamera.GetProjectionMatrix() * mCamera.GetViewMatrix());
+        for (auto& pointLight : mPointLights) {
+            auto modelMatrix = glm::translate(glm::mat4(1.0), pointLight.Position);
+            modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1));
+            mPointLightShader->SetMat4("mat_model", modelMatrix);
+            mPointLightShader->SetVec3("color", pointLight.GetColor());
 
-        for (auto bt : mTransforms) {
-            auto modelMatrix = glm::translate(glm::mat4(1.0), bt.GetPosition());
+            glBindVertexArray(mSphereVao);
+            Jerboa::Renderer::Draw(mSphereIndexBuffer->GetCount());
+        }
+
+        mPBRShader->Bind();
+        
+        // MVP
+        mPBRShader->SetMat4("mat_view", mCamera.GetViewMatrix());
+        mPBRShader->SetMat4("mat_projection", mCamera.GetProjectionMatrix());
+        mPBRShader->SetMat4("mat_VP", mCamera.GetProjectionMatrix() * mCamera.GetViewMatrix());
+        
+        // Textures
+        mPBRShader->SetInt("material.albedo", 0);
+        mAlbedoTexture->Bind(0);
+        
+        mPBRShader->SetInt("material.ao", 1);
+        mAmbientOcclusionTexture->Bind(1);
+
+        mPBRShader->SetInt("material.normal", 2);
+        mNormalTexture->Bind(2);
+
+        mPBRShader->SetInt("material.metallic", 3);
+        mMetallicTexture->Bind(3);
+
+        mPBRShader->SetInt("material.roughness", 4);
+        mRoughnessTexture->Bind(4);
+
+        // Camera & Lights
+        mPBRShader->SetVec3("cameraWorldPos", mCamera.GetTransform().GetPosition());
+        mPBRShader->SetInt("nPointLights", mPointLights.size());
+        
+        for (int i = 0; i < mPointLights.size(); i++) {
+            std::string pl = "pointLights[" + std::to_string(i) + "]";
+            
+            mPBRShader->SetVec3(pl + ".color", mPointLights[i].GetColor());
+            mPBRShader->SetFloat(pl + ".power", mPointLights[i].GetPower());
+            mPBRShader->SetVec3(pl + ".position", mPointLights[i].Position);
+        }
+
+        // Misc
+        mPBRShader->SetBool("useGamma", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::G));
+
+        for (auto& trans : mTransforms) {
+            auto modelMatrix = glm::translate(glm::mat4(1.0), trans.GetPosition());
             //modelMatrix = modelMatrix * glm::toMat4(bt.GetOrientation());
-            mTestShader->SetMat4("mat_model", modelMatrix);
+            mPBRShader->SetMat4("mat_model", modelMatrix);
 
             glBindVertexArray(mSphereVao);
             Jerboa::Renderer::Draw(mSphereIndexBuffer->GetCount());
@@ -102,12 +156,17 @@ namespace JerboaClient {
         
         const int nSpheres = 10;
         mTransforms.reserve(nSpheres);
+        mPointLights.reserve(nSpheres);
         for (int i = 0; i < nSpheres; i++) {
             std::random_device rand;
-            std::uniform_real_distribution<float> dist(-5, 5);
+            std::uniform_real_distribution<float> dist(-7, 7);
             auto position = glm::vec3(dist(rand), dist(rand), dist(rand) - 5);
             auto rotation = glm::vec3(dist(rand), dist(rand), dist(rand));
             mTransforms.emplace_back(position, rotation);
+
+            dist = std::uniform_real_distribution<float>(0.5, 1.0);
+            auto posPointLight = position + glm::vec3(dist(rand), dist(rand), dist(rand));
+            mPointLights.push_back(Jerboa::PointLight(glm::vec3(1.0f), 1.0f, posPointLight));
         }
 
         // TODO: Remove explicit OpenGL calls
@@ -120,7 +179,7 @@ namespace JerboaClient {
 
         std::vector<float> sphereVertices;
         std::vector<uint32_t> sphereIndices;
-        Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, 1.0f, sphereVertices, sphereIndices);
+        Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, 1.0f, glm::vec2(1.0), sphereVertices, sphereIndices);
        
         int verticesSize = sphereVertices.size() * sizeof(sphereVertices[0]);
         mSphereVertexBuffer = Jerboa::VertexBuffer::Create(sphereVertices.data(), verticesSize, Jerboa::VertexBufferUsage::Static,
@@ -133,8 +192,14 @@ namespace JerboaClient {
         int indicesSize = sphereIndices.size() * sizeof(sphereIndices[0]);
         mSphereIndexBuffer = Jerboa::IndexBuffer::Create(sphereIndices.data(), indicesSize);
 
-        mTestShader = Jerboa::Shader::Create("assets/shaders/Test.glsl");
-        mAlbedoTexture = Jerboa::Texture2D::Create("assets/textures/misc/earth.jpg", Jerboa::TextureType::Diffuse);
+        mPBRShader = Jerboa::Shader::Create("assets/shaders/pbr/Standard.glsl");
+        mPointLightShader = Jerboa::Shader::Create("assets/shaders/pbr/PointLight.glsl");
+
+        mAlbedoTexture = Jerboa::Texture2D::Create("assets/textures/pbr/beaten-up-metal/albedo.png", Jerboa::TextureType::Albedo);
+        mAmbientOcclusionTexture = Jerboa::Texture2D::Create("assets/textures/pbr/beaten-up-metal/ao.png", Jerboa::TextureType::AmbientOcclusion);
+        mNormalTexture = Jerboa::Texture2D::Create("assets/textures/pbr/beaten-up-metal/normal-ogl.png", Jerboa::TextureType::Normal);
+        mMetallicTexture = Jerboa::Texture2D::Create("assets/textures/pbr/beaten-up-metal/metallic.png", Jerboa::TextureType::Metallic);
+        mRoughnessTexture = Jerboa::Texture2D::Create("assets/textures/pbr/beaten-up-metal/roughness.png", Jerboa::TextureType::Roughness);
 	}
 
 	void EditorLayer::OnDetach() {

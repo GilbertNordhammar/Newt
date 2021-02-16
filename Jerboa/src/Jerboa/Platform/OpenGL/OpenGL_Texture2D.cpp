@@ -17,33 +17,40 @@ namespace Jerboa {
 		unsigned char* data{};
 
 		if (stbi_is_hdr(path.c_str())) {
-			JERBOA_LOG_INFO("Loading HDR texture {0}", path);
+			JERBOA_LOG_INFO("Loading HDR texture \"{0}\"", path);
 			dataHDR = stbi_loadf(path.c_str(), &mWidth, &mHeight, &nrComponents, 0);
 		}
 		else {
+			JERBOA_LOG_INFO("Loading texture \"{0}\"", path);
 			data = stbi_load(path.c_str(), &mWidth, &mHeight, &nrComponents, 0);
 		}
 		
 		if (data || dataHDR) {
 			GLenum format;
-			if (nrComponents == 1)
-				format = GL_RED;
-			else if (nrComponents == 3)
+			if (nrComponents == 3)
 				format = GL_RGB;
 			else if (nrComponents == 4)
 				format = GL_RGBA;
+			else // nrComponents == 1
+				format = GL_RED;
+
+			GLenum internalFormat = format;
+			if (type == TextureType::Albedo)
+				internalFormat = format == GL_RGBA ? GL_SRGB_ALPHA : GL_SRGB;
 			
 			glBindTexture(GL_TEXTURE_2D, mTexture);
 			if(dataHDR)
-				glTexImage2D(GL_TEXTURE_2D, 0, format, mWidth, mHeight, 0, format, GL_UNSIGNED_BYTE, dataHDR);
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mWidth, mHeight, 0, format, GL_UNSIGNED_BYTE, dataHDR);
 			else
-				glTexImage2D(GL_TEXTURE_2D, 0, format, mWidth, mHeight, 0, format, GL_UNSIGNED_BYTE, data);
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mWidth, mHeight, 0, format, GL_UNSIGNED_BYTE, data);
 			glGenerateMipmap(GL_TEXTURE_2D);
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 		else {
 			JERBOA_LOG_WARN("Couldn't load texture {0}", path);

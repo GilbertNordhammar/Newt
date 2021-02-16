@@ -14,10 +14,7 @@ namespace Jerboa {
 	};
 
 	enum class TextureType {
-		Diffuse, Specular, Ambient, Emissive, Height, Normals, 
-		Shininess, Opacity, Displacement, Lightmap, Reflection,
-		BaseColorPBR, NormalCameraPBR, EmissionColorPBR,
-		MetalnessPBR, DiffuseRoughnessPBR, AmbientOcclusionPBR
+		Albedo, Normal, Metallic, Roughness, AmbientOcclusion
 	};
 
 	class Texture2D : public Texture {
