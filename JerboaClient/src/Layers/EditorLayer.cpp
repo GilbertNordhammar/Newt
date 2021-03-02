@@ -31,7 +31,7 @@ namespace JerboaClient {
         flags |= ImGuiColorEditFlags_DisplayRGB;
         ImGui::ColorPicker3("Color", (float*)& color, flags);
 
-        static float power = 0.2;
+        static float power = 0.3;
         //ImGui::InputFloat("Power", &power);
         ImGui::SliderFloat("Power", &power, 0.0f, 2.0f);
         
@@ -138,10 +138,15 @@ namespace JerboaClient {
         // Misc
         mPBRShader->SetBool("useGamma", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::G));
         mPBRShader->SetBool("useNormalMap", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::N));
-
+ 
+        static const float rotationSpeed = 0.2;
+        float rotation = 0;
+        if(!Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::R))
+            rotation += Jerboa::Time::GetDeltaTime() * rotationSpeed;
         for (auto& trans : mTransforms) {
             auto modelMatrix = glm::translate(glm::mat4(1.0), trans.GetPosition());
-            //modelMatrix = modelMatrix * glm::toMat4(bt.GetOrientation());
+            trans.Rotate(rotation, trans.GetUp());
+            modelMatrix = modelMatrix * glm::toMat4(trans.GetOrientation());
             mPBRShader->SetMat4("mat_model", modelMatrix);
 
             glBindVertexArray(mSphereVao);
@@ -164,7 +169,7 @@ namespace JerboaClient {
             auto rotation = glm::vec3(dist(rand), dist(rand), dist(rand));
             mTransforms.emplace_back(position, rotation);
 
-            dist = std::uniform_real_distribution<float>(0.5, 1.0);
+            dist = std::uniform_real_distribution<float>(1.0, 1.5);
             auto posPointLight = position + glm::vec3(dist(rand), dist(rand), dist(rand));
             mPointLights.push_back(Jerboa::PointLight(glm::vec3(1.0f), 1.0f, posPointLight));
         }
@@ -197,6 +202,14 @@ namespace JerboaClient {
         mPBRShader = Jerboa::Shader::Create("assets/shaders/pbr/Standard.glsl");
         mPointLightShader = Jerboa::Shader::Create("assets/shaders/pbr/PointLight.glsl");
 
+        // stone wall
+        /*mAlbedoTexture = Jerboa::Texture2D::Create("assets/textures/pbr/stone-wall-1k/albedo.png", Jerboa::TextureType::Albedo);
+        mAmbientOcclusionTexture = Jerboa::Texture2D::Create("assets/textures/pbr/stone-wall-1k/ao.png", Jerboa::TextureType::AmbientOcclusion);
+        mNormalTexture = Jerboa::Texture2D::Create("assets/textures/pbr/stone-wall-1k/normal.png", Jerboa::TextureType::Normal);
+        mMetallicTexture = Jerboa::Texture2D::Create("assets/textures/pbr/stone-wall-1k/metallic.png", Jerboa::TextureType::Metallic);
+        mRoughnessTexture = Jerboa::Texture2D::Create("assets/textures/pbr/stone-wall-1k/roughness.png", Jerboa::TextureType::Roughness);*/
+
+        // metal texture
         mAlbedoTexture = Jerboa::Texture2D::Create("assets/textures/pbr/beaten-up-metal/albedo.png", Jerboa::TextureType::Albedo);
         mAmbientOcclusionTexture = Jerboa::Texture2D::Create("assets/textures/pbr/beaten-up-metal/ao.png", Jerboa::TextureType::AmbientOcclusion);
         mNormalTexture = Jerboa::Texture2D::Create("assets/textures/pbr/beaten-up-metal/normal-ogl.png", Jerboa::TextureType::Normal);
