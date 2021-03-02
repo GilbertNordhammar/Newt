@@ -39,7 +39,6 @@ namespace JerboaClient {
             pl.SetColor(glm::vec3(color.x, color.y, color.z));
             pl.SetPower(power);
         }
-        JERBOA_LOG_TRACE("{} {}", mPointLights[0].GetPower(), power);
 		ImGui::End();
 	}
 
@@ -138,6 +137,7 @@ namespace JerboaClient {
 
         // Misc
         mPBRShader->SetBool("useGamma", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::G));
+        mPBRShader->SetBool("useNormalMap", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::N));
 
         for (auto& trans : mTransforms) {
             auto modelMatrix = glm::translate(glm::mat4(1.0), trans.GetPosition());
@@ -187,6 +187,8 @@ namespace JerboaClient {
             { Jerboa::ShaderDataType::Float3 }, // pos
             { Jerboa::ShaderDataType::Float2 }, // UV
             { Jerboa::ShaderDataType::Float3 }, // normal
+            { Jerboa::ShaderDataType::Float3 }, // tangent
+            { Jerboa::ShaderDataType::Float3 }, // bitangent
         });
 
         int indicesSize = sphereIndices.size() * sizeof(sphereIndices[0]);
