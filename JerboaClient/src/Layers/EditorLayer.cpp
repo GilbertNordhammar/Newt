@@ -24,21 +24,23 @@ namespace JerboaClient {
 
 		//ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
-		ImGui::Begin("Point light properties");
+		ImGui::Begin("Shader properties");
 
         static ImVec4 color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
         static ImGuiColorEditFlags flags;
         flags |= ImGuiColorEditFlags_DisplayRGB;
-        ImGui::ColorPicker3("Color", (float*)& color, flags);
+        ImGui::ColorPicker3("Light Color", (float*)& color, flags);
 
         static float power = 0.3;
         //ImGui::InputFloat("Power", &power);
-        ImGui::SliderFloat("Power", &power, 0.0f, 2.0f);
+        ImGui::SliderFloat("Light Power", &power, 0.0f, 2.0f);
         
         for (auto& pl : mPointLights) {
             pl.SetColor(glm::vec3(color.x, color.y, color.z));
             pl.SetPower(power);
         }
+
+        ImGui::SliderFloat("Normal Map Mult", &mNormalMapMult, 0.0f, 10.0f);
 		ImGui::End();
 	}
 
@@ -138,6 +140,9 @@ namespace JerboaClient {
         // Misc
         mPBRShader->SetBool("useGamma", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::G));
         mPBRShader->SetBool("useNormalMap", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::N));
+        mPBRShader->SetBool("reorthogonalize", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::B));
+        mPBRShader->SetBool("toggle", Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::T));
+        mPBRShader->SetFloat("normalMapMult", mNormalMapMult);
  
         static const float rotationSpeed = 0.2;
         float rotation = 0;

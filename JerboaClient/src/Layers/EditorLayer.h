@@ -47,6 +47,8 @@ namespace JerboaClient {
 		std::shared_ptr<Jerboa::Texture2D> mMetallicTexture;
 		std::shared_ptr<Jerboa::Texture2D> mRoughnessTexture;
 
+		float mNormalMapMult = 5.0f;
+
 		std::vector<Jerboa::PointLight> mPointLights;
 
 		Jerboa::EventObserver mWindowResizeObserver;

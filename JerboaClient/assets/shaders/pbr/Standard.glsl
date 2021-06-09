@@ -26,10 +26,11 @@ void main()
 
     mat3 normalMatrix = transpose(inverse(mat3(mat_model)));
     vec3 T = normalize(normalMatrix * aTangent);
-    vec3 B = normalize(normalMatrix * aBitangent);
+    vec3 N = v2f_normal;
+    
     // re-orthogonalize T with respect to N
-    //T = normalize(T - dot(T, N) * N);
-    vec3 N = cross(T, B);
+    T = normalize(T - dot(T, N) * N);
+    vec3 B = cross(N, T);
 
     v2f_TBN = mat3(T, B, N);
 
@@ -50,6 +51,7 @@ out vec4 FragColor;
 uniform bool useNormalMap;
 uniform bool useGamma;
 uniform vec3 cameraWorldPos;
+uniform float normalMapMult = 1.0;
 
 uniform struct {
     sampler2D albedo;
@@ -79,12 +81,13 @@ void main()
     if (useNormalMap) {
         normal = texture(material.normal, v2f_texCoord).rgb; // TODO: convert with tangent space matrix
         normal = normal * 2.0 - 1.0;
+        normal.r *= normalMapMult;
+        normal.g *= normalMapMult;
+        normal = normalize(normal);
         normal = normalize(v2f_TBN * normal);
     } else {
         normal = normalize(v2f_normal);
     }
-    
-    
     
     vec3 metallic = texture(material.metallic, v2f_texCoord).rgb;
     vec3 roughness = texture(material.roughness, v2f_texCoord).rgb;
