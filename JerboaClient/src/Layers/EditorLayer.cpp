@@ -1,5 +1,7 @@
 #include "EditorLayer.h"
+
 #include "imgui.h"
+#include "optick.h"
 
 #include "Jerboa/UI/ImGui/ImGuiApp.h"
 
@@ -46,6 +48,7 @@ namespace JerboaClient {
 
 	void EditorLayer::OnUpdate()
 	{
+        OPTICK_EVENT("EditorLayer::OnUpdate()");
         auto& camTrans = mCamera.GetTransform();
         
         if (Jerboa::Window::Get()->GetCursorMode() == Jerboa::CursorMode::Disabled) {

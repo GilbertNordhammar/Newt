@@ -23,11 +23,10 @@ jerboa_includedirs =  {
 	"%{wks.location}/Jerboa/thirdparty/assimp/include",
 	"%{wks.location}/Jerboa/thirdparty/assimp/build/include",
 	"%{wks.location}/Jerboa/thirdparty/glm",
-	"%{wks.location}/Jerboa/thirdparty/stb"
+	"%{wks.location}/Jerboa/thirdparty/stb",
+	"%{wks.location}/Jerboa/thirdparty/optick/src",
 }
 
 include "Jerboa"
 include "Sandbox"
 include "JerboaClient"
-
-

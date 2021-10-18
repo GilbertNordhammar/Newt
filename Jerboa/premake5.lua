@@ -35,7 +35,8 @@ project "Jerboa"
 		"glfw",
 		"glad",
 		"ImGui",
-		"assimp"
+		"assimp",
+		"OptickCore"
 	}
 	
 	filter "system:windows"
@@ -48,12 +49,14 @@ project "Jerboa"
 
 	filter "configurations:Debug"
 		defines "JERBOA_DEBUG"
+		defines { "JERBOA_DEBUG", "USE_OPTICK=1" }
 		symbols "On"
-				
+
 	filter "configurations:Staging"
-		defines "JERBOA_STAGING"
+		defines { "JERBOA_STAGING", "USE_OPTICK=1" }
 		optimize "On"
 
 	filter "configurations:Release"
+		defines { "JERBOA_RELEASE", "USE_OPTICK=0" }
 		defines "JERBOA_RELEASE"
 		optimize "On"

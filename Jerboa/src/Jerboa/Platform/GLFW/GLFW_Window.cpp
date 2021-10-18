@@ -2,6 +2,7 @@
 #include "GLFW_Window.h"
 
 #include "glad/glad.h"
+#include "optick.h"
 
 #include "Jerboa/Debug.h"
 #include "Jerboa/Core/KeyCode.h"
@@ -36,6 +37,7 @@ namespace Jerboa {
 
 	void GLFW_Window::Update()
 	{
+		OPTICK_EVENT("GLFW_Window::Update()");
 		glfwSwapBuffers(mWindow);
 		glfwPollEvents();
 	}

@@ -45,6 +45,7 @@ project "JerboaClient"
 		postbuildcommands 
 		{
 	   		'{COPY} "%{wks.location}/Jerboa/thirdparty/assimp/build/code/Debug/assimp-vc142-mtd.dll" "%{cfg.targetdir}"',
+	   		'{COPY} "%{wks.location}/Jerboa/thirdparty/optick/bin/Debug/OptickCore.dll" "%{cfg.targetdir}"',
 		}
 				
 	filter "configurations:Staging"
@@ -54,6 +55,7 @@ project "JerboaClient"
 		postbuildcommands 
 		{
 	   		'{COPY} "%{wks.location}/Jerboa/thirdparty/assimp/build/code/RelWithDebInfo/assimp-vc142-mt.dll" "%{cfg.targetdir}"',
+	   		'{COPY} "%{wks.location}/Jerboa/thirdparty/optick/bin/Staging/OptickCore.dll" "%{cfg.targetdir}"',
 		}
 
 	filter "configurations:Release"
@@ -63,4 +65,6 @@ project "JerboaClient"
 		postbuildcommands 
 		{
 	   		'{COPY} "%{wks.location}/Jerboa/thirdparty/assimp/build/code/Release/assimp-vc142-mt.dll" "%{cfg.targetdir}"',
+	   		'{COPY} "%{wks.location}/Jerboa/thirdparty/optick/bin/Release/OptickCore.dll" "%{cfg.targetdir}"',
+			
 		}
