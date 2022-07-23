@@ -1,0 +1,14 @@
+# Binary files
+**/bin-int
+**/bin
+**/build
+
+# Build files
+optick/obj
+
+# Visual studio project files
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
