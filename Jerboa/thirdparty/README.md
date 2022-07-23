@@ -32,7 +32,7 @@
 * **Upstream:** https://github.com/ocornut/imgui/tree/fa963b9aafde7f05b1d32d42e3d2b084c9685e31
 * **Version**: https://github.com/ocornut/imgui/commit/fa963b9aafde7f05b1d32d42e3d2b084c9685e31
 * **License:** MIT
-* **Build system:** -
+* **Build system:** Premake 5
 * **Custom changes:** -
 
 ### spdlog
