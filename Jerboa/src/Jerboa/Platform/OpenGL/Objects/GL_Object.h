@@ -21,14 +21,15 @@ namespace Jerboa
 
 		GL_Object &operator=(GL_Object &other) = delete;
 		GL_Object &operator=(GL_Object &&other) noexcept;
-
-		operator GLuint() const { return mObject; }
+		operator GLuint();
 
 	protected:
 		void CleanUp();
 		void Move(GL_Object &other);
 
-		GLuint mObject = 0;
-		DeleteObjectFunc DeleteObjects;
+		GLuint m_ObjectGL = 0;
+		GenerateObjectFunc fm_GenerateObject;
+		DeleteObjectFunc fm_DeleteObject;
+		bool m_CreationMethodHasRun = false;
 	};
 } // namespace Jerboa

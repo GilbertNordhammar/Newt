@@ -3,11 +3,11 @@
 
 namespace Jerboa
 {
-	GL_Object::GL_Object(
-		GenerateObjectFunc genObjFunc,
-		DeleteObjectFunc delObjFunc) : DeleteObjects(delObjFunc)
+	GL_Object::GL_Object(GenerateObjectFunc genObjFunc, DeleteObjectFunc delObjFunc)
+		: fm_GenerateObject(genObjFunc), fm_DeleteObject(delObjFunc)
 	{
-		genObjFunc(&mObject);
+		JERBOA_ASSERT(genObjFunc, "GL Object generation function can't be null");
+		JERBOA_ASSERT(delObjFunc, "GL Object deletion function can't be null");
 	}
 
 	GL_Object::GL_Object(GL_Object &&other)
@@ -20,20 +20,31 @@ namespace Jerboa
 		CleanUp();
 	}
 
+	GL_Object::operator GLuint() 
+	{ 
+		if (fm_GenerateObject && !m_CreationMethodHasRun)
+		{
+			fm_GenerateObject(&m_ObjectGL);
+			JERBOA_ASSERT(m_ObjectGL, "GL object failed to get generated");
+			m_CreationMethodHasRun = true;
+		}
+		return m_ObjectGL; 
+	}
+
 	void GL_Object::Move(GL_Object &other)
 	{
 		CleanUp();
-		mObject = std::move(other.mObject);
-		DeleteObjects = std::move(other.DeleteObjects);
+		m_ObjectGL = std::move(other.m_ObjectGL);
+		fm_DeleteObject = std::move(other.fm_DeleteObject);
 
-		other.mObject = 0;
-		other.DeleteObjects = nullptr;
+		other.m_ObjectGL = 0;
+		other.fm_DeleteObject = nullptr;
 	}
 
 	void GL_Object::CleanUp()
 	{
-		if (DeleteObject)
-			DeleteObjects(&mObject);
+		if (fm_DeleteObject && m_ObjectGL)
+			fm_DeleteObject(&m_ObjectGL);			
 	}
 
 	GL_Object &GL_Object::operator=(GL_Object &&other) noexcept

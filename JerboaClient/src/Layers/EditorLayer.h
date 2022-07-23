@@ -39,7 +39,7 @@ namespace JerboaClient {
 
 		std::shared_ptr<Jerboa::VertexBuffer> mSphereVertexBuffer;
 		std::shared_ptr<Jerboa::IndexBuffer> mSphereIndexBuffer;
-		Jerboa::GL_VertexArray mSphereVao;
+		Jerboa::GL_VertexArrayObject mSphereVao;
 
 		std::shared_ptr<Jerboa::Texture2D> mAlbedoTexture;
 		std::shared_ptr<Jerboa::Texture2D> mAmbientOcclusionTexture;

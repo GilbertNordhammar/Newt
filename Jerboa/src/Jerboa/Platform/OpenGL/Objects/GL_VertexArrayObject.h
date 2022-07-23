@@ -4,10 +4,10 @@
 
 namespace Jerboa
 {
-	class GL_VertexArray : public GL_Object
+	class GL_VertexArrayObject : public GL_Object
 	{
 	public:
-		GL_VertexArray()
+		GL_VertexArrayObject()
 			: GL_Object(
 				  [](GLuint *object) {
 					  glGenVertexArrays(1, object);
