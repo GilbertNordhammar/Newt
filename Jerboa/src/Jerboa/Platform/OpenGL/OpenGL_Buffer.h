@@ -12,7 +12,7 @@ namespace Jerboa {
 					glGenBuffers(1, object);
 				},
 				[](GLuint* object) {
-					glGenBuffers(1, object);
+					glDeleteBuffers(1, object);
 				}
 			)
 		{}
