@@ -13,7 +13,7 @@
 #include "Jerboa/Rendering/lights/PointLight.h"
 #include "Jerboa/Scene/Transform.h"
 
-#include "Jerboa/Platform/OpenGL/OpenGL_VertexArray.h"
+#include "Jerboa/Platform/OpenGL/Objects/GL_VertexArrayObject.h"
 
 #include <memory>
 #include <vector>
@@ -39,7 +39,7 @@ namespace JerboaClient {
 
 		std::shared_ptr<Jerboa::VertexBuffer> mSphereVertexBuffer;
 		std::shared_ptr<Jerboa::IndexBuffer> mSphereIndexBuffer;
-		Jerboa::OpenGL_VertexArray mSphereVao;
+		Jerboa::GL_VertexArray mSphereVao;
 
 		std::shared_ptr<Jerboa::Texture2D> mAlbedoTexture;
 		std::shared_ptr<Jerboa::Texture2D> mAmbientOcclusionTexture;

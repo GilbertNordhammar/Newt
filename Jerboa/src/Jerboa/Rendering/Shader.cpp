@@ -1,7 +1,7 @@
 #include "jerboa-pch.h"
 #include "Shader.h"
 
-#include "Jerboa/Platform/OpenGL/OpenGL_Shader.h"
+#include "Jerboa/Platform/OpenGL/GL_Shader.h"
 #include "Jerboa/Platform/Platform.h"
 #include "Jerboa/Debug.h"
 
@@ -12,7 +12,7 @@ namespace Jerboa {
 
 		switch (Platform::GetRenderApi()) {
 			case RenderAPI::OpenGL: 
-				shader = std::make_shared<OpenGL_Shader>(vertexPath, fragmentPath);
+				shader = std::make_shared<GL_Shader>(vertexPath, fragmentPath);
 		}
 
 		JERBOA_ASSERT(shader, "Implementation is missing or render API is not set");
@@ -25,7 +25,7 @@ namespace Jerboa {
 
 		switch (Platform::GetRenderApi()) {
 		case RenderAPI::OpenGL:
-			shader = std::make_shared<OpenGL_Shader>(path);
+			shader = std::make_shared<GL_Shader>(path);
 		}
 
 		JERBOA_ASSERT(shader, "Implementation is missing or render API is not set");

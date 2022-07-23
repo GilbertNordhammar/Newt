@@ -2,7 +2,7 @@
 #include "Texture.h"
 
 #include "Jerboa/Platform/Platform.h"
-#include "Jerboa/Platform/OpenGL/OpenGL_Texture2D.h"
+#include "Jerboa/Platform/OpenGL/GL_Texture2D.h"
 
 #include "Jerboa/Debug.h"
 
@@ -13,7 +13,7 @@ namespace Jerboa {
 
 		switch (Platform::GetRenderApi()) {
 			case RenderAPI::OpenGL:
-				texture = std::make_shared<OpenGL_Texture2D>(path, type);
+				texture = std::make_shared<GL_Texture2D>(path, type);
 		}
 
 		JERBOA_ASSERT(texture, "Implementation is missing or render API is not set");

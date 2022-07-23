@@ -1,7 +1,7 @@
 #include "jerboa-pch.h"
 #include "IndexBuffer.h"
 
-#include "Jerboa/Platform/OpenGL/OpenGL_IndexBuffer.h"
+#include "Jerboa/Platform/OpenGL/GL_IndexBuffer.h"
 #include "Jerboa/Platform/Platform.h"
 #include "Jerboa/Debug.h"
 
@@ -12,10 +12,10 @@ namespace Jerboa {
 
 		switch (Platform::GetRenderApi()) {
 			case RenderAPI::OpenGL:
-				indexBuffer = std::make_shared<OpenGL_IndexBuffer>(data, size);
+				indexBuffer = std::make_shared<GL_IndexBuffer>(data, size);
 		}
 
 		JERBOA_ASSERT(indexBuffer, "Implementation is missing or render API is not set");
-		return std::make_shared<OpenGL_IndexBuffer>(data, size);
+		return std::make_shared<GL_IndexBuffer>(data, size);
 	}
 }

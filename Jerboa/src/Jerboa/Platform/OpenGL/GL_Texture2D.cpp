@@ -1,31 +1,35 @@
 #include "jerboa-pch.h"
-#include "OpenGL_Texture2D.h"
+#include "GL_Texture2D.h"
 
 #include "Jerboa/Debug.h"
 
 #include "stb_image.h"
 #include "glad/glad.h"
 
-namespace Jerboa {
-	OpenGL_Texture2D::OpenGL_Texture2D(const std::string& path, TextureType type)
+namespace Jerboa
+{
+	GL_Texture2D::GL_Texture2D(const std::string &path, TextureType type)
 		: mPath(path), mType(type)
 	{
 		stbi_set_flip_vertically_on_load(true);
 
 		int nrComponents;
-		float* dataHDR{};
-		unsigned char* data{};
+		float *dataHDR{};
+		unsigned char *data{};
 
-		if (stbi_is_hdr(path.c_str())) {
+		if (stbi_is_hdr(path.c_str()))
+		{
 			JERBOA_LOG_INFO("Loading HDR texture \"{0}\"", path);
 			dataHDR = stbi_loadf(path.c_str(), &mWidth, &mHeight, &nrComponents, 0);
 		}
-		else {
+		else
+		{
 			JERBOA_LOG_INFO("Loading texture \"{0}\"", path);
 			data = stbi_load(path.c_str(), &mWidth, &mHeight, &nrComponents, 0);
 		}
-		
-		if (data || dataHDR) {
+
+		if (data || dataHDR)
+		{
 			GLenum format;
 			if (nrComponents == 3)
 				format = GL_RGB;
@@ -37,9 +41,9 @@ namespace Jerboa {
 			GLenum internalFormat = format;
 			if (type == TextureType::Albedo)
 				internalFormat = format == GL_RGBA ? GL_SRGB_ALPHA : GL_SRGB;
-			
+
 			glBindTexture(GL_TEXTURE_2D, mTexture);
-			if(dataHDR)
+			if (dataHDR)
 				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mWidth, mHeight, 0, format, GL_UNSIGNED_BYTE, dataHDR);
 			else
 				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mWidth, mHeight, 0, format, GL_UNSIGNED_BYTE, data);
@@ -52,7 +56,8 @@ namespace Jerboa {
 
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
-		else {
+		else
+		{
 			JERBOA_LOG_WARN("Couldn't load texture {0}", path);
 		}
 
@@ -60,10 +65,10 @@ namespace Jerboa {
 		stbi_image_free(dataHDR);
 	}
 
-	void OpenGL_Texture2D::Bind(int slot)
+	void GL_Texture2D::Bind(int slot)
 	{
 		JERBOA_ASSERT(slot >= 0, "Must not be negative");
 		glActiveTexture(GL_TEXTURE0 + slot);
 		glBindTexture(GL_TEXTURE_2D, mTexture);
 	}
-}
+} // namespace Jerboa
