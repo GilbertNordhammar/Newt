@@ -7,6 +7,8 @@
 #include "Jerboa/Core/Input.h"
 #include "Jerboa/Core/Time.h"
 
+#include "optick.h"
+
 namespace Jerboa {
     Application::Application(const ApplicationProps& props)
         : mWindow(Window::Create(props.windowProps)),
@@ -27,16 +29,24 @@ namespace Jerboa {
         Init();
 
         while (mRunning) {
+            OPTICK_FRAME("MainThread");
             Renderer::Clear();
 
-            for (Layer* layer : mLayerStack)
-                layer->OnUpdate();
+            {
+                OPTICK_EVENT("Update Layers");
+                for (Layer* layer : mLayerStack)
+                    layer->OnUpdate();
+            }
 
             RenderImGui();
 
             mWindow->Update();
-            InputInternals::Update();
-            TimeInternals::Update();
+
+            {
+                OPTICK_EVENT("Update Time and Input");
+                InputInternals::Update();
+                TimeInternals::Update();
+            }
         }
         ShutDown();
     }
@@ -63,6 +73,7 @@ namespace Jerboa {
 
     void Application::RenderImGui()
     {
+        OPTICK_EVENT("Application::RenderImGui()");
         Jerboa::UI::ImGuiApp::BeginFrame();
         
         for (Layer* layer : mLayerStack)
