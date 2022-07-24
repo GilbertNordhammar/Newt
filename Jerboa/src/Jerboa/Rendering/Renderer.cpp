@@ -1,7 +1,7 @@
 #include "jerboa-pch.h"
 #include "Renderer.h"
 
-#include "glad/glad.h"
+#include "Jerboa/Platform/OpenGL/OpenGL.h"
 
 namespace Jerboa {
 	void Renderer::BeginPass()

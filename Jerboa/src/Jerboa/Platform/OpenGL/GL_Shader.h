@@ -2,7 +2,7 @@
 
 #include "Jerboa/Rendering/Shader.h"
 
-#include <glad/glad.h>
+#include "Jerboa/Platform/OpenGL/OpenGL.h"
 #include <glm/glm.hpp>
 #include <string>
 

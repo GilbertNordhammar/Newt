@@ -2,7 +2,7 @@
 
 #include "Jerboa/Rendering/VertexBuffer.h"
 #include "Objects/GL_Buffer.h"
-#include "glad/glad.h"
+#include "Jerboa/Platform/OpenGL/OpenGL.h"
 
 namespace Jerboa
 {

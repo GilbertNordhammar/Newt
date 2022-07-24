@@ -1,9 +1,23 @@
 #include "jerboa-pch.h"
 #include "RenderState.h"
 
+#if defined(JERBOA_RENDER_API_OPENGL)
+	#include "Jerboa/Platform/OpenGL/GL_RenderState.h"
+#endif
+
 namespace Jerboa
 {
 	BufferClearBits operator|(BufferClearBits lhs, BufferClearBits rhs);
+
+	RenderState* RenderState::Create()
+	{
+	#if defined(JERBOA_RENDER_API_OPENGL)
+		return new GL_RenderState();
+	#else
+		#error "No valid JERBOA_RENDER_API_ defined"
+	#endif
+		return nullptr;
+	}
 
 	void RenderState::ResetStateToDefaultValues()
 	{
@@ -47,7 +61,7 @@ namespace Jerboa
 
 	void RenderState::SetClearStencil(float clearStencil)
 	{
-		SetClearStencil(clearStencil);
+		SetClearStencilImpl(clearStencil);
 		m_ClearStencil = clearStencil;
 	}
 
@@ -59,9 +73,9 @@ namespace Jerboa
 
 	void RenderState::SetStencilParameters(CompareFunction compareFunction, int compareValue, int readMask, int writeMask)
 	{
-		JERBOA_ASSERT(compareValue > 0, "Compare value must be greater than 0");
-		JERBOA_ASSERT(readMask > 0 && readMask < 256, "Mask needs must be greater than 0");
-		JERBOA_ASSERT(writeMask > 0 && writeMask < 256, "Mask needs to be in range 0 to 255/0xFF");
+		JERBOA_ASSERT(compareValue >= 0, "Compare value must be greater than 0");
+		JERBOA_ASSERT(readMask >= 0 && readMask < 256, "Mask needs must be greater than 0");
+		JERBOA_ASSERT(writeMask >= 0 && writeMask < 256, "Mask needs to be in range 0 to 255/0xFF");
 		
 		compareValue = std::max(0, compareValue);
 		readMask = std::max(0, readMask);
@@ -102,7 +116,7 @@ namespace Jerboa
 
 	void RenderState::SetDepthCompareFunction(CompareFunction compareFunction)
 	{
-		SetDepthCompareFunction(compareFunction);
+		SetDepthCompareFunctionImpl(compareFunction);
 		m_DepthCompareFunction = compareFunction;
 	}
 

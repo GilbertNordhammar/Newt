@@ -4,7 +4,7 @@
 #include "Jerboa/Debug.h"
 
 #include "stb_image.h"
-#include "glad/glad.h"
+#include "Jerboa/Platform/OpenGL/OpenGL.h"
 
 namespace Jerboa
 {

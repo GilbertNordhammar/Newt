@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/glad.h>
+#include "Jerboa/Platform/OpenGL/OpenGL.h"
 #include <string>
 #include <fstream>
 #include <vector>

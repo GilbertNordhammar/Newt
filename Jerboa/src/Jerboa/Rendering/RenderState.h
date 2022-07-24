@@ -78,6 +78,7 @@ namespace Jerboa
     class RenderState
     {
     public:
+        static RenderState* Create();
         void                ResetStateToDefaultValues();
 
         // Buffer clearing interface

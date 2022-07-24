@@ -1,46 +1,55 @@
 #include "jerboa-pch.h"
 #include "Application.h"
 
-#include "Jerboa/Platform/Platform.h"
-#include "Jerboa/UI/ImGui/ImGuiApp.h"
-#include "Jerboa/Rendering/Renderer.h"
 #include "Jerboa/Core/Input.h"
 #include "Jerboa/Core/Time.h"
+#include "Jerboa/Platform/Platform.h"
+#include "Jerboa/Rendering/Renderer.h"
+#include "Jerboa/UI/ImGui/ImGuiApp.h"
+
 
 #include "optick.h"
 
 namespace Jerboa {
     Application::Application(const ApplicationProps& props)
-        : mWindow(Window::Create(props.windowProps)),
-        mWindowResizeObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnWindowResize)),
-        mWindowCloseObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnWindowClose)),
-        mKeyPressedObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnKeyPressed)),
-        mKeyReleasedObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnKeyReleased)),
-        mKeyRepeatObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnKeyRepeat)),
-        mMouseMovedObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnMouseMoved)),
-        mMouseScrolledObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnMouseScrolled)),
-        mMouseButtonPressedObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnMouseButtonPressed)),
-        mMouseButtonReleasedObserver(EventObserver::Create(mWindow->GetEventBus().lock().get(), this, &Application::OnMouseButtonReleased))
+        : m_Window(Window::Create(props.windowProps)),
+        m_RenderState(RenderState::Create()),
+        mWindowResizeObserver(EventObserver::Create(m_Window->GetEventBus().lock().get(), this, &Application::OnWindowResize)),
+        mWindowCloseObserver(EventObserver::Create(m_Window->GetEventBus().lock().get(), this, &Application::OnWindowClose)),
+        mKeyPressedObserver(EventObserver::Create(m_Window->GetEventBus().lock().get(), this, &Application::OnKeyPressed)),
+        mKeyReleasedObserver(EventObserver::Create(m_Window->GetEventBus().lock().get(), this, &Application::OnKeyReleased)),
+        mKeyRepeatObserver(EventObserver::Create(m_Window->GetEventBus().lock().get(), this, &Application::OnKeyRepeat)),
+        mMouseMovedObserver(EventObserver::Create(m_Window->GetEventBus().lock().get(), this, &Application::OnMouseMoved)),
+        mMouseScrolledObserver(EventObserver::Create(m_Window->GetEventBus().lock().get(), this, &Application::OnMouseScrolled)),
+        mMouseButtonPressedObserver(EventObserver::Create(m_Window->GetEventBus().lock().get(), this, &Application::OnMouseButtonPressed)),
+        mMouseButtonReleasedObserver(EventObserver::Create(m_Window->GetEventBus().lock().get(), this, &Application::OnMouseButtonReleased))
     {
-        mWindow->SetVSync(true);
+        m_Window->SetVSync(true);
+        
+    }
+
+    Application::~Application()
+    {
+        delete m_RenderState;
+        //delete m_Window;
     }
 
     void Application::Run() {
         Init();
 
-        while (mRunning) {
+        while (m_Running) {
             OPTICK_FRAME("MainThread");
             Renderer::Clear();
 
             {
                 OPTICK_EVENT("Update Layers");
-                for (Layer* layer : mLayerStack)
+                for (Layer* layer : m_LayerStack)
                     layer->OnUpdate();
             }
 
             RenderImGui();
 
-            mWindow->Update();
+            m_Window->Update();
 
             {
                 OPTICK_EVENT("Update Time and Input");
@@ -57,7 +66,8 @@ namespace Jerboa {
         
         Platform::SetRenderAPI(RenderAPI::OpenGL);
         InputInternals::Init();
-        UI::ImGuiApp::Init(mWindow);
+        UI::ImGuiApp::Init(m_Window);
+        m_RenderState->ResetStateToDefaultValues();
 
         OnInit();
     }
@@ -76,19 +86,19 @@ namespace Jerboa {
         OPTICK_EVENT("Application::RenderImGui()");
         Jerboa::UI::ImGuiApp::BeginFrame();
         
-        for (Layer* layer : mLayerStack)
+        for (Layer* layer : m_LayerStack)
             layer->OnImGuiRender();
 
         Jerboa::UI::ImGuiApp::EndFrame();
     }
 
     void Application::PushLayer(Layer* layer) {
-        mLayerStack.PushLayer(layer);
+        m_LayerStack.PushLayer(layer);
         layer->OnAttach();
     }
 
     void Application::PushOverlay(Layer* overlay) {
-        mLayerStack.PushOverlay(overlay);
+        m_LayerStack.PushOverlay(overlay);
         overlay->OnAttach();
     }
 
@@ -99,7 +109,7 @@ namespace Jerboa {
 
     void Application::OnWindowClose(const WindowCloseEvent& evnt)
     {
-        mRunning = false;
+        m_Running = false;
     }
 
     void Application::OnKeyPressed(const KeyPressedEvent& evnt)

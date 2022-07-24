@@ -1,7 +1,7 @@
 #include "jerboa-pch.h"
 #include "GL_RenderState.h"
 
-#include "glad/glad.h"
+#include "Jerboa/Platform/OpenGL/OpenGL.h"
 
 namespace Jerboa
 {

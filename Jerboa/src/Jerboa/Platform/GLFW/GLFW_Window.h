@@ -2,7 +2,7 @@
 
 #include "Jerboa/Core/Window.h"
 
-#define GLFW_INCLUDE_NONE // glad throws a compiler error without this being defined
+#include "Jerboa/Platform/OpenGL/OpenGL.h" // OpenGL needs to be included before GLFW
 #include "GLFW/glfw3.h"
 
 namespace Jerboa 

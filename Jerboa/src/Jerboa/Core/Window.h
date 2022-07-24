@@ -7,11 +7,13 @@
 #include <memory>
 
 namespace Jerboa {
-	enum class WindowApi {
+	enum class WindowApi 
+	{
 		None, GLFW
 	};
 
-	enum class CursorMode {
+	enum class CursorMode 
+	{
 		Normal, Disabled, Hidden
 	};
 

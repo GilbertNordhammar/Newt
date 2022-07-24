@@ -2,7 +2,7 @@
 
 #include "Jerboa/Rendering/RenderState.h";
 
-#include "glad/glad.h"
+#include "Jerboa/Platform/OpenGL/OpenGL.h"
 
 namespace Jerboa
 {

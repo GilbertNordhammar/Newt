@@ -44,7 +44,8 @@ project "Jerboa"
 		
 		defines 
 		{ 
-			"JERBOA_PLATFORM_WINDOWS"
+			"JERBOA_PLATFORM_WINDOWS",
+			"JERBOA_RENDER_API_OPENGL"
 		}
 
 	filter "configurations:Debug"

@@ -1,7 +1,6 @@
 #include "jerboa-pch.h"
 #include "GLFW_Window.h"
 
-#include "glad/glad.h"
 #include "optick.h"
 
 #include "Jerboa/Debug.h"
