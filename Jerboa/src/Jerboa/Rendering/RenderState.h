@@ -61,10 +61,10 @@ namespace Jerboa
     {
         Zero, 
         One, 
-        Source, 
-        OneMinusSource, 
-        Destination, 
-        OneMinusDestination, 
+        SourceColor, 
+        OneMinusSourceColor, 
+        DestinationColor, 
+        OneMinusDestinationColor, 
         SourceAlpha, 
         OneMinusSourceAlpha,
         DestinationAlpha,
@@ -72,11 +72,7 @@ namespace Jerboa
         BlendColor,
         OneMinusBlendColor,
         BlendAlpha,
-        OneMinusBlendAlpha,
-        Source1Color,
-        OneMinusSource1Color,
-        Source1Alpha,
-        OneMinusSource1Alpha
+        OneMinusBlendAlpha
     };
 
     class RenderState
@@ -94,11 +90,9 @@ namespace Jerboa
         BufferClearBits     GetClearBits() const { return m_ClearBits; }
 
         // Stencil testing interface
-        void                SetStencilCompareFunction(CompareFunction compareFunction, int compareValue);
+        void                SetStencilParameters(CompareFunction compareFunction, int compareValue, int readMask, int writeMask);
         void                SetStencilTestingEnabled(bool enabled);
         void                SetStencilOperations(StencilOperation stencilFail, StencilOperation depthFail, StencilOperation pass);
-        void                SetStencilReadMask(int readMask);
-        void                SetStencilWriteMask(int writeMask);
 
         bool                GetStencilTestingEnabled() const     { return m_StencilTestingEnabled; }
         int                 GetStencilReadMask() const           { return m_StencilReadMask; }
@@ -127,11 +121,12 @@ namespace Jerboa
         // Color blending interface
         void                SetBlendingEnabled(bool enabled);
         void                SetBlendingColor(glm::vec4 color);
-        void                SetBlendingFactor(BlendingFactor factor);
+        void                SetBlendingFactor(BlendingFactor source, BlendingFactor destination);
 
         bool                GetBlendingEnabled() const   { return m_BlendingEnabled; }
         glm::vec4           GetBlendingColor() const     { return m_BlendingColor; }
-        BlendingFactor      GetBlendingFactor() const    { return m_BlendingFactor; }
+        BlendingFactor      GetBlendingFactorSource() const    { return m_BlendingFactorSource; }
+        BlendingFactor      GetBlendingFactorDestination() const { return m_BlendingFactorDestination; }
 
     protected:
         // Buffer clearing virtual interface
@@ -141,11 +136,9 @@ namespace Jerboa
         virtual void        SetClearBitsImpl(BufferClearBits clearBits) = 0;
 
         // Stencil testing virtual interface
-        virtual void        SetStencilCompareFunctionImpl(CompareFunction compareFunction, int compareValue) = 0;
+        virtual void        SetStencilParametersImpl(CompareFunction compareFunction, int compareValue, int readMask, int writeMask) = 0;
         virtual void        SetStencilTestingEnabledImpl(bool enabled) = 0;
         virtual void        SetStencilOperationsImpl(StencilOperation stencilFail, StencilOperation depthFail, StencilOperation pass) = 0;
-        virtual void        SetStencilReadMaskImpl(int readMask) = 0;
-        virtual void        SetStencilWriteMaskImpl(int writeMask) = 0;
 
         // Depth testing virtual interface
         virtual void        SetDepthTestingEnabledImpl(bool enabled) = 0;
@@ -159,7 +152,7 @@ namespace Jerboa
         // Color blending virtual interface
         virtual void        SetBlendingEnabledImpl(bool enabled) = 0;
         virtual void        SetBlendingColorImpl(glm::vec4 color) = 0;
-        virtual void        SetBlendingFactorImpl(BlendingFactor factor) = 0;
+        virtual void        SetBlendingFactorImpl(BlendingFactor source, BlendingFactor destination) = 0;
 
         // Buffer clearing variables
         glm::vec4           m_ClearColor;
@@ -189,6 +182,7 @@ namespace Jerboa
         // Color blending variables
         bool                m_BlendingEnabled;
         glm::vec4           m_BlendingColor;
-        BlendingFactor      m_BlendingFactor;
+        BlendingFactor      m_BlendingFactorSource;
+        BlendingFactor      m_BlendingFactorDestination;
     };
 }

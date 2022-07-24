@@ -14,25 +14,23 @@ namespace Jerboa
 		SetClearBits(BufferClearBits::None);
 
 		// Stencil testing
-		SetStencilCompareFunction(CompareFunction::Equal, 1);
+		SetStencilParameters(CompareFunction::Never, 0, 0xFF, 0);
 		SetStencilTestingEnabled(false);
-		//SetStencilOperations(StencilOperation stencilFail, StencilOperation depthFail, StencilOperation pass);
-		//SetStencilReadMask(int readMask);
-		//SetStencilWriteMask(int writeMask);
+		SetStencilOperations(StencilOperation::Keep, StencilOperation::Keep, StencilOperation::Keep);
 
 		// Depth testing
-		//SetDepthTestingEnabled(bool enabled);
-		//SetDepthWritingEnabled(bool enabled);
-		//SetDepthCompareFunction(CompareFunction compareFunction);
+		SetDepthTestingEnabled(true);
+		SetDepthWritingEnabled(true);
+		SetDepthCompareFunction(CompareFunction::Less);
 
 		// Face culling
-		//SetFaceCullingMode(FaceCullingMode mode);
-		//SetFrontFaceWinding(FrontFaceWinding winding);
+		SetFaceCullingMode(FaceCullingMode::Back);
+		SetFrontFaceWinding(FrontFaceWinding::CounterClockwise);
 
 		// Color blending 
-		//SetBlendingEnabled(bool enabled);
-		//SetBlendingColor(glm::vec4 color);
-		//SetBlendingFactor(BlendingFactor factor);
+		SetBlendingEnabled(false);
+		SetBlendingColor(glm::vec4(0, 0, 0, 0));
+		SetBlendingFactor(BlendingFactor::One, BlendingFactor::One);
 	}
 
 	void RenderState::SetClearColor(const glm::vec4& clearColor)
@@ -59,13 +57,21 @@ namespace Jerboa
 		m_ClearBits = clearBits;
 	}
 
-	void RenderState::SetStencilCompareFunction(CompareFunction compareFunction, int compareValue)
+	void RenderState::SetStencilParameters(CompareFunction compareFunction, int compareValue, int readMask, int writeMask)
 	{
-		JERBOA_ASSERT(compareValue > 0, "Compare value must be greater than 0")
+		JERBOA_ASSERT(compareValue > 0, "Compare value must be greater than 0");
+		JERBOA_ASSERT(readMask > 0 && readMask < 256, "Mask needs must be greater than 0");
+		JERBOA_ASSERT(writeMask > 0 && writeMask < 256, "Mask needs to be in range 0 to 255/0xFF");
+		
 		compareValue = std::max(0, compareValue);
-		SetStencilCompareFunctionImpl(compareFunction, compareValue);
+		readMask = std::max(0, readMask);
+		writeMask = std::max(0, writeMask);
+
+		SetStencilParametersImpl(compareFunction, compareValue, readMask, writeMask);
 		m_StencilCompareFunction = compareFunction;
 		m_StencilCompareValue = compareValue;
+		m_StencilReadMask = readMask;
+		m_StencilWriteMask = writeMask;
 	}
 
 	void RenderState::SetStencilTestingEnabled(bool enabled)
@@ -80,22 +86,6 @@ namespace Jerboa
 		m_StencilFailOperation = stencilFail;
 		m_StencilDepthFailOperation = depthFail;
 		m_StencilPassOperation = pass;
-	}
-
-	void RenderState::SetStencilReadMask(int readMask)
-	{
-		JERBOA_ASSERT(readMask > 0 && readMask < 256, "Mask needs must be greater than 0")
-		readMask = std::max(0, readMask);
-		SetStencilReadMaskImpl(readMask);
-		m_StencilReadMask = readMask;
-	}
-
-	void RenderState::SetStencilWriteMask(int writeMask)
-	{
-		JERBOA_ASSERT(writeMask > 0 && writeMask < 256, "Mask needs to be in range 0 to 255/0xFF")
-		writeMask = std::max(0, writeMask);
-		SetStencilWriteMaskImpl(writeMask);
-		m_StencilWriteMask = writeMask;
 	}
 
 	void RenderState::SetDepthTestingEnabled(bool enabled)
@@ -140,9 +130,10 @@ namespace Jerboa
 		m_BlendingColor = color;
 	}
 
-	void RenderState::SetBlendingFactor(BlendingFactor factor)
+	void RenderState::SetBlendingFactor(BlendingFactor source, BlendingFactor destination)
 	{
-		SetBlendingFactorImpl(factor);
-		m_BlendingFactor = factor;
+		SetBlendingFactorImpl(source, destination);
+		m_BlendingFactorSource = source;
+		m_BlendingFactorDestination = destination;
 	}
 }

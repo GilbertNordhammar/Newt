@@ -6,9 +6,12 @@
 
 namespace Jerboa
 {
-    GLbitfield GetBufferClearBitsGL(BufferClearBits clearBits);
-    GLenum     GetCompareFunctionGL(CompareFunction compareFunction);
-    GLenum     GetStencilOperationGL(StencilOperation operation);
+    GLbitfield ConvertBufferClearBitsToGL(BufferClearBits clearBits);
+    GLenum     ConvertCompareFunctionToGL(CompareFunction compareFunction);
+    GLenum     ConvertStencilOperationToGL(StencilOperation operation);
+    GLenum     ConvertFaceCullingModeToGL(FaceCullingMode mode);
+    GLenum     ConvertFrontFaceWindingToGL(FrontFaceWinding winding);
+    GLenum     ConvertBlendingFactorToGL(BlendingFactor factor);
 
 	class GL_RenderState : public RenderState
 	{
@@ -19,11 +22,9 @@ namespace Jerboa
         void        SetClearBitsImpl(BufferClearBits clearBits) override;
 
         // Stencil testing
-        void        SetStencilCompareFunctionImpl(CompareFunction compareFunction, int compareValue) override;
+        void        SetStencilParametersImpl(CompareFunction compareFunction, int compareValue, int readMask, int writeMask) override;
         void        SetStencilTestingEnabledImpl(bool enabled) override;
         void        SetStencilOperationsImpl(StencilOperation stencilFail, StencilOperation depthFail, StencilOperation pass) override;
-        void        SetStencilReadMaskImpl(int readMask) override;
-        void        SetStencilWriteMaskImpl(int writeMask) override;
 
         // Depth testing
         void        SetDepthTestingEnabledImpl(bool enabled) override;
@@ -37,6 +38,6 @@ namespace Jerboa
         // Color blending
         void        SetBlendingEnabledImpl(bool enabled) override;
         void        SetBlendingColorImpl(glm::vec4 color) override;
-        void        SetBlendingFactorImpl(BlendingFactor factor) override;
+        void        SetBlendingFactorImpl(BlendingFactor source, BlendingFactor destination) override;
 	};
 }
