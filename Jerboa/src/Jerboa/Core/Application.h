@@ -33,9 +33,6 @@ namespace Jerboa
 
         void Run();
 
-        virtual void OnInit() {}
-        virtual void OnShutdown() {}
-
         void PushLayer(Layer *layer);
         void PushOverlay(Layer *overlay);
 
@@ -54,6 +51,9 @@ namespace Jerboa
         void OnMouseScrolled(const MouseScrolledEvent &evnt);
         void OnMouseButtonPressed(const MouseButtonPressedEvent &evnt);
         void OnMouseButtonReleased(const MouseButtonReleasedEvent &evnt);
+
+        virtual void OnInit() {}
+        virtual void OnShutdown() {}
 
         Window *m_Window;
         bool m_Running = true;
