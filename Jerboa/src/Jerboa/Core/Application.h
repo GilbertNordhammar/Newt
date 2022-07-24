@@ -36,6 +36,10 @@ namespace Jerboa
         void PushLayer(Layer *layer);
         void PushOverlay(Layer *overlay);
 
+        Window*      GetWindow() { return m_Window; }
+        RenderState* GetRenderState() { return m_RenderState; };
+        bool         IsRunning() { return m_Running; }
+
     private:
         void Init();
         void ShutDown();
@@ -55,10 +59,10 @@ namespace Jerboa
         virtual void OnInit() {}
         virtual void OnShutdown() {}
 
-        Window *m_Window;
+        Window* m_Window;
         bool m_Running = true;
         LayerStack m_LayerStack;
-        RenderState *m_RenderState;
+        RenderState* m_RenderState;
 
         EventObserver
             mWindowResizeObserver,

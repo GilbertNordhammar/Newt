@@ -9,15 +9,18 @@
 #include "Jerboa/Core/Time.h"
 
 #include "Jerboa/Rendering/Renderer.h"
+#include "Jerboa/Rendering/RenderState.h"
 #include "Jerboa/Rendering/PrimitiveFactory.h"
 
 #include <random>
 
 namespace JerboaClient {
-	EditorLayer::EditorLayer()
-		: mWindowResizeObserver(Jerboa::EventObserver::Create(GetSharedEventBus(), this, &EditorLayer::OnWindowResize)),
+	EditorLayer::EditorLayer(Jerboa::RenderState* renderState)
+		: m_RenderState(renderState),
+        mWindowResizeObserver(Jerboa::EventObserver::Create(GetSharedEventBus(), this, &EditorLayer::OnWindowResize)),
         mCamera(Jerboa::Camera(glm::vec3(-1, 0, 5), Jerboa::CameraType::Perspective, glm::radians(60.0)))
 	{
+        JERBOA_ASSERT(renderState, "Rendere state can't be null");
     }
 
 	void EditorLayer::OnImGuiRender()
@@ -181,12 +184,6 @@ namespace JerboaClient {
             auto posPointLight = position + glm::vec3(dist(rand), dist(rand), dist(rand));
             mPointLights.push_back(Jerboa::PointLight(glm::vec3(1.0f), 1.0f, posPointLight));
         }
-
-        // TODO: Remove explicit OpenGL calls
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-        glFrontFace(GL_CCW);
 
         glBindVertexArray(mSphereVao);
 

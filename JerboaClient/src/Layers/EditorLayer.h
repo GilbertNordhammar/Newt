@@ -18,11 +18,16 @@
 #include <memory>
 #include <vector>
 
+namespace Jerboa
+{
+	class RenderState;
+}
+
 namespace JerboaClient {
 	class EditorLayer : public Jerboa::Layer
 	{
 	public:
-		EditorLayer();
+		EditorLayer(Jerboa::RenderState* renderState);
 
 		virtual void OnUpdate() override;
 		virtual void OnAttach() override;
@@ -30,6 +35,8 @@ namespace JerboaClient {
 		virtual void OnImGuiRender() override;
 	private:
 		void OnWindowResize(const Jerboa::WindowResizeEvent& evnt);
+
+		Jerboa::RenderState* m_RenderState;
 
 		Jerboa::Camera mCamera;
 		std::shared_ptr<Jerboa::Shader> mPBRShader;
