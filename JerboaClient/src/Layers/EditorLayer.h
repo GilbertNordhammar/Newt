@@ -42,7 +42,7 @@ namespace JerboaClient {
 
 		std::vector<Jerboa::Transform> mTransforms;
 
-		std::shared_ptr<Jerboa::Mesh> m_SphereMesh;
+		Jerboa::Mesh m_SphereMesh;
 
 		std::shared_ptr<Jerboa::Texture2D> mAlbedoTexture;
 		std::shared_ptr<Jerboa::Texture2D> mAmbientOcclusionTexture;

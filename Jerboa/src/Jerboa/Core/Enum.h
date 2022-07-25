@@ -1,4 +1,4 @@
-
+#pragma once
 #include <type_traits>
 
 namespace Jerboa
@@ -32,7 +32,7 @@ namespace Jerboa
     }
 
     template<typename T, typename E, class = std::enable_if<std::is_enum<E>::value && std::is_integral<T>::value>::type>
-    T EnumToInt(E arg)
+    constexpr T EnumToInt(E arg)
     {
         return static_cast<T>(arg);
     }

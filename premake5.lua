@@ -28,5 +28,5 @@ jerboa_includedirs =  {
 }
 
 include "Jerboa"
-include "Sandbox"
+-- include "Sandbox"
 include "JerboaClient"

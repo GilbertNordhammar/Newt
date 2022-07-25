@@ -1,23 +1,18 @@
 #include "jerboa-pch.h"
 #include "VertexBuffer.h"
 
-#include "Jerboa/Platform/OpenGL/GL_VertexBuffer.h"
-#include "Jerboa/Platform/Platform.h"
 #include "Jerboa/Debug.h"
+#include "Jerboa/Platform/Platform.h"
+#include "Jerboa/Rendering/Types.h";
+#include "Jerboa/Rendering/GPUResourceAllocator.h"
 
 namespace Jerboa {
-	std::shared_ptr<VertexBuffer> Jerboa::VertexBuffer::Create(
-		float* data, uint32_t size, VertexBufferUsage usage, VertexBufferLayout layout)
+	void VertexBuffer::Create(const VertexBufferData& bufferData, GPUResourceAllocator* resourceAllocator)
 	{
-		std::shared_ptr<VertexBuffer> vertexBuffer;
-
-		switch (Platform::GetRenderApi()) {
-			case RenderAPI::OpenGL:
-				vertexBuffer = std::make_shared<GL_VertexBuffer>(data, size, usage, layout);
-		}
-
-		JERBOA_ASSERT(vertexBuffer, "Implementation is missing or render API is not set");
-		return vertexBuffer;
+		m_VertexBufferResource = resourceAllocator->CreateVertexBuffer(bufferData);
+		m_Usage = bufferData.m_Usage;
+		m_Layout = bufferData.m_Layout;
+		m_Size = bufferData.m_Size;
 	}
 
 	VertexBuffer::VertexBuffer(uint32 size, VertexBufferUsage usage, VertexBufferLayout layout)

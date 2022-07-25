@@ -1,6 +1,10 @@
 #include "jerboa-pch.h"
 #include "GL_RenderState.h"
 
+#include "Jerboa/Core/Enum.h"
+#include "Jerboa/Rendering/Mesh.h"
+#include "Jerboa/Rendering/Shader.h"
+#include "Jerboa/Rendering/Texture.h"
 #include "Jerboa/Platform/OpenGL/OpenGL.h"
 
 namespace Jerboa
@@ -101,6 +105,23 @@ namespace Jerboa
 
         JERBOA_ASSERT(false, "Invalid or unhandled BlendingFactor entry");
         return GL_INVALID_ENUM;
+    }
+
+    void GL_RenderState::BindTextureImpl(Texture2D& texture, TextureSlot slot)
+    {
+        JERBOA_ASSERT(false, "Not implemnted");
+        /*glActiveTexture(GL_TEXTURE0 + EnumToInt<int>(slot));
+        glBindTexture(GL_TEXTURE_2D, mTexture);*/
+    }
+
+    void GL_RenderState::BindShaderImpl(Shader& shader)
+    {
+        JERBOA_ASSERT(false, "Not implemnted");
+    }
+
+    void GL_RenderState::BindMeshImpl(Mesh& mesh)
+    {
+        glBindVertexArray(mesh.GetVAO().Get());
     }
 
     void GL_RenderState::SetClearColorImpl(const glm::vec4& clearColor)

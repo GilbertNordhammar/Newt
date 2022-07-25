@@ -15,6 +15,12 @@ namespace Jerboa
 
 	class GL_RenderState : public RenderState
 	{
+    public:
+        // Resource binding virtual interface
+        void	    BindTextureImpl(Texture2D& texture, TextureSlot slot) override;
+        void	    BindShaderImpl(Shader& shader) override;
+        void	    BindMeshImpl(Mesh& mesh) override;
+
         // Buffer clearing
         void        SetClearColorImpl(const glm::vec4& clearColor) override;
         void        SetClearDepthImpl(float clearDepth) override;
@@ -39,5 +45,8 @@ namespace Jerboa
         void        SetBlendingEnabledImpl(bool enabled) override;
         void        SetBlendingColorImpl(glm::vec4 color) override;
         void        SetBlendingFactorImpl(BlendingFactor source, BlendingFactor destination) override;
+
+        // Misc
+        bool        m_BoundMeshStateDirty = false;
 	};
 }

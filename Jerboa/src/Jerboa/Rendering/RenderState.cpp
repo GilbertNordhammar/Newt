@@ -1,26 +1,19 @@
 #include "jerboa-pch.h"
 #include "RenderState.h"
 
-#if defined(JERBOA_RENDER_API_OPENGL)
-	#include "Jerboa/Platform/OpenGL/GL_RenderState.h"
-#endif
+#include "Jerboa/Rendering/Texture.h"
+#include "Jerboa/Rendering/Shader.h"
+#include "Jerboa/Rendering/Mesh.h"
 
 namespace Jerboa
 {
-	BufferClearBits operator|(BufferClearBits lhs, BufferClearBits rhs);
-
-	RenderState* RenderState::Create()
-	{
-	#if defined(JERBOA_RENDER_API_OPENGL)
-		return new GL_RenderState();
-	#else
-		#error "No valid JERBOA_RENDER_API_ defined"
-	#endif
-		return nullptr;
-	}
-
 	void RenderState::ResetStateToDefaultValues()
 	{
+		// Resource binding
+		m_BoundTextures.fill(nullptr);
+		m_BoundShader = nullptr;
+		m_BoundMesh = nullptr;
+
 		// Buffer clearing
 		SetClearColor(glm::vec4(0, 0, 0, 0));
 		SetClearDepth(1);
@@ -45,6 +38,24 @@ namespace Jerboa
 		SetBlendingEnabled(false);
 		SetBlendingColor(glm::vec4(0, 0, 0, 0));
 		SetBlendingFactor(BlendingFactor::One, BlendingFactor::One);
+	}
+
+	void RenderState::BindTexture(Texture2D& texture, TextureSlot slot)
+	{
+		BindTextureImpl(texture, slot);
+		m_BoundTextures[EnumToInt<int>(slot)] = &texture;
+	}
+
+	void RenderState::BindShader(Shader& shader)
+	{
+		BindShaderImpl(shader);
+		m_BoundShader = &shader;
+	}
+
+	void RenderState::BindMesh(Mesh& mesh)
+	{
+		BindMeshImpl(mesh);
+		m_BoundMesh = &mesh;
 	}
 
 	void RenderState::SetClearColor(const glm::vec4& clearColor)

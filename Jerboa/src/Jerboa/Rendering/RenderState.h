@@ -4,9 +4,14 @@
 
 #include "glm/glm.hpp"
 #include <memory>
+#include <array>
 
 namespace Jerboa
 {
+    class Texture2D;
+    class Shader;
+    class Mesh;
+
     enum class BufferClearBits
     {
         None = 0,
@@ -76,11 +81,24 @@ namespace Jerboa
         OneMinusBlendAlpha
     };
 
+    enum class TextureSlot
+    {
+        S0 = 0, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, Count
+    };
+
     class RenderState
     {
     public:
-        static RenderState* Create();
         void                ResetStateToDefaultValues();
+
+        // Resource binding interface
+        void				BindTexture(Texture2D& texture, TextureSlot slot);
+        void				BindShader(Shader& shader);
+        void				BindMesh(Mesh& mesh);
+
+        Texture2D*          GetBoundTexture(TextureSlot slot) { return m_BoundTextures[EnumToInt<int>(slot)]; }
+        Shader*             GetBoundShader() { return m_BoundShader; }
+        Mesh*               GetBoundMesh() { return m_BoundMesh; }
 
         // Buffer clearing interface
         void                SetClearColor(const glm::vec4& clearColor);
@@ -131,6 +149,11 @@ namespace Jerboa
         BlendingFactor      GetBlendingFactorDestination() const { return m_BlendingFactorDestination; }
 
     protected:
+        // Resource binding virtual interface
+        virtual void	    BindTextureImpl(Texture2D& texture, TextureSlot slot) = 0;
+        virtual void	    BindShaderImpl(Shader& shader) = 0;
+        virtual void	    BindMeshImpl(Mesh& mesh) = 0;
+
         // Buffer clearing virtual interface
         virtual void        SetClearColorImpl(const glm::vec4& clearColor) = 0;
         virtual void        SetClearDepthImpl(float clearDepth) = 0;
@@ -156,35 +179,41 @@ namespace Jerboa
         virtual void        SetBlendingColorImpl(glm::vec4 color) = 0;
         virtual void        SetBlendingFactorImpl(BlendingFactor source, BlendingFactor destination) = 0;
 
+        // Resource binding variables
+        // TODO: This can lead to dangling pointer if the resource is deallocated. Find a better solution
+        std::array<Texture2D*, EnumToInt<int>(TextureSlot::Count)>   m_BoundTextures; // TODO: Replace magic number for array size
+        Shader*                     m_BoundShader = nullptr;
+        Mesh*                       m_BoundMesh = nullptr;
+
         // Buffer clearing variables
-        glm::vec4           m_ClearColor;
-        float               m_ClearDepth;
-        float               m_ClearStencil;
-        BufferClearBits     m_ClearBits;
+        glm::vec4                   m_ClearColor;
+        float                       m_ClearDepth;
+        float                       m_ClearStencil;
+        BufferClearBits             m_ClearBits;
 
         // Stencil testing variables
-        bool                m_StencilTestingEnabled;
-        int                 m_StencilReadMask;
-        int                 m_StencilWriteMask;
-        StencilOperation    m_StencilFailOperation;
-        StencilOperation    m_StencilDepthFailOperation;
-        StencilOperation    m_StencilPassOperation;
-        CompareFunction     m_StencilCompareFunction;
-        int                 m_StencilCompareValue;
+        bool                        m_StencilTestingEnabled;
+        int                         m_StencilReadMask;
+        int                         m_StencilWriteMask;
+        StencilOperation            m_StencilFailOperation;
+        StencilOperation            m_StencilDepthFailOperation;
+        StencilOperation            m_StencilPassOperation;
+        CompareFunction             m_StencilCompareFunction;
+        int                         m_StencilCompareValue;
 
         // Depth testing variables
-        bool                m_DepthTestingEnabled;
-        bool                m_DepthWritingEnabled;
-        CompareFunction     m_DepthCompareFunction;
+        bool                        m_DepthTestingEnabled;
+        bool                        m_DepthWritingEnabled;
+        CompareFunction             m_DepthCompareFunction;
 
         // Face culling variables
-        FaceCullingMode     m_FaceCullingMode;
-        FrontFaceWinding    m_FrontFaceWinding;
+        FaceCullingMode             m_FaceCullingMode;
+        FrontFaceWinding            m_FrontFaceWinding;
 
         // Color blending variables
-        bool                m_BlendingEnabled;
-        glm::vec4           m_BlendingColor;
-        BlendingFactor      m_BlendingFactorSource;
-        BlendingFactor      m_BlendingFactorDestination;
+        bool                        m_BlendingEnabled;
+        glm::vec4                   m_BlendingColor;
+        BlendingFactor              m_BlendingFactorSource;
+        BlendingFactor              m_BlendingFactorDestination;
     };
 }

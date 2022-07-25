@@ -98,7 +98,7 @@ namespace JerboaClient {
             mPointLightShader->SetMat4("mat_model", modelMatrix);
             mPointLightShader->SetVec3("color", pointLight.GetColor());
 
-            m_Renderer->Draw(*m_SphereMesh);
+            m_Renderer->Draw(m_SphereMesh);
         }
 
         mPBRShader->Bind();
@@ -153,7 +153,7 @@ namespace JerboaClient {
             modelMatrix = modelMatrix * glm::toMat4(trans.GetOrientation());
             mPBRShader->SetMat4("mat_model", modelMatrix);
 
-            m_Renderer->Draw(*m_SphereMesh);
+            m_Renderer->Draw(m_SphereMesh);
         }
 	}
 
@@ -195,7 +195,7 @@ namespace JerboaClient {
         int indicesSize = sphereIndices.size() * sizeof(sphereIndices[0]);
         auto sphereIndexData = Jerboa::IndexBufferData(sphereIndices.data(), indicesSize);
 
-        m_SphereMesh = Jerboa::Mesh::Create(sphereVertexData, sphereIndexData, Jerboa::PrimitiveType::Triangle);
+        m_SphereMesh.Create(sphereVertexData, &sphereIndexData, Jerboa::PrimitiveType::Triangle, m_Renderer->GetAllocator());
 
         mPBRShader = Jerboa::Shader::Create("assets/shaders/pbr/Standard.glsl");
         mPointLightShader = Jerboa::Shader::Create("assets/shaders/pbr/PointLight.glsl");

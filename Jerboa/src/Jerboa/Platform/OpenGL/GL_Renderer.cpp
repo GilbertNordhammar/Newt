@@ -1,9 +1,11 @@
 #include "jerboa-pch.h"
 #include "GL_Renderer.h"
 
-#include "Jerboa/Platform/OpenGL/OpenGL.h"
 #include "Jerboa/Rendering/Mesh.h"
-#include "Jerboa/Rendering/RenderState.h"
+#include "Jerboa/Platform/OpenGL/GL_RenderState.h"
+#include "Jerboa/Core/Types.h"
+#include "OpenGL.h"
+#include "GL_Types.h"
 
 namespace Jerboa {
 	static GLenum ConvertPritimtiveTypeToGL(PrimitiveType primitiveType)
@@ -22,6 +24,12 @@ namespace Jerboa {
 	}
 
 
+	GL_Renderer::GL_Renderer(GL_RenderState* renderStateGL)
+		: m_RenderStateGL(renderStateGL)
+	{
+		JERBOA_ASSERT(renderStateGL, "Render state is null");
+	}
+
 	void GL_Renderer::Clear()
 	{
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -30,7 +38,12 @@ namespace Jerboa {
 
 	void GL_Renderer::Draw(Mesh& mesh)
 	{
-		mesh.Bind();
+		Mesh* boundMesh = m_RenderState->GetBoundMesh();
+		if (!boundMesh || boundMesh != &mesh || m_RenderStateGL->m_BoundMeshStateDirty)
+		{
+			m_RenderState->BindMesh(mesh);
+			m_RenderStateGL->m_BoundMeshStateDirty = false;
+		}
 
 		if (mesh.IsIndexed())
 		{
