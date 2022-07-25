@@ -13,12 +13,8 @@ namespace Jerboa
 
 		virtual void Bind() override;
 		virtual void Unbind() override;
-		virtual uint32_t GetSize() const override { return mSize; };
-		virtual uint32_t GetCount() const override { return mCount; };
 
 	private:
-		GL_Buffer mBuffer;
-		uint32_t mSize;
-		uint32_t mCount;
+		GL_Buffer m_Buffer;
 	};
 } // namespace Jerboa

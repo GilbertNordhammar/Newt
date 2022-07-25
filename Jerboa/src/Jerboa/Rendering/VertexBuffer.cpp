@@ -19,4 +19,9 @@ namespace Jerboa {
 		JERBOA_ASSERT(vertexBuffer, "Implementation is missing or render API is not set");
 		return vertexBuffer;
 	}
+
+	VertexBuffer::VertexBuffer(uint32 size, VertexBufferUsage usage, VertexBufferLayout layout)
+		: m_Usage(usage), m_Layout(layout), m_Size(size)
+	{
+	}
 }

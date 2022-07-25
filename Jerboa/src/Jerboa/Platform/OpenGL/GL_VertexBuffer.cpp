@@ -50,7 +50,7 @@ namespace Jerboa
 	}
 
 	GL_VertexBuffer::GL_VertexBuffer(float *data, uint32_t size, VertexBufferUsage usage, VertexBufferLayout layout)
-		: mUsage(usage), mLayout(layout), mSize(size)
+		: VertexBuffer(size, usage, layout)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
 		glBufferData(GL_ARRAY_BUFFER, size, data, GetOpenGLUsage(usage));

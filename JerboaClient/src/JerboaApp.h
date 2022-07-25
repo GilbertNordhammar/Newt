@@ -9,7 +9,7 @@ namespace JerboaClient {
 			: Application(props) {}
 	private:
 		virtual void OnInit() {
-			PushLayer(new EditorLayer(GetRenderState()));
+			PushLayer(new EditorLayer(GetRenderer()));
 		}
 	};
 }

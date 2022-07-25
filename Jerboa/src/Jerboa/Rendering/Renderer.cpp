@@ -1,32 +1,25 @@
 #include "jerboa-pch.h"
 #include "Renderer.h"
 
-#include "Jerboa/Platform/OpenGL/OpenGL.h"
+
+#if defined(JERBOA_RENDER_API_OPENGL)
+#include "Jerboa/Platform/OpenGL/GL_Renderer.h"
+#endif
 
 namespace Jerboa {
-	void Renderer::BeginPass()
+	Renderer* Renderer::Create()
 	{
-	
-	}
-	
-	void Renderer::EndPass()
-	{
-	
-	}
-	
-	void Renderer::Clear()
-	{
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	}
-	
-	void Renderer::Submit(std::shared_ptr<VertexBuffer> vertexBuffer)
-	{
-		// TODO
-	}
 
-	void Renderer::Draw(int count)
-	{
-		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
+
+		Renderer* renderer;
+#if defined(JERBOA_RENDER_API_OPENGL)
+		renderer = new GL_Renderer();
+#else
+#error "JERBOA_RENDER_API_ is not defined"
+#endif
+		renderer->m_RenderState = std::shared_ptr<RenderState>(RenderState::Create());
+		JERBOA_ASSERT(renderer->m_RenderState, "Render state is null");
+
+		return renderer;
 	}
 }

@@ -14,9 +14,8 @@
 #include "Events/WindowCloseEvent.h"
 #include "Events/WindowResizeEvent.h"
 #include "Jerboa/Rendering/RenderState.h"
+#include "Jerboa/Rendering/Renderer.h"
 #include "Window.h"
-
-#include "Jerboa/Platform/OpenGL/OpenGL.h"
 
 namespace Jerboa
 {
@@ -37,7 +36,7 @@ namespace Jerboa
         void PushOverlay(Layer *overlay);
 
         Window*      GetWindow() { return m_Window; }
-        RenderState* GetRenderState() { return m_RenderState; };
+        Renderer*    GetRenderer() { return m_Renderer; }
         bool         IsRunning() { return m_Running; }
 
     private:
@@ -62,7 +61,7 @@ namespace Jerboa
         Window* m_Window;
         bool m_Running = true;
         LayerStack m_LayerStack;
-        RenderState* m_RenderState;
+        Renderer* m_Renderer;
 
         EventObserver
             mWindowResizeObserver,

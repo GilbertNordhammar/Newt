@@ -1,26 +1,22 @@
 #include "EditorLayer.h"
 
-#include "imgui.h"
-#include "optick.h"
 
-#include "Jerboa/UI/ImGui/ImGuiApp.h"
 
 #include "Jerboa/Core/Input.h"
 #include "Jerboa/Core/Time.h"
-
-#include "Jerboa/Rendering/Renderer.h"
-#include "Jerboa/Rendering/RenderState.h"
+#include "Jerboa/UI/ImGui/ImGuiApp.h"
 #include "Jerboa/Rendering/PrimitiveFactory.h"
 
+#include "imgui.h"
+#include "optick.h"
 #include <random>
 
 namespace JerboaClient {
-	EditorLayer::EditorLayer(Jerboa::RenderState* renderState)
-		: m_RenderState(renderState),
+	EditorLayer::EditorLayer(Jerboa::Renderer* renderer)
+		: m_Renderer(renderer),
         mWindowResizeObserver(Jerboa::EventObserver::Create(GetSharedEventBus(), this, &EditorLayer::OnWindowResize)),
         mCamera(Jerboa::Camera(glm::vec3(-1, 0, 5), Jerboa::CameraType::Perspective, glm::radians(60.0)))
 	{
-        JERBOA_ASSERT(renderState, "Rendere state can't be null");
     }
 
 	void EditorLayer::OnImGuiRender()
@@ -104,8 +100,7 @@ namespace JerboaClient {
             mPointLightShader->SetMat4("mat_model", modelMatrix);
             mPointLightShader->SetVec3("color", pointLight.GetColor());
 
-            glBindVertexArray(mSphereVao);
-            Jerboa::Renderer::Draw(mSphereIndexBuffer->GetCount());
+            m_Renderer->Draw(*m_SphereMesh);
         }
 
         mPBRShader->Bind();
@@ -160,8 +155,7 @@ namespace JerboaClient {
             modelMatrix = modelMatrix * glm::toMat4(trans.GetOrientation());
             mPBRShader->SetMat4("mat_model", modelMatrix);
 
-            glBindVertexArray(mSphereVao);
-            Jerboa::Renderer::Draw(mSphereIndexBuffer->GetCount());
+            m_Renderer->Draw(*m_SphereMesh);
         }
 	}
 
@@ -185,14 +179,13 @@ namespace JerboaClient {
             mPointLights.push_back(Jerboa::PointLight(glm::vec3(1.0f), 1.0f, posPointLight));
         }
 
-        glBindVertexArray(mSphereVao);
-
         std::vector<float> sphereVertices;
         std::vector<uint32_t> sphereIndices;
         Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, 1.0f, glm::vec2(1.0), sphereVertices, sphereIndices);
        
         int verticesSize = sphereVertices.size() * sizeof(sphereVertices[0]);
-        mSphereVertexBuffer = Jerboa::VertexBuffer::Create(sphereVertices.data(), verticesSize, Jerboa::VertexBufferUsage::Static,
+        
+        auto sphereVertexData = Jerboa::VertexBufferData(sphereVertices.data(), verticesSize, Jerboa::VertexBufferUsage::Static,
         {
             { Jerboa::ShaderDataType::Float3 }, // pos
             { Jerboa::ShaderDataType::Float2 }, // UV
@@ -202,7 +195,9 @@ namespace JerboaClient {
         });
 
         int indicesSize = sphereIndices.size() * sizeof(sphereIndices[0]);
-        mSphereIndexBuffer = Jerboa::IndexBuffer::Create(sphereIndices.data(), indicesSize);
+        auto sphereIndexData = Jerboa::IndexBufferData(sphereIndices.data(), indicesSize);
+
+        m_SphereMesh = std::make_shared<Jerboa::Mesh>(sphereVertexData, sphereIndexData, Jerboa::PrimitiveType::Triangle);
 
         mPBRShader = Jerboa::Shader::Create("assets/shaders/pbr/Standard.glsl");
         mPointLightShader = Jerboa::Shader::Create("assets/shaders/pbr/PointLight.glsl");

@@ -13,14 +13,8 @@ namespace Jerboa
 
 		virtual void Bind() override;
 		virtual void UnBind() override;
-		virtual const VertexBufferUsage &GetUsage() const override { return mUsage; };
-		virtual const VertexBufferLayout &GetLayout() const override { return mLayout; };
-		virtual uint32_t GetSize() const override { return mSize; }
 
 	private:
 		GL_Buffer mBuffer;
-		VertexBufferUsage mUsage;
-		VertexBufferLayout mLayout;
-		uint32_t mSize = 0;
 	};
 } // namespace Jerboa

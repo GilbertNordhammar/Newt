@@ -13,7 +13,7 @@
 namespace Jerboa {
     Application::Application(const ApplicationProps& props)
         : m_Window(Window::Create(props.windowProps)),
-        m_RenderState(RenderState::Create()),
+        m_Renderer(Renderer::Create()),
         mWindowResizeObserver(EventObserver::Create(m_Window->GetEventBus().lock().get(), this, &Application::OnWindowResize)),
         mWindowCloseObserver(EventObserver::Create(m_Window->GetEventBus().lock().get(), this, &Application::OnWindowClose)),
         mKeyPressedObserver(EventObserver::Create(m_Window->GetEventBus().lock().get(), this, &Application::OnKeyPressed)),
@@ -30,7 +30,7 @@ namespace Jerboa {
 
     Application::~Application()
     {
-        delete m_RenderState;
+        delete m_Renderer;
         //delete m_Window;
     }
 
@@ -39,7 +39,7 @@ namespace Jerboa {
 
         while (m_Running) {
             OPTICK_FRAME("MainThread");
-            Renderer::Clear();
+            m_Renderer->Clear();
 
             {
                 OPTICK_EVENT("Update Layers");
@@ -67,7 +67,7 @@ namespace Jerboa {
         Platform::SetRenderAPI(RenderAPI::OpenGL);
         InputInternals::Init();
         UI::ImGuiApp::Init(m_Window);
-        m_RenderState->ResetStateToDefaultValues();
+        m_Renderer->GetState()->ResetStateToDefaultValues();
 
         OnInit();
     }

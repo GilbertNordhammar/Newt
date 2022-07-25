@@ -3,6 +3,7 @@
 #include "Jerboa/Core/Enum.h"
 
 #include "glm/glm.hpp"
+#include <memory>
 
 namespace Jerboa
 {

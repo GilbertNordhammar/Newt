@@ -13,21 +13,19 @@
 #include "Jerboa/Rendering/lights/PointLight.h"
 #include "Jerboa/Scene/Transform.h"
 
+#include "Jerboa/Rendering/Mesh.h"
+#include "Jerboa/Rendering/Renderer.h"
+
 #include "Jerboa/Platform/OpenGL/Objects/GL_VertexArrayObject.h"
 
 #include <memory>
 #include <vector>
 
-namespace Jerboa
-{
-	class RenderState;
-}
-
 namespace JerboaClient {
 	class EditorLayer : public Jerboa::Layer
 	{
 	public:
-		EditorLayer(Jerboa::RenderState* renderState);
+		EditorLayer(Jerboa::Renderer* renderer);
 
 		virtual void OnUpdate() override;
 		virtual void OnAttach() override;
@@ -36,7 +34,7 @@ namespace JerboaClient {
 	private:
 		void OnWindowResize(const Jerboa::WindowResizeEvent& evnt);
 
-		Jerboa::RenderState* m_RenderState;
+		Jerboa::Renderer* m_Renderer;
 
 		Jerboa::Camera mCamera;
 		std::shared_ptr<Jerboa::Shader> mPBRShader;
@@ -44,9 +42,7 @@ namespace JerboaClient {
 
 		std::vector<Jerboa::Transform> mTransforms;
 
-		std::shared_ptr<Jerboa::VertexBuffer> mSphereVertexBuffer;
-		std::shared_ptr<Jerboa::IndexBuffer> mSphereIndexBuffer;
-		Jerboa::GL_VertexArrayObject mSphereVao;
+		std::shared_ptr<Jerboa::Mesh> m_SphereMesh;
 
 		std::shared_ptr<Jerboa::Texture2D> mAlbedoTexture;
 		std::shared_ptr<Jerboa::Texture2D> mAmbientOcclusionTexture;
