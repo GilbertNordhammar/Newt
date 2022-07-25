@@ -16,8 +16,6 @@
 #include "Jerboa/Rendering/Mesh.h"
 #include "Jerboa/Rendering/Renderer.h"
 
-#include "Jerboa/Platform/OpenGL/Objects/GL_VertexArrayObject.h"
-
 #include <memory>
 #include <vector>
 

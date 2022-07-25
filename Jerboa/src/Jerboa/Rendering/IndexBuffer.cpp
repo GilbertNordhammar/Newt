@@ -2,7 +2,6 @@
 #include "IndexBuffer.h"
 
 #include "Jerboa/Debug.h"
-#include "Jerboa/Platform/OpenGL/GL_IndexBuffer.h"
 #include "Jerboa/Platform/Platform.h"
 #include "Jerboa/Rendering/GPUResourceAllocator.h"
 
