@@ -1,7 +1,5 @@
 #include "EditorLayer.h"
 
-
-
 #include "Jerboa/Core/Input.h"
 #include "Jerboa/Core/Time.h"
 #include "Jerboa/UI/ImGui/ImGuiApp.h"
@@ -197,7 +195,7 @@ namespace JerboaClient {
         int indicesSize = sphereIndices.size() * sizeof(sphereIndices[0]);
         auto sphereIndexData = Jerboa::IndexBufferData(sphereIndices.data(), indicesSize);
 
-        m_SphereMesh = std::make_shared<Jerboa::Mesh>(sphereVertexData, sphereIndexData, Jerboa::PrimitiveType::Triangle);
+        m_SphereMesh = Jerboa::Mesh::Create(sphereVertexData, sphereIndexData, Jerboa::PrimitiveType::Triangle);
 
         mPBRShader = Jerboa::Shader::Create("assets/shaders/pbr/Standard.glsl");
         mPointLightShader = Jerboa::Shader::Create("assets/shaders/pbr/PointLight.glsl");

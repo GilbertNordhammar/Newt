@@ -6,8 +6,6 @@
 
 #include <memory>
 
-#include "Jerboa/Platform/OpenGL/Objects/GL_VertexArrayObject.h";
-
 namespace Jerboa
 {
 	struct VertexBufferData
@@ -46,19 +44,17 @@ namespace Jerboa
 	class Mesh
 	{
 	public:
-		Mesh(const VertexBufferData& vertexBufferData, const IndexBufferData& indexBufferData, PrimitiveType primitiveType);
+		static std::shared_ptr<Mesh> Create(const VertexBufferData& vertexBufferData, const IndexBufferData& indexBufferData, PrimitiveType primitiveType);
 		
-		void			Bind();
-		bool			IsIndexed();
-		uint32			GetVertexCount() const { return m_VertexBuffer->GetCount(); }
-		uint32			GetIndexCount() const { return m_IndexBuffer->GetCount(); }
-		PrimitiveType	GetPrimitiveType() const { return m_PrimitiveType; }
+		virtual void				Bind() = 0;
+		bool						IsIndexed() const;
+		PrimitiveType				GetPrimitiveType() const { return m_PrimitiveType; }
+		VertexBuffer*				GetVertexBuffer() const { return m_VertexBuffer.get(); }
+		IndexBuffer*				GetIndexBuffer() const { return m_IndexBuffer.get(); }
 
-	private:
+	protected:
 		std::shared_ptr<VertexBuffer>	m_VertexBuffer = nullptr;
 		std::shared_ptr<IndexBuffer>	m_IndexBuffer = nullptr;
 		PrimitiveType					m_PrimitiveType;
-
-		GL_VertexArrayObject m_VAO;
 	};
 }

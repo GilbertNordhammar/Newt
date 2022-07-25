@@ -1,25 +1,29 @@
 #include "jerboa-pch.h"
 #include "Mesh.h"
 
+#if defined(JERBOA_RENDER_API_OPENGL)
+#include "Jerboa/Platform/OpenGL/GL_Mesh.h"
+#endif
 
 namespace Jerboa
 {
-	Mesh::Mesh(const VertexBufferData& vertexBufferData, const IndexBufferData& indexBufferData, PrimitiveType primitiveType)
-		: m_PrimitiveType(primitiveType)
+	std::shared_ptr<Mesh> Mesh::Create(const VertexBufferData& vertexBufferData, const IndexBufferData& indexBufferData, PrimitiveType primitiveType)
 	{
-		glBindVertexArray(m_VAO);
+		std::shared_ptr<Mesh> mesh = nullptr;
+	#if defined(JERBOA_RENDER_API_OPENGL)
+		mesh = std::make_shared<GL_Mesh>(vertexBufferData, indexBufferData);
+	#else
+	#error "JERBOA_RENDER_API_ not defined"
+	#endif
 
-		m_VertexBuffer = Jerboa::VertexBuffer::Create(vertexBufferData.m_Data, vertexBufferData.m_Size, vertexBufferData.m_Usage, vertexBufferData.m_Layout);
-		m_IndexBuffer = Jerboa::IndexBuffer::Create(indexBufferData.m_Data, indexBufferData.m_Size);
+		JERBOA_ASSERT(mesh, "Mesh is null");
+		JERBOA_ASSERT(mesh->m_VertexBuffer, "Vertex buffer is null");
 
-		glBindVertexArray(0);
+		mesh->m_PrimitiveType = primitiveType;
+		return mesh;
 	}
 
-	void Mesh::Bind()
-	{
-		glBindVertexArray(m_VAO);
-	}
-	bool Mesh::IsIndexed()
+	bool Mesh::IsIndexed() const
 	{
 		return m_IndexBuffer != nullptr;
 	}
