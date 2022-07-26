@@ -94,4 +94,41 @@ namespace Jerboa
 		VAO.Create(generateVAO, deleteVAO);
 		return VAO;
 	}
+
+	GPUResource	GL_GPUResourceAllocator::CreateTexture(const TextureData& textureData)
+	{
+		auto generateTexture = [&](uint64* textureObject)
+		{
+			GLuint glObject = 0;
+			glGenTextures(1, &glObject);
+			*textureObject = glObject;
+
+			GLenum format = GetPixelFormatGL(textureData.GetPixelFormat());
+			GLenum internalFormat = format;
+			/*if (type == TextureType::Albedo)
+				internalFormat = format == GL_RGBA ? GL_SRGB_ALPHA : GL_SRGB;*/
+
+			glBindTexture(GL_TEXTURE_2D, *textureObject);
+			glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, textureData.GetWidth(), textureData.GetHeight(), 0, format, GL_UNSIGNED_BYTE, textureData.GetData());
+			
+			glGenerateMipmap(GL_TEXTURE_2D);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			// TODO: Rebind currently bound texture
+			glBindTexture(GL_TEXTURE_2D, 0);
+		};
+
+		auto deleteTexture = [](uint64* vao) {
+			GLuint glObject = *vao;
+			glDeleteTextures(1, &glObject);
+			
+		};
+
+		GPUResource VAO;
+		VAO.Create(generateTexture, deleteTexture);
+		return VAO;
+	}
 }

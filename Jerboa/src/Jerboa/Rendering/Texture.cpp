@@ -1,23 +1,19 @@
 #include "jerboa-pch.h"
 #include "Texture.h"
 
-#include "Jerboa/Platform/Platform.h"
-#include "Jerboa/Platform/OpenGL/GL_Texture2D.h"
-
 #include "Jerboa/Debug.h"
+#include "Jerboa/Platform/Platform.h"
+#include "Jerboa/Rendering/GPUResourceAllocator.h"
 
-namespace Jerboa {
-	std::shared_ptr<Texture2D> Jerboa::Texture2D::Create(const std::string& path, TextureType type)
+namespace Jerboa 
+{
+	void Texture2D::Create(TextureType type, const TextureData& data, GPUResourceAllocator& allocator)
 	{
-		std::shared_ptr<Texture2D> texture;
-
-		switch (Platform::GetRenderApi()) {
-			case RenderAPI::OpenGL:
-				texture = std::make_shared<GL_Texture2D>(path, type);
-		}
-
-		JERBOA_ASSERT(texture, "Implementation is missing or render API is not set");
-		return texture;
+		m_TextureResource = allocator.CreateTexture(data);
+		m_Width = data.GetWidth();
+		m_Height = data.GetHeight();
+		m_Type = type;
+		m_PixelFormat = data.GetPixelFormat();
 	}
 }
 

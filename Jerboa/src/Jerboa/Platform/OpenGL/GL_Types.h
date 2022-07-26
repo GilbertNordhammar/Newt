@@ -36,4 +36,17 @@ namespace Jerboa
 		JERBOA_ASSERT(false, "Unknown usage!");
 		return GL_INVALID_ENUM;
 	}
+
+	static GLenum GetPixelFormatGL(PixelFormat pixelFormat)
+	{
+		switch (pixelFormat)
+		{
+			case PixelFormat::Red:		return GL_RED;
+			case PixelFormat::RGB:		return GL_RGB;
+			case PixelFormat::RGBA:		return GL_RGBA;
+		}
+
+		JERBOA_ASSERT(false, "Unhandled PixelFormat entry");
+		return GL_INVALID_ENUM;
+	}
 }

@@ -94,4 +94,9 @@ namespace Jerboa
 	{
 		Static = 1, Dynamic = 2
 	};
+
+	enum class PixelFormat
+	{
+		None, Red, RGB, RGBA
+	};
 }

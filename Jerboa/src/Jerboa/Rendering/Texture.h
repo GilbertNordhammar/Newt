@@ -1,9 +1,15 @@
 #pragma once
 
+#include "Jerboa/Rendering/GPUResource.h"
+#include "Jerboa/Resource/Data/TextureData.h"
+#include "Jerboa/Core/Types.h"
+
 #include <string>
 #include <memory>
 
 namespace Jerboa {
+	class GPUResourceAllocator;
+
 	class Texture
 	{
 	public:
@@ -13,15 +19,28 @@ namespace Jerboa {
 		virtual void Bind(int slot) = 0;
 	};
 
-	enum class TextureType {
+	enum class TextureType 
+	{
 		Albedo, Normal, Metallic, Roughness, AmbientOcclusion
 	};
 
-	class Texture2D : public Texture {
+	class Texture2D
+	{
 	public:
-		static std::shared_ptr<Texture2D> Create(const std::string& path, TextureType type);
+		void Create(TextureType type, const TextureData& data, GPUResourceAllocator& allocator);
 
-		virtual TextureType GetType() const = 0;
+		const GPUResource&	GetGPUResouce() const { return m_TextureResource; }
+		uint32				GetWidth() const { return m_Width; }
+		uint32				GetHeight() const { return m_Height; };
+		TextureType			GetType() const { return m_Type; }
+		PixelFormat			GetPixelFormat() const { return m_PixelFormat; }
+
+	private:
+		GPUResource m_TextureResource;
+		uint32		m_Width;
+		uint32		m_Height;
+		TextureType m_Type;
+		PixelFormat m_PixelFormat;
 	};
 }
 

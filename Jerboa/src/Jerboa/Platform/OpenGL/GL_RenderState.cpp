@@ -109,9 +109,8 @@ namespace Jerboa
 
     void GL_RenderState::BindTextureImpl(Texture2D& texture, TextureSlot slot)
     {
-        JERBOA_ASSERT(false, "Not implemnted");
-        /*glActiveTexture(GL_TEXTURE0 + EnumToInt<int>(slot));
-        glBindTexture(GL_TEXTURE_2D, mTexture);*/
+        glActiveTexture(GL_TEXTURE0 + EnumToInt<int>(slot));
+        glBindTexture(GL_TEXTURE_2D, texture.GetGPUResouce().Get());
     }
 
     void GL_RenderState::BindShaderImpl(Shader& shader)

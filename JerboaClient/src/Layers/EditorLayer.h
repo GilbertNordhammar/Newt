@@ -23,7 +23,7 @@ namespace JerboaClient {
 	class EditorLayer : public Jerboa::Layer
 	{
 	public:
-		EditorLayer(Jerboa::Renderer* renderer);
+		EditorLayer(Jerboa::Renderer& renderer);
 
 		virtual void OnUpdate() override;
 		virtual void OnAttach() override;
@@ -32,7 +32,9 @@ namespace JerboaClient {
 	private:
 		void OnWindowResize(const Jerboa::WindowResizeEvent& evnt);
 
-		Jerboa::Renderer* m_Renderer;
+		Jerboa::Renderer& m_Renderer;
+		Jerboa::RenderState& m_RenderState;
+		Jerboa::GPUResourceAllocator& m_ResourceAllocator;
 
 		Jerboa::Camera mCamera;
 		std::shared_ptr<Jerboa::Shader> mPBRShader;
@@ -42,11 +44,11 @@ namespace JerboaClient {
 
 		Jerboa::Mesh m_SphereMesh;
 
-		std::shared_ptr<Jerboa::Texture2D> mAlbedoTexture;
-		std::shared_ptr<Jerboa::Texture2D> mAmbientOcclusionTexture;
-		std::shared_ptr<Jerboa::Texture2D> mNormalTexture;
-		std::shared_ptr<Jerboa::Texture2D> mMetallicTexture;
-		std::shared_ptr<Jerboa::Texture2D> mRoughnessTexture;
+		Jerboa::Texture2D m_AlbedoTexture;
+		Jerboa::Texture2D m_AmbientOcclusionTexture;
+		Jerboa::Texture2D m_NormalTexture;
+		Jerboa::Texture2D m_MetallicTexture;
+		Jerboa::Texture2D m_RoughnessTexture;
 
 		float mNormalMapMult = 5.0f;
 

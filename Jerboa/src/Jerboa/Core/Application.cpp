@@ -67,7 +67,7 @@ namespace Jerboa {
         Platform::SetRenderAPI(RenderAPI::OpenGL);
         InputInternals::Init();
         UI::ImGuiApp::Init(m_Window);
-        m_Renderer->GetState()->ResetStateToDefaultValues();
+        m_Renderer->GetStatePtr()->ResetStateToDefaultValues();
 
         OnInit();
     }
