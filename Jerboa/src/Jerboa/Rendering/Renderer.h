@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Jerboa/Core/Singleton.h"
 #include "Jerboa/Core/Types.h"
 #include "Jerboa/Rendering/GPUResourceAllocator.h"
 #include "Jerboa/Rendering/Mesh.h"
@@ -13,7 +14,7 @@
 namespace Jerboa {
 	class Mesh;
 
-	class Renderer
+	class Renderer : Singleton<Renderer>
 	{
 	public:
 		static Renderer* Create();

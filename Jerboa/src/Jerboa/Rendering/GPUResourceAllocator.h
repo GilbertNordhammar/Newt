@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Jerboa/Core/Singleton.h"
 #include "Jerboa/Rendering/GPUResource.h"
 #include "Jerboa/Rendering/IndexBuffer.h"
 #include "Jerboa/Rendering/VertexBuffer.h"
@@ -7,7 +8,7 @@
 
 namespace Jerboa
 {
-	class GPUResourceAllocator
+	class GPUResourceAllocator : Singleton<GPUResourceAllocator>
 	{
 	public:
 		virtual GPUResource	CreateVertexBuffer(const VertexBufferData& bufferData) = 0;
@@ -15,5 +16,4 @@ namespace Jerboa
 		virtual GPUResource	CreateIndexBuffer(const IndexBufferData& bufferData) = 0;
 		virtual GPUResource	CreateTexture(const TextureData& textureData) = 0;
 	};
-	
 }
