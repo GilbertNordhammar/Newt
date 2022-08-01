@@ -5,11 +5,11 @@ namespace Jerboa
 {
 	void GPUResource::Create(GenerateResourceFunc genObjFunc, DeleteResourceFunc delObjFunc)
 	{
-		JERBOA_ASSERT(!m_ID, "GPU resource has already been created");
+		JERBOA_ASSERT(!m_ResourceReference, "GPU resource has already been created");
 		JERBOA_ASSERT(genObjFunc, "Generate callback can't be null");
 		JERBOA_ASSERT(delObjFunc, "Delete callback can't be null");
 
-		genObjFunc(&m_ID);
+		genObjFunc(&m_ResourceReference);
 		fm_DeleteObject = delObjFunc;
 	}
 
@@ -23,25 +23,20 @@ namespace Jerboa
 		CleanUp();
 	}
 
-	GPUResource::operator uint64()
-	{ 
-		return m_ID; 
-	}
-
 	void GPUResource::Move(GPUResource& other)
 	{
 		CleanUp();
-		m_ID = std::move(other.m_ID);
+		m_ResourceReference = std::move(other.m_ResourceReference);
 		fm_DeleteObject = std::move(other.fm_DeleteObject);
 
-		other.m_ID = 0;
+		other.m_ResourceReference = 0;
 		other.fm_DeleteObject = nullptr;
 	}
 
 	void GPUResource::CleanUp()
 	{
-		if (fm_DeleteObject && m_ID)
-			fm_DeleteObject(&m_ID);			
+		if (fm_DeleteObject && m_ResourceReference)
+			fm_DeleteObject(&m_ResourceReference);			
 	}
 
 	GPUResource& GPUResource::operator=(GPUResource&&other) noexcept

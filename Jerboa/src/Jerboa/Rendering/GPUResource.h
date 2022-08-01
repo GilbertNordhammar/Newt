@@ -6,8 +6,8 @@
 
 namespace Jerboa
 {
-	using GenerateResourceFunc = std::function<void(uint64 *)>;
-	using DeleteResourceFunc = std::function<void(uint64 *)>;
+	using GenerateResourceFunc = std::function<void(uintptr* resource)>;
+	using DeleteResourceFunc = std::function<void(uintptr* resource)>;
 
 	class GPUResource
 	{
@@ -17,18 +17,18 @@ namespace Jerboa
 		GPUResource(GPUResource&& other);
 		~GPUResource();
 
-		uint64 Get() const { return m_ID; }
+		uintptr Get() const { return m_ResourceReference; }
 
 		GPUResource&operator=(GPUResource& other) = delete;
 		GPUResource&operator=(GPUResource&& other) noexcept;
-		operator uint64();
 
 	protected:
 		void Create(GenerateResourceFunc genObjFunc, DeleteResourceFunc delObjFunc);
 		void CleanUp();
 		void Move(GPUResource& other);
 
-		uint64 m_ID = 0;
+		//uint64 m_ID = 0;
+		uintptr m_ResourceReference = 0;
 		DeleteResourceFunc fm_DeleteObject;
 		
 		friend class GPUResourceAllocator;

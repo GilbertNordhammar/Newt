@@ -17,7 +17,7 @@ namespace Jerboa
 
 	GPUResource GL_GPUResourceAllocator::CreateVertexBuffer(const VertexBufferData& bufferData)
 	{
-		auto generateVertexBuffer = [&](uint64* vertexBufferObject)
+		auto generateVertexBuffer = [&](uintptr* vertexBufferObject)
 		{
 			GLuint glObject = 0;
 			glGenBuffers(1, &glObject);
@@ -42,7 +42,7 @@ namespace Jerboa
 			}
 		};
 
-		auto deleteVertexBuffer = [](uint64* vertexBufferObject) {
+		auto deleteVertexBuffer = [](uintptr* vertexBufferObject) {
 			GLuint glObject = *vertexBufferObject;
 			glDeleteBuffers(1, &glObject);
 		};
@@ -54,7 +54,7 @@ namespace Jerboa
 
 	GPUResource GL_GPUResourceAllocator::CreateIndexBuffer(const IndexBufferData& bufferData)
 	{
-		auto generateIndexBuffer = [&](uint64* indexBufferObject)
+		auto generateIndexBuffer = [&](uintptr* indexBufferObject)
 		{
 			GLuint glObject = 0;
 			glGenBuffers(1, &glObject);
@@ -65,7 +65,7 @@ namespace Jerboa
 			
 		};
 
-		auto deleteIndexBuffer = [](uint64* indexBufferObject) {
+		auto deleteIndexBuffer = [](uintptr* indexBufferObject) {
 			GLuint glObject = *indexBufferObject;
 			glDeleteBuffers(1, &glObject);
 		};
@@ -77,7 +77,7 @@ namespace Jerboa
 
 	GPUResource GL_GPUResourceAllocator::CreateVertexArrayObject()
 	{
-		auto generateVAO = [&](uint64* vao)
+		auto generateVAO = [&](uintptr* vao)
 		{
 			GLuint glObject = 0;
 			glGenVertexArrays(1, &glObject);
@@ -86,7 +86,7 @@ namespace Jerboa
 			m_RenderStateGL->m_BoundMeshStateDirty = true;
 		};
 
-		auto deleteVAO = [](uint64* vao) {
+		auto deleteVAO = [](uintptr* vao) {
 			GLuint glObject = *vao;
 			glDeleteVertexArrays(1, &glObject);
 		};
@@ -98,7 +98,7 @@ namespace Jerboa
 
 	GPUResource	GL_GPUResourceAllocator::CreateTexture(const TextureData& textureData)
 	{
-		auto generateTexture = [&](uint64* textureObject)
+		auto generateTexture = [&](uintptr* textureObject)
 		{
 			GLuint glObject = 0;
 			glGenTextures(1, &glObject);
@@ -122,7 +122,7 @@ namespace Jerboa
 			glBindTexture(GL_TEXTURE_2D, 0);
 		};
 
-		auto deleteTexture = [](uint64* vao) {
+		auto deleteTexture = [](uintptr* vao) {
 			GLuint glObject = *vao;
 			glDeleteTextures(1, &glObject);
 			
@@ -132,9 +132,10 @@ namespace Jerboa
 		texture.Create(generateTexture, deleteTexture);
 		return texture;
 	}
+
 	GPUResource GL_GPUResourceAllocator::CreateShader(const ShaderDataGLSL& shaderData)
 	{
-		auto generateShader = [&](uint64* shaderObject)
+		auto generateShader = [&](uintptr* shaderObject)
 		{
 			using namespace ShaderUtils;
 
@@ -152,7 +153,7 @@ namespace Jerboa
 				glDeleteShader(fragmentId);
 		};
 
-		auto deleteShader = [](uint64* shaderObject) {
+		auto deleteShader = [](uintptr* shaderObject) {
 			GLuint glObject = *shaderObject;
 			glDeleteProgram(glObject);
 		};
