@@ -3,9 +3,11 @@
 #include "ShaderLoaderGLSL.h"
 
 #include "Jerboa/Debug.h"
+#include "Jerboa/Core/File.h"
 #include "Jerboa/Core/String.h"
 
 #include <filesystem>
+#include <string_view>
 
 namespace Jerboa
 {
@@ -20,7 +22,10 @@ namespace Jerboa
 		std::string vertexCode = LoadCode(vertexPath);
 		std::string fragmentCode = LoadCode(fragmentPath);
 
-		return ShaderDataGLSL(ShaderSource(LoadCode(vertexPath)), ShaderSource(LoadCode(fragmentPath)));
+		std::string vertexName = GetFileName(vertexPath, FileNameMode::WithExtension);
+		std::string fragmentName = GetFileName(vertexPath, FileNameMode::WithoutExtension);
+
+		return ShaderDataGLSL(vertexName, ShaderSource(LoadCode(vertexPath)), fragmentName, ShaderSource(LoadCode(fragmentPath)));
 	}
 
 	ShaderDataGLSL ShaderLoaderGLSL::Load(const std::string& path)
@@ -59,7 +64,9 @@ namespace Jerboa
 
 		file.close();
 
-		return ShaderDataGLSL(ShaderSource(vertexCode), ShaderSource(fragmentCode));
+		std::string fileName = GetFileName(path, FileNameMode::WithoutExtension);
+		
+		return ShaderDataGLSL("VS_" + fileName, ShaderSource(vertexCode), "PS_" + fileName, ShaderSource(fragmentCode));
 	}
 
 	ShaderType ShaderLoaderGLSL::IdentifyShaderType(std::ifstream& file)

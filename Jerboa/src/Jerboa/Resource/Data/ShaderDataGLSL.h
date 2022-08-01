@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <string_view>
 
 namespace Jerboa
 {
@@ -13,7 +12,7 @@ namespace Jerboa
 		{
 		}
 
-		const std::string& GetSourceCode() const { return m_SourceCode; }
+		const std::string& GetCode() const { return m_SourceCode; }
 	private:
 		std::string m_SourceCode;
 	};
@@ -21,15 +20,19 @@ namespace Jerboa
 	class ShaderDataGLSL
 	{
 	public:
-		ShaderDataGLSL(const ShaderSource& vertexSource, const ShaderSource& fragmentSource)
-			: m_VertexSource(vertexSource), m_FragmentSource(fragmentSource)
+		ShaderDataGLSL(const std::string& vertexName, const ShaderSource& vertexSource, const std::string& fragmentName, const ShaderSource& fragmentSource)
+			: m_VertexName(vertexName), m_VertexSource(vertexSource), m_FragmentName(fragmentName), m_FragmentSource(fragmentSource)
 		{
 		}
 
-		const ShaderSource& GetVertexCode() const { return m_VertexSource; }
-		const ShaderSource& GetFragmentCode() const { return m_FragmentSource; }
+		const std::string& GetVertexName() const { return m_VertexName; }
+		const std::string& GetFragmentName() const { return m_FragmentName; }
+		const ShaderSource& GetVertexSource() const { return m_VertexSource; }
+		const ShaderSource& GetFragmentSource() const { return m_FragmentSource; }
 
 	private:
+		std::string m_VertexName = "";
+		std::string m_FragmentName = "";
 		ShaderSource m_VertexSource;
 		ShaderSource m_FragmentSource;
 	};

@@ -5,34 +5,39 @@
 
 namespace Jerboa::ShaderUtils
 {
-	GLuint CompileShader(const std::string& shaderCode, GLenum shaderType)
+	GLuint CompileShader(std::string_view name, const std::string& shaderCode, GLenum shaderType)
 	{
 		const char* gShaderCode = shaderCode.c_str();
 		auto shaderID = glCreateShader(shaderType);
 		glShaderSource(shaderID, 1, &gShaderCode, NULL);
 		glCompileShader(shaderID);
 
+		if (!ShaderCompiledSuccessfully(shaderID, name))
+		{
+			shaderID = 0;
+			glDeleteShader(shaderID);
+		}
+
 		return shaderID;
 	}
 
-	GLuint CreateShaderProgram(GLuint vertexShaderId, GLuint fragmentShaderId)
+	GLuint CreateAndLinkProgram(GLuint vertexShaderId, GLuint fragmentShaderId)
 	{
 		GLuint programID = glCreateProgram();
 		glAttachShader(programID, vertexShaderId);
 		glAttachShader(programID, fragmentShaderId);
 
 		glLinkProgram(programID);
+		if (!ProgramLinkedSuccessfully(programID))
+		{
+			glDeleteProgram(programID);
+			programID = 0;
+		}
 
 		return programID;
 	}
 
-	void DeleteShaders(GLuint vertexShaderId, GLuint fragmentShaderId)
-	{
-		glDeleteShader(vertexShaderId);
-		glDeleteShader(fragmentShaderId);
-	}
-
-	void CheckCompileErrors(GLuint shader, const std::string& shaderType)
+	bool ShaderCompiledSuccessfully(GLuint shader, std::string_view name)
 	{
 		GLint success;
 		GLchar infoLog[1024];
@@ -41,11 +46,12 @@ namespace Jerboa::ShaderUtils
 		if (!success)
 		{
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			JERBOA_LOG_ERROR("Failed to compile {0} shader!\n{1}", shaderType, infoLog);
+			JERBOA_LOG_ERROR("Failed to compile shader '{0}'\n{1}", name, infoLog);
 		}
+		return success;
 	}
 
-	void CheckLinkErrors(GLuint program)
+	bool ProgramLinkedSuccessfully(GLuint program)
 	{
 		GLint success;
 		GLchar infoLog[1024];
@@ -56,5 +62,6 @@ namespace Jerboa::ShaderUtils
 			glGetProgramInfoLog(program, 1024, NULL, infoLog);
 			JERBOA_LOG_ERROR("ERROR::PROGRAM_LINKING_ERROR\n {0}", infoLog);
 		}
+		return success;
 	}
 }

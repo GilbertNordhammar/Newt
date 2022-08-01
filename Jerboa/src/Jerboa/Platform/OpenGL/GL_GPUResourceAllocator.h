@@ -15,7 +15,7 @@ namespace Jerboa
 		GPUResource CreateVertexArrayObject() override; // Needed for OpenGL
 		GPUResource	CreateIndexBuffer(const IndexBufferData& bufferData) override;
 		GPUResource	CreateTexture(const TextureData& textureData) override;
-		GPUResource	CreateShader(ShaderDataGLSL shaderData) override;
+		GPUResource	CreateShader(const ShaderDataGLSL& shaderData) override;
 	private:
 		GL_RenderState* m_RenderStateGL;
 	};

@@ -132,24 +132,24 @@ namespace Jerboa
 		texture.Create(generateTexture, deleteTexture);
 		return texture;
 	}
-	GPUResource GL_GPUResourceAllocator::CreateShader(ShaderDataGLSL shaderData)
+	GPUResource GL_GPUResourceAllocator::CreateShader(const ShaderDataGLSL& shaderData)
 	{
 		auto generateShader = [&](uint64* shaderObject)
 		{
 			using namespace ShaderUtils;
 
-			const std::string& vertexCode = shaderData.GetVertexCode().GetSourceCode();
-			const std::string& fragmentCode = shaderData.GetFragmentCode().GetSourceCode();
-			unsigned int vertexId = CompileShader(vertexCode, GL_VERTEX_SHADER);
-			unsigned int fragmentId = CompileShader(fragmentCode, GL_FRAGMENT_SHADER);
+			const std::string& vertexCode = shaderData.GetVertexSource().GetCode();
+			const std::string& fragmentCode = shaderData.GetFragmentSource().GetCode();
+			unsigned int vertexId = CompileShader(shaderData.GetVertexName(), vertexCode, GL_VERTEX_SHADER);
+			unsigned int fragmentId = CompileShader(shaderData.GetFragmentName(), fragmentCode, GL_FRAGMENT_SHADER);
 
-			CheckCompileErrors(vertexId, "vertex");
-			CheckCompileErrors(fragmentId, "fragment");
+			if (vertexId && fragmentId)
+				*shaderObject = CreateAndLinkProgram(vertexId, fragmentId);
 
-			*shaderObject = CreateShaderProgram(vertexId, fragmentId);
-			CheckLinkErrors(*shaderObject);
-
-			DeleteShaders(vertexId, fragmentId);
+			if(vertexId)
+				glDeleteShader(vertexId);
+			if (fragmentId)
+				glDeleteShader(fragmentId);
 		};
 
 		auto deleteShader = [](uint64* shaderObject) {

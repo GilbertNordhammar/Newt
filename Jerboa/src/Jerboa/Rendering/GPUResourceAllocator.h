@@ -16,6 +16,6 @@ namespace Jerboa
 		virtual GPUResource CreateVertexArrayObject(); // Needed for OpenGL
 		virtual GPUResource	CreateIndexBuffer(const IndexBufferData& bufferData) = 0;
 		virtual GPUResource	CreateTexture(const TextureData& textureData) = 0;
-		virtual GPUResource	CreateShader(ShaderDataGLSL shaderData) = 0;
+		virtual GPUResource	CreateShader(const ShaderDataGLSL& shaderData) = 0;
 	};
 }
