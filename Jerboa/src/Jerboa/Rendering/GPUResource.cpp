@@ -9,12 +9,6 @@ namespace Jerboa
 		JERBOA_ASSERT(genObjFunc, "Generate callback can't be null");
 		JERBOA_ASSERT(delObjFunc, "Delete callback can't be null");
 
-		if (m_ID)
-		{
-			JERBOA_ASSERT(false, "Resource has already been created")
-			return;
-		}
-
 		genObjFunc(&m_ID);
 		fm_DeleteObject = delObjFunc;
 	}
