@@ -34,11 +34,12 @@ namespace JerboaClient {
 
 		Jerboa::Renderer& m_Renderer;
 		Jerboa::RenderState& m_RenderState;
+		Jerboa::ShaderState& m_ShaderState;
 		Jerboa::GPUResourceAllocator& m_ResourceAllocator;
 
-		Jerboa::Camera mCamera;
-		std::shared_ptr<Jerboa::Shader> mPBRShader;
-		std::shared_ptr<Jerboa::Shader> mPointLightShader;
+		Jerboa::Camera m_Camera;
+		Jerboa::Shader m_PBRShader;
+		Jerboa::Shader m_PointLightShader;
 
 		std::vector<Jerboa::Transform> mTransforms;
 

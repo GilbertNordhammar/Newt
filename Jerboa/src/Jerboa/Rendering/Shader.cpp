@@ -1,34 +1,12 @@
 #include "jerboa-pch.h"
 #include "Shader.h"
 
-#include "Jerboa/Platform/OpenGL/GL_Shader.h"
-#include "Jerboa/Platform/Platform.h"
-#include "Jerboa/Debug.h"
+#include "Jerboa/Resource/Data/ShaderDataGLSL.h"
+#include "Jerboa/Rendering/GPUResourceAllocator.h"
 
 namespace Jerboa {
-	std::shared_ptr<Shader> Shader::Create(const std::string& vertexPath, const std::string& fragmentPath)
+	void Shader::Create(ShaderDataGLSL data, GPUResourceAllocator& allocator)
 	{
-		std::shared_ptr<Shader> shader;
-
-		switch (Platform::GetRenderApi()) {
-			case RenderAPI::OpenGL: 
-				shader = std::make_shared<GL_Shader>(vertexPath, fragmentPath);
-		}
-
-		JERBOA_ASSERT(shader, "Implementation is missing or render API is not set");
-		return shader;
-	}
-
-	std::shared_ptr<Shader> Shader::Create(const std::string& path)
-	{
-		std::shared_ptr<Shader> shader;
-
-		switch (Platform::GetRenderApi()) {
-		case RenderAPI::OpenGL:
-			shader = std::make_shared<GL_Shader>(path);
-		}
-
-		JERBOA_ASSERT(shader, "Implementation is missing or render API is not set");
-		return shader;
+		m_GPUResource = allocator.CreateShader(data);
 	}
 }

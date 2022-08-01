@@ -115,7 +115,7 @@ namespace Jerboa
 
     void GL_RenderState::BindShaderImpl(Shader& shader)
     {
-        JERBOA_ASSERT(false, "Not implemnted");
+        glUseProgram(shader.GetGPUResource().Get());
     }
 
     void GL_RenderState::BindMeshImpl(Mesh& mesh)

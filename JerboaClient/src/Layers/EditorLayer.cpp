@@ -3,6 +3,7 @@
 #include "Jerboa/Core/Input.h"
 #include "Jerboa/Core/Time.h"
 #include "Jerboa/Rendering/PrimitiveFactory.h"
+#include "Jerboa/Resource/Loaders/ShaderLoaderGLSL.h"
 #include "Jerboa/Resource/Loaders/TextureLoader.h"
 #include "Jerboa/UI/ImGui/ImGuiApp.h"
 
@@ -10,13 +11,17 @@
 #include "optick.h"
 #include <random>
 
+
+using namespace Jerboa;
+
 namespace JerboaClient {
 	EditorLayer::EditorLayer(Jerboa::Renderer& renderer)
 		: m_Renderer(renderer),
         m_RenderState(renderer.GetState()),
+        m_ShaderState(renderer.GetShaderState()),
         m_ResourceAllocator(renderer.GetAllocator()),
         mWindowResizeObserver(Jerboa::EventObserver::Create(GetSharedEventBus(), this, &EditorLayer::OnWindowResize)),
-        mCamera(Jerboa::Camera(glm::vec3(-1, 0, 5), Jerboa::CameraType::Perspective, glm::radians(60.0)))
+        m_Camera(Jerboa::Camera(glm::vec3(-1, 0, 5), Jerboa::CameraType::Perspective, glm::radians(60.0)))
 	{
     }
 
@@ -49,7 +54,7 @@ namespace JerboaClient {
 	void EditorLayer::OnUpdate()
 	{
         OPTICK_EVENT("EditorLayer::OnUpdate()");
-        auto& camTrans = mCamera.GetTransform();
+        auto& camTrans = m_Camera.GetTransform();
         
         if (Jerboa::Window::Get()->GetCursorMode() == Jerboa::CursorMode::Disabled) {
             auto mouseMovement = Jerboa::Input::GetMouseMovement();
@@ -93,58 +98,59 @@ namespace JerboaClient {
             Jerboa::Window::Get()->SetCursorMode(Jerboa::CursorMode::Normal);
 
         // Drawing point light represenations
-        mPointLightShader->Bind();
-        mPointLightShader->SetMat4("mat_VP", mCamera.GetProjectionMatrix() * mCamera.GetViewMatrix());
+     
+        m_RenderState.BindShader(m_PointLightShader);
+        m_ShaderState.SetMat4("mat_VP", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
         for (auto& pointLight : mPointLights) {
             auto modelMatrix = glm::translate(glm::mat4(1.0), pointLight.Position);
             modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1));
-            mPointLightShader->SetMat4("mat_model", modelMatrix);
-            mPointLightShader->SetVec3("color", pointLight.GetColor());
+            m_ShaderState.SetMat4("mat_model", modelMatrix);
+            m_ShaderState.SetVec3("color", pointLight.GetColor());
 
             m_Renderer.Draw(m_SphereMesh);
         }
 
-        mPBRShader->Bind();
+        m_RenderState.BindShader(m_PBRShader);
         
         // MVP
-        mPBRShader->SetMat4("mat_view", mCamera.GetViewMatrix());
-        mPBRShader->SetMat4("mat_projection", mCamera.GetProjectionMatrix());
-        mPBRShader->SetMat4("mat_VP", mCamera.GetProjectionMatrix() * mCamera.GetViewMatrix());
+        m_ShaderState.SetMat4("mat_view", m_Camera.GetViewMatrix());
+        m_ShaderState.SetMat4("mat_projection", m_Camera.GetProjectionMatrix());
+        m_ShaderState.SetMat4("mat_VP", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
         
         // Textures
-        mPBRShader->SetInt("material.albedo", 0);
+        m_ShaderState.SetInt("material.albedo", 0);
         m_RenderState.BindTexture(m_AlbedoTexture, Jerboa::TextureSlot::S0);
         
-        mPBRShader->SetInt("material.ao", 1);
+        m_ShaderState.SetInt("material.ao", 1);
         m_RenderState.BindTexture(m_AmbientOcclusionTexture, Jerboa::TextureSlot::S1);
 
-        mPBRShader->SetInt("material.normal", 2);
+        m_ShaderState.SetInt("material.normal", 2);
         m_RenderState.BindTexture(m_NormalTexture, Jerboa::TextureSlot::S2);
 
-        mPBRShader->SetInt("material.metallic", 3);
+        m_ShaderState.SetInt("material.metallic", 3);
         m_RenderState.BindTexture(m_MetallicTexture, Jerboa::TextureSlot::S3);
 
-        mPBRShader->SetInt("material.roughness", 4);
+        m_ShaderState.SetInt("material.roughness", 4);
         m_RenderState.BindTexture(m_RoughnessTexture, Jerboa::TextureSlot::S4);
 
         // Camera & Lights
-        mPBRShader->SetVec3("cameraWorldPos", mCamera.GetTransform().GetPosition());
-        mPBRShader->SetInt("nPointLights", mPointLights.size());
+        m_ShaderState.SetVec3("cameraWorldPos", m_Camera.GetTransform().GetPosition());
+        m_ShaderState.SetInt("nPointLights", mPointLights.size());
         
         for (int i = 0; i < mPointLights.size(); i++) {
             std::string pl = "pointLights[" + std::to_string(i) + "]";
             
-            mPBRShader->SetVec3(pl + ".color", mPointLights[i].GetColor());
-            mPBRShader->SetFloat(pl + ".power", mPointLights[i].GetPower());
-            mPBRShader->SetVec3(pl + ".position", mPointLights[i].Position);
+            m_ShaderState.SetVec3(pl + ".color", mPointLights[i].GetColor());
+            m_ShaderState.SetFloat(pl + ".power", mPointLights[i].GetPower());
+            m_ShaderState.SetVec3(pl + ".position", mPointLights[i].Position);
         }
 
         // Misc
-        mPBRShader->SetBool("useGamma", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::G));
-        mPBRShader->SetBool("useNormalMap", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::N));
-        mPBRShader->SetBool("reorthogonalize", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::B));
-        mPBRShader->SetBool("toggle", Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::T));
-        mPBRShader->SetFloat("normalMapMult", mNormalMapMult);
+        m_ShaderState.SetBool("useGamma", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::G));
+        m_ShaderState.SetBool("useNormalMap", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::N));
+        m_ShaderState.SetBool("reorthogonalize", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::B));
+        m_ShaderState.SetBool("toggle", Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::T));
+        m_ShaderState.SetFloat("normalMapMult", mNormalMapMult);
  
         static const float rotationSpeed = 0.2;
         float rotation = 0;
@@ -154,7 +160,7 @@ namespace JerboaClient {
             auto modelMatrix = glm::translate(glm::mat4(1.0), trans.GetPosition());
             trans.Rotate(rotation, trans.GetUp());
             modelMatrix = modelMatrix * glm::toMat4(trans.GetOrientation());
-            mPBRShader->SetMat4("mat_model", modelMatrix);
+            m_ShaderState.SetMat4("mat_model", modelMatrix);
 
             m_Renderer.Draw(m_SphereMesh);
         }
@@ -200,8 +206,8 @@ namespace JerboaClient {
 
         m_SphereMesh.Create(sphereVertexData, &sphereIndexData, Jerboa::PrimitiveType::Triangle, m_Renderer.GetAllocatorPtr());
 
-        mPBRShader = Jerboa::Shader::Create("assets/shaders/pbr/Standard.glsl");
-        mPointLightShader = Jerboa::Shader::Create("assets/shaders/pbr/PointLight.glsl");
+        m_PBRShader.Create(ShaderLoaderGLSL::Load("assets/shaders/pbr/Standard.glsl"), m_ResourceAllocator);
+        m_PointLightShader.Create(ShaderLoaderGLSL::Load("assets/shaders/pbr/PointLight.glsl"), m_ResourceAllocator);
 
 
         m_AlbedoTexture.Create( Jerboa::TextureType::Albedo, Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/albedo.png"), m_ResourceAllocator);

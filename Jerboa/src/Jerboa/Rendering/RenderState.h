@@ -2,6 +2,9 @@
 
 #include "Jerboa/Core/Enum.h"
 #include "Jerboa/Core/Singleton.h"
+#include "Jerboa/Rendering/Mesh.h"
+#include "Jerboa/Rendering/Shader.h"
+#include "Jerboa/Rendering/Texture.h"
 
 #include "glm/glm.hpp"
 #include <memory>
@@ -9,10 +12,6 @@
 
 namespace Jerboa
 {
-    class Texture2D;
-    class Shader;
-    class Mesh;
-
     enum class BufferClearBits
     {
         None = 0,
@@ -182,7 +181,7 @@ namespace Jerboa
 
         // Resource binding variables
         // TODO: This can lead to dangling pointer if the resource is deallocated. Find a better solution
-        std::array<Texture2D*, EnumToInt<int>(TextureSlot::Count)>   m_BoundTextures; // TODO: Replace magic number for array size
+        std::array<Texture2D*, EnumToInt<int>(TextureSlot::Count)> m_BoundTextures; // TODO: Replace magic number for array size
         Shader*                     m_BoundShader = nullptr;
         Mesh*                       m_BoundMesh = nullptr;
 

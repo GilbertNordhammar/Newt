@@ -3,6 +3,7 @@
 
 #include "Jerboa/Debug.h"
 #include "Jerboa/Platform/OpenGL/GL_RenderState.h"
+#include "Jerboa/Platform/OpenGL/GL_ShaderUtils.h"
 #include "Jerboa/Platform/OpenGL/GL_Types.h"
 #include "Jerboa/Platform/OpenGL/OpenGL.h"
 
@@ -127,8 +128,37 @@ namespace Jerboa
 			
 		};
 
-		GPUResource VAO;
-		VAO.Create(generateTexture, deleteTexture);
-		return VAO;
+		GPUResource texture;
+		texture.Create(generateTexture, deleteTexture);
+		return texture;
+	}
+	GPUResource GL_GPUResourceAllocator::CreateShader(ShaderDataGLSL shaderData)
+	{
+		auto generateShader = [&](uint64* shaderObject)
+		{
+			using namespace ShaderUtils;
+
+			const std::string& vertexCode = shaderData.GetVertexCode().GetSourceCode();
+			const std::string& fragmentCode = shaderData.GetFragmentCode().GetSourceCode();
+			unsigned int vertexId = CompileShader(vertexCode, GL_VERTEX_SHADER);
+			unsigned int fragmentId = CompileShader(fragmentCode, GL_FRAGMENT_SHADER);
+
+			CheckCompileErrors(vertexId, "vertex");
+			CheckCompileErrors(fragmentId, "fragment");
+
+			*shaderObject = CreateShaderProgram(vertexId, fragmentId);
+			CheckLinkErrors(*shaderObject);
+
+			DeleteShaders(vertexId, fragmentId);
+		};
+
+		auto deleteShader = [](uint64* shaderObject) {
+			GLuint glObject = *shaderObject;
+			glDeleteProgram(glObject);
+		};
+
+		GPUResource shader;
+		shader.Create(generateShader, deleteShader);
+		return shader;
 	}
 }
