@@ -33,16 +33,17 @@ namespace Jerboa {
             }
         }
 
-        template<class EventType>
-        static constexpr EventIndex GetTypeIndex() {
-            return std::type_index(typeid(EventType));
-        }
-
     private:
         EventBus() {};
 
         static void Subscribe(EventCallback& callback, EventIndex id);
         static void Unsubscribe(EventCallback& callback, EventIndex id);
+
+        template<class EventType>
+        static constexpr EventIndex GetTypeIndex() 
+        {
+            return std::type_index(typeid(EventType));
+        }
 
         static std::unordered_map<EventIndex, std::shared_ptr<CallbackList>> m_Subscribers;
     };
