@@ -33,6 +33,7 @@ namespace Jerboa {
 		virtual void Bind() {};
 		virtual void UnBind() {};
 
+		GPUResource&				GetGPUResource() { return m_GPUResource; }
 		const VertexBufferUsage&	GetUsage() const { return m_Usage; };
 		const VertexBufferLayout&	GetLayout() const { return m_Layout; };
 		uint32						GetSize() const { return m_Size; }
@@ -44,7 +45,7 @@ namespace Jerboa {
 	protected:
 		VertexBuffer(uint32 size, VertexBufferUsage usage, VertexBufferLayout layout);
 
-		GPUResource m_VertexBufferResource;
+		GPUResource m_GPUResource;
 		VertexBufferUsage m_Usage;
 		VertexBufferLayout m_Layout;
 		uint32 m_Size = 0;

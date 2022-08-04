@@ -27,12 +27,13 @@ namespace Jerboa {
 		virtual void	Bind() {};
 		virtual void	Unbind() {};
 
+		GPUResource&	GetGPUResource() { return m_GPUResource; }
 		uint32_t		GetSize() const { return m_Size; };
 		uint32_t		GetCount() const { return m_Size / sizeof(uint32_t); };
 
 		virtual ~IndexBuffer() {};
 	protected:
-		GPUResource m_IndexBufferResource;
+		GPUResource m_GPUResource;
 		uint32_t m_Size = 0;
 	};
 }

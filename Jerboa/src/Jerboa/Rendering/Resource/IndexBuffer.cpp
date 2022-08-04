@@ -8,7 +8,7 @@
 namespace Jerboa {
 	void IndexBuffer::Create(IndexBufferData bufferData, GPUResourceAllocator* resourceAllocator)
 	{
-		m_IndexBufferResource = resourceAllocator->CreateIndexBuffer(bufferData);
+		m_GPUResource = resourceAllocator->CreateIndexBuffer(bufferData);
 		m_Size = bufferData.m_Size;
 	}
 }
