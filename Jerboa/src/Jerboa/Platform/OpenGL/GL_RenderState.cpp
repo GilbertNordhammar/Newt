@@ -123,6 +123,22 @@ namespace Jerboa
         glBindVertexArray(mesh.GetVAO().Get());
     }
 
+    void GL_RenderState::ClearBoundTextureImpl(TextureSlot slot)
+    {
+        glActiveTexture(GL_TEXTURE0 + EnumToInt<int>(slot));
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    void GL_RenderState::ClearBoundShaderImpl()
+    {
+        glUseProgram(0);
+    }
+
+    void GL_RenderState::ClearBoundMeshImpl()
+    {
+        glBindVertexArray(0);
+    }
+
     void GL_RenderState::SetClearColorImpl(const glm::vec4& clearColor)
     {
         if (m_ClearColor != clearColor) return; // Is this floating point comparison?

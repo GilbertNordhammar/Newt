@@ -7,6 +7,13 @@
 
 namespace Jerboa
 {
+	RenderState::RenderState()
+	{
+		m_EventObserver.Subscribe(this, &RenderState::OnMeshDestroyed);
+		m_EventObserver.Subscribe(this, &RenderState::OnShaderDestroyed);
+		m_EventObserver.Subscribe(this, &RenderState::OnTextureDestroyed);
+	}
+
 	void RenderState::ResetStateToDefaultValues()
 	{
 		// Resource binding
@@ -56,6 +63,24 @@ namespace Jerboa
 	{
 		BindMeshImpl(mesh);
 		m_BoundMesh = &mesh;
+	}
+
+	void RenderState::ClearBoundTexture(TextureSlot slot)
+	{
+		ClearBoundTextureImpl(slot);
+		m_BoundTextures[EnumToInt<int>(slot)] = nullptr;
+	}
+
+	void RenderState::ClearBoundShader()
+	{
+		ClearBoundShaderImpl();
+		m_BoundShader = nullptr;
+	}
+
+	void RenderState::ClearBoundMesh()
+	{
+		ClearBoundMeshImpl();
+		m_BoundMesh = nullptr;
 	}
 
 	void RenderState::SetClearColor(const glm::vec4& clearColor)
@@ -160,5 +185,26 @@ namespace Jerboa
 		SetBlendingFactorImpl(source, destination);
 		m_BlendingFactorSource = source;
 		m_BlendingFactorDestination = destination;
+	}
+
+	void RenderState::OnMeshDestroyed(const MeshDestroyedEvent& evnt)
+	{
+		if (m_BoundMesh == &evnt.m_Mesh)
+			ClearBoundMesh();
+	}
+
+	void RenderState::OnShaderDestroyed(const ShaderDestroyedEvent& evnt)
+	{
+		if (m_BoundShader == &evnt.m_Shader)
+			ClearBoundShader();
+	}
+
+	void RenderState::OnTextureDestroyed(const TextureDestroyedEvent& evnt)
+	{
+		for (int i = 0; i < EnumToInt<int>(TextureSlot::Count); i++)
+		{
+			if (m_BoundTextures[i] == &evnt.m_Texture)
+				ClearBoundTexture(static_cast<TextureSlot>(i));
+		}
 	}
 }

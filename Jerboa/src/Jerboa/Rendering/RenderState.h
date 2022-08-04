@@ -1,7 +1,14 @@
 #pragma once
 
 #include "Jerboa/Core/Enum.h"
+#include "Jerboa/Core/EventObserver.h"
 #include "Jerboa/Core/Singleton.h"
+
+// TODO: Callback won't get called unless the event is included in the header. Find out why
+#include "Jerboa/Rendering/Events/MeshDestroyedEvent.h"
+#include "Jerboa/Rendering/Events/ShaderDestroyedEvent.h"
+#include "Jerboa/Rendering/Events/TextureDestroyedEvent.h"
+
 #include "Jerboa/Rendering/Resource/Mesh.h"
 #include "Jerboa/Rendering/Resource/Shader.h"
 #include "Jerboa/Rendering/Resource/Texture.h"
@@ -12,6 +19,8 @@
 
 namespace Jerboa
 {
+    class MeshDestroyedEvent;
+
     enum class BufferClearBits
     {
         None = 0,
@@ -89,12 +98,19 @@ namespace Jerboa
     class RenderState : Singleton<RenderState>
     {
     public:
+        RenderState();
+        virtual ~RenderState() {}
+
         void                ResetStateToDefaultValues();
 
         // Resource binding interface
         void				BindTexture(Texture2D& texture, TextureSlot slot);
         void				BindShader(Shader& shader);
         void				BindMesh(Mesh& mesh);
+
+        void                ClearBoundTexture(TextureSlot slot);
+        void                ClearBoundShader();
+        void                ClearBoundMesh();
 
         Texture2D*          GetBoundTexture(TextureSlot slot) { return m_BoundTextures[EnumToInt<int>(slot)]; }
         Shader*             GetBoundShader() { return m_BoundShader; }
@@ -153,6 +169,10 @@ namespace Jerboa
         virtual void	    BindTextureImpl(Texture2D& texture, TextureSlot slot) = 0;
         virtual void	    BindShaderImpl(Shader& shader) = 0;
         virtual void	    BindMeshImpl(Mesh& mesh) = 0;
+
+        virtual void        ClearBoundTextureImpl(TextureSlot slot) = 0;
+        virtual void        ClearBoundShaderImpl() = 0;
+        virtual void        ClearBoundMeshImpl() = 0;
 
         // Buffer clearing virtual interface
         virtual void        SetClearColorImpl(const glm::vec4& clearColor) = 0;
@@ -215,5 +235,13 @@ namespace Jerboa
         glm::vec4                   m_BlendingColor;
         BlendingFactor              m_BlendingFactorSource;
         BlendingFactor              m_BlendingFactorDestination;
+
+    private:
+        // Internal stuff
+        void OnMeshDestroyed(const MeshDestroyedEvent& evnt);
+        void OnShaderDestroyed(const ShaderDestroyedEvent& evnt);
+        void OnTextureDestroyed(const TextureDestroyedEvent& evnt);
+
+        EventObserver m_EventObserver;
     };
 }

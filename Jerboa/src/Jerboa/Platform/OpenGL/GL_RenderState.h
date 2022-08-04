@@ -21,6 +21,10 @@ namespace Jerboa
         void	    BindShaderImpl(Shader& shader) override;
         void	    BindMeshImpl(Mesh& mesh) override;
 
+        void        ClearBoundTextureImpl(TextureSlot slot) override;
+        void        ClearBoundShaderImpl() override;
+        void        ClearBoundMeshImpl() override;
+
         // Buffer clearing
         void        SetClearColorImpl(const glm::vec4& clearColor) override;
         void        SetClearDepthImpl(float clearDepth) override;

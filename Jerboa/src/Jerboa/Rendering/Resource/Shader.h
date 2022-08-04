@@ -12,6 +12,7 @@ namespace Jerboa {
     class Shader
     {
     public:
+        ~Shader();
         void Create(ShaderDataGLSL data, GPUResourceAllocator& allocator);
         GPUResource& GetGPUResource() { return m_GPUResource; }
     private:

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Jerboa/Core/Event.h"
-#include "Jerboa/Rendering/Shader.h"
+#include "Jerboa/Rendering/Resource/Shader.h"
 
 namespace Jerboa {
 	struct ShaderDestroyedEvent : Event 

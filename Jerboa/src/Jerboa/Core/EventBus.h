@@ -21,15 +21,16 @@ namespace Jerboa {
     public:
         template<class EventType>
         static void Publish(const EventType& evnt) {
-            auto callbacks = m_Subscribers[GetTypeIndex<EventType>()];
+            auto callbacksIterator = m_Subscribers.find(GetTypeIndex<EventType>());
 
-            if (callbacks == nullptr) 
+            if (callbacksIterator == m_Subscribers.end())
                 return;
-
-            for (auto& callback : *callbacks) {
-                if (callback != nullptr) {
+            
+            std::shared_ptr<CallbackList> callbacks = callbacksIterator->second;
+            for (auto& callback : *callbacks) 
+            {
+                if (callback != nullptr) 
                     (*callback)(evnt);
-                }
             }
         }
 

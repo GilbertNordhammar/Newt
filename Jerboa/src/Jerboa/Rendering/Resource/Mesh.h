@@ -23,6 +23,7 @@ namespace Jerboa
 	class Mesh
 	{
 	public:
+		~Mesh();
 		void Create(const VertexBufferData& vertexBufferData, const IndexBufferData* indexBufferData, PrimitiveType primitiveType, GPUResourceAllocator* resourceAllocator);
 		
 		bool						IsIndexed() const;

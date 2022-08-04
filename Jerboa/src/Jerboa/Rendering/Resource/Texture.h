@@ -28,6 +28,7 @@ namespace Jerboa
 	class Texture2D
 	{
 	public:
+		~Texture2D();
 		void Create(TextureType type, const TextureData& data, GPUResourceAllocator& allocator);
 
 		const GPUResource&	GetGPUResouce() const { return m_TextureResource; }
