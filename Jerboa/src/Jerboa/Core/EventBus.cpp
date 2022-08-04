@@ -2,23 +2,25 @@
 #include "EventBus.h"
 
 namespace Jerboa {
-    void EventBus::Subscribe(EventCallback& callback, std::type_index id) {
-        auto callbacks = mSubscribers[id];
+    std::unordered_map<EventIndex, std::shared_ptr<CallbackList>> EventBus::m_Subscribers = {};
 
-        if (callbacks == nullptr) {
+    void EventBus::Subscribe(EventCallback& callback, EventIndex id) {
+        std::shared_ptr<CallbackList> callbacks = m_Subscribers[id];
+        
+        if (callbacks == nullptr) 
+        {
             callbacks = std::make_shared<CallbackList>();
-            mSubscribers[id] = callbacks;
+            m_Subscribers[id] = callbacks;
         }
 
         callbacks->push_back(&callback);
     }
+    
+    void EventBus::Unsubscribe(EventCallback& callback, EventIndex id) {
+        auto callbacks = m_Subscribers[id];
 
-    void EventBus::Unsubscribe(EventCallback& callback, std::type_index id) {
-        auto callbacks = mSubscribers[id];
-
-        if (callbacks == nullptr) {
+        if (callbacks == nullptr)
             return;
-        }
 
         callbacks->remove(&callback);
     }

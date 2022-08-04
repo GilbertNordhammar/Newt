@@ -20,9 +20,9 @@ namespace JerboaClient {
         m_RenderState(renderer.GetState()),
         m_ShaderState(renderer.GetShaderState()),
         m_ResourceAllocator(renderer.GetAllocator()),
-        mWindowResizeObserver(Jerboa::EventObserver::Create(GetSharedEventBus(), this, &EditorLayer::OnWindowResize)),
         m_Camera(Jerboa::Camera(glm::vec3(-1, 0, 5), Jerboa::CameraType::Perspective, glm::radians(60.0)))
 	{
+        m_EventObserver.Subscribe(this, &EditorLayer::OnWindowResize);
     }
 
 	void EditorLayer::OnImGuiRender()

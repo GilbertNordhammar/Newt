@@ -13,20 +13,18 @@ namespace Jerboa {
     class EventObserver;
     
     typedef std::function<void(const Event&)> EventCallback;
+    typedef std::list<EventCallback*> CallbackList;
+    typedef std::type_index EventIndex;
 
     class EventBus {
         friend class EventObserver;
-
-        typedef std::list<EventCallback*> CallbackList;
-    
     public:
         template<class EventType>
-        void Publish(const EventType& evnt) {
-            auto callbacks = mSubscribers[GetTypeIndex<EventType>()];
+        static void Publish(const EventType& evnt) {
+            auto callbacks = m_Subscribers[GetTypeIndex<EventType>()];
 
-            if (callbacks == nullptr) {
+            if (callbacks == nullptr) 
                 return;
-            }
 
             for (auto& callback : *callbacks) {
                 if (callback != nullptr) {
@@ -36,14 +34,16 @@ namespace Jerboa {
         }
 
         template<class EventType>
-        static std::type_index GetTypeIndex() {
+        static constexpr EventIndex GetTypeIndex() {
             return std::type_index(typeid(EventType));
         }
 
     private:
-        void Subscribe(EventCallback& callback, std::type_index id);
-        void Unsubscribe(EventCallback& callback, std::type_index id);
+        EventBus() {};
 
-        std::unordered_map<std::type_index, std::shared_ptr<CallbackList>> mSubscribers;
+        static void Subscribe(EventCallback& callback, EventIndex id);
+        static void Unsubscribe(EventCallback& callback, EventIndex id);
+
+        static std::unordered_map<EventIndex, std::shared_ptr<CallbackList>> m_Subscribers;
     };
 };

@@ -5,6 +5,7 @@
 
 #include "Jerboa/Debug.h"
 #include "Jerboa/Core/KeyCode.h"
+#include "Jerboa/Core/EventBus.h"
 
 #include "Jerboa/Core/Events/WindowResizeEvent.h"
 #include "Jerboa/Core/Events/WindowCloseEvent.h"
@@ -106,7 +107,7 @@ namespace Jerboa {
 
 			data.width = width;
 			data.height = height;
-			data.eventBus->Publish(WindowResizeEvent(width, height));
+			EventBus::Publish(WindowResizeEvent(width, height));
 		});
 
 		glfwSetWindowCloseCallback(mWindow, [](GLFWwindow* window)
@@ -114,7 +115,7 @@ namespace Jerboa {
 			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
 
 			WindowCloseEvent event;
-			data.eventBus->Publish(WindowCloseEvent());
+			EventBus::Publish(WindowCloseEvent());
 		});
 
 		glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -127,17 +128,17 @@ namespace Jerboa {
 			{
 				case GLFW_PRESS:
 				{
-					data.eventBus->Publish(KeyPressedEvent(keyCode, modsKeyCode));
+					EventBus::Publish(KeyPressedEvent(keyCode, modsKeyCode));
 					break;
 				}
 				case GLFW_RELEASE:
 				{
-					data.eventBus->Publish(KeyReleasedEvent(keyCode, modsKeyCode));
+					EventBus::Publish(KeyReleasedEvent(keyCode, modsKeyCode));
 					break;
 				}
 				case GLFW_REPEAT:
 				{
-					data.eventBus->Publish(KeyRepeatEvent(keyCode, modsKeyCode));
+					EventBus::Publish(KeyRepeatEvent(keyCode, modsKeyCode));
 					break;
 				}
 			}
@@ -146,13 +147,13 @@ namespace Jerboa {
 		glfwSetCursorPosCallback(mWindow, [](GLFWwindow* window, double x, double y)
 		{
 			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
-			data.eventBus->Publish(MouseMovedEvent(x, y));
+			EventBus::Publish(MouseMovedEvent(x, y));
 		});
 
 		glfwSetScrollCallback(mWindow, [](GLFWwindow* window, double xOffset, double yOffset)
 		{
 			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
-			data.eventBus->Publish(MouseScrolledEvent(xOffset, yOffset));
+			EventBus::Publish(MouseScrolledEvent(xOffset, yOffset));
 		});
 
 		glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods)
@@ -165,12 +166,12 @@ namespace Jerboa {
 			{
 				case GLFW_PRESS:
 				{
-					data.eventBus->Publish(MouseButtonPressedEvent(buttonCode, modsKeyCode));
+					EventBus::Publish(MouseButtonPressedEvent(buttonCode, modsKeyCode));
 					break;
 				}
 				case GLFW_RELEASE:
 				{
-					data.eventBus->Publish(MouseButtonReleasedEvent(buttonCode, modsKeyCode));
+					EventBus::Publish(MouseButtonReleasedEvent(buttonCode, modsKeyCode));
 					break;
 				}
 			}

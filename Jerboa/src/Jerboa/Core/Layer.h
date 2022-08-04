@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EventBus.h"
+#include <string>
 
 namespace Jerboa {
 	class Layer
@@ -14,19 +14,8 @@ namespace Jerboa {
 		virtual void OnUpdate() {}
 		virtual void OnImGuiRender() {}
 
-		template<class EventType>
-		void PublishInternalEvent(const EventType& evnt) {
-			mInternalEventBus.Publish(evnt);
-		}
-
-		static EventBus* GetSharedEventBus() {
-			static EventBus instance;
-			return &instance;
-		}
-
-		inline const std::string& GetName() const { return mDebugName; }
+		const std::string& GetName() const { return mDebugName; }
 	protected:
-		EventBus mInternalEventBus;
 		std::string mDebugName;
 	};
 }

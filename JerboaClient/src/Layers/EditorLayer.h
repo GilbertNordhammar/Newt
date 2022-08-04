@@ -3,6 +3,8 @@
 #include "Jerboa/Debug.h"
 #include "Jerboa/Core/Layer.h"
  
+#include "Jerboa/Core/EventBus.h"
+
 #include "Jerboa/Core/Events/MouseMovedEvent.h"
 #include "Jerboa/Core/Events/WindowResizeEvent.h"
 #include "Jerboa/Rendering/Camera.h"
@@ -55,7 +57,7 @@ namespace JerboaClient {
 
 		std::vector<Jerboa::PointLight> mPointLights;
 
-		Jerboa::EventObserver mWindowResizeObserver;
+		Jerboa::EventObserver m_EventObserver;
 	};
 }
 

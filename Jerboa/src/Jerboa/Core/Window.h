@@ -1,7 +1,5 @@
 #pragma once
 
-#include "EventBus.h"
-
 #include "glm/vec2.hpp"
 
 #include <memory>
@@ -44,7 +42,6 @@ namespace Jerboa {
 		virtual int GetHeight() const = 0;
 		virtual glm::ivec2 GetPosition() const = 0;
 		virtual void* GetNativeWindow() const = 0;
-		virtual std::weak_ptr<EventBus> GetEventBus() = 0;
 
 		virtual CursorMode GetCursorMode() = 0;
 		virtual void SetCursorMode(CursorMode mode) = 0;

@@ -27,55 +27,38 @@ namespace Jerboa
     class Application
     {
     public:
-        Application(const ApplicationProps &props);
-        virtual ~Application() = 0;
+                        Application(const ApplicationProps &props);
+        virtual         ~Application() = 0;
 
-        void Run();
+        void            Run();
 
-        void PushLayer(Layer *layer);
-        void PushOverlay(Layer *overlay);
+        void            PushLayer(Layer *layer);
+        void            PushOverlay(Layer *overlay);
 
-        Window*      GetWindow() { return m_Window; }
-        Renderer&    GetRenderer() { return *m_Renderer; }
-        Renderer*    GetRendererPtr() { return m_Renderer; }
-        bool         IsRunning() { return m_Running; }
+        Window*         GetWindow() { return m_Window; }
+        Renderer&       GetRenderer() { return *m_Renderer; }
+        Renderer*       GetRendererPtr() { return m_Renderer; }
+        bool            IsRunning() { return m_Running; }
 
     private:
-        void Init();
-        void ShutDown();
+        void            Init();
+        void            ShutDown();
 
-        void RenderImGui();
+        void            RenderImGui();
 
-        void OnWindowResize(const WindowResizeEvent &evnt);
-        void OnWindowClose(const WindowCloseEvent &evnt);
-        void OnKeyPressed(const KeyPressedEvent &evnt);
-        void OnKeyReleased(const KeyReleasedEvent &evnt);
-        void OnKeyRepeat(const KeyRepeatEvent &evnt);
-        void OnMouseMoved(const MouseMovedEvent &evnt);
-        void OnMouseScrolled(const MouseScrolledEvent &evnt);
-        void OnMouseButtonPressed(const MouseButtonPressedEvent &evnt);
-        void OnMouseButtonReleased(const MouseButtonReleasedEvent &evnt);
+        void            OnWindowClose(const WindowCloseEvent &evnt);
 
-        virtual void OnInit() {}
-        virtual void OnShutdown() {}
+        virtual void    OnInit() {}
+        virtual void    OnShutdown() {}
 
-        Window* m_Window;
-        bool m_Running = true;
-        LayerStack m_LayerStack;
-        Renderer* m_Renderer;
-
-        EventObserver
-            mWindowResizeObserver,
-            mWindowCloseObserver,
-            mKeyPressedObserver,
-            mKeyReleasedObserver,
-            mKeyRepeatObserver,
-            mMouseMovedObserver,
-            mMouseScrolledObserver,
-            mMouseButtonPressedObserver,
-            mMouseButtonReleasedObserver;
+        Window*         m_Window;
+        bool            m_Running = true;
+        LayerStack      m_LayerStack;
+        Renderer*       m_Renderer;
+        EventObserver   m_EventObserver;
     };
 
     // Implemented by client
     Application *CreateApplication();
+
 }; // namespace Jerboa

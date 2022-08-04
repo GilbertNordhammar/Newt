@@ -1,42 +1,44 @@
 #pragma once
 #include "EventBus.h"
 
+#include "Jerboa/Debug.h"
+#include <string>
+
 namespace Jerboa {
     class EventObserver 
     {
     public:
         template<class EventType, class T>
-        static EventObserver Create(EventBus* eventBus, T* instance, void (T::* memberFunction)(const EventType&) ) {
-            return EventObserver(
-                eventBus,
-                [=](const Event& evnt) { (instance->*memberFunction)(static_cast<const EventType&>(evnt)); },
-                EventBus::GetTypeIndex<EventType>()
+        void Subscribe(T* instance, void (T::* memberFunction)(const EventType&))
+        {
+            auto eventIndex = EventBus::GetTypeIndex<EventType>();
+            m_Callbacks[eventIndex] = [=](const Event& evnt) { (instance->*memberFunction)(static_cast<const EventType&>(evnt)); };
+            EventBus::Subscribe(
+                m_Callbacks[eventIndex],
+                eventIndex
             );
         }
 
-        
-        template<class EventType, class T>
-        static std::unique_ptr<EventObserver> CreatePtr(EventBus* eventBus, T* instance, void (T::* memberFunction)(const EventType&)) {
-            return std::unique_ptr<EventObserver>( // Not as safe as std::make_unique, but then the constructor would need to be public
-                new EventObserver(
-                    eventBus,
-                    [=](const Event& evnt) { (instance->*memberFunction)(static_cast<const EventType&>(evnt)); },
-                    EventBus::GetTypeIndex<EventType>()
-                )
-            );
+        template<class EventType>
+        void Unsubscribe()
+        {
+            auto eventIndex = EventBus::GetTypeIndex<EventType>();
+            auto callbackIterator = m_Callbacks.find(eventIndex);
+            bool isSubscribed = callbackIterator != m_Callbacks.end();
+            JERBOA_ASSERT(isSubscribed, "Can't unsubscribe to event '" + std::string(typeid(EventType).name()) + "' since it's not being subscribed to in the first place.");
+            if (isSubscribed)
+            {
+                EventBus::Unsubscribe(callbackIterator->second, eventIndex);
+                m_Callbacks.erase(eventIndex);
+            }
         }
 
-        void Subscribe(EventCallback& callback, std::type_index id);
-        void Unsubscribe(EventCallback& callback, std::type_index id);
+        void UnsubscribeAll();
         
         ~EventObserver();
 
     private:
-        EventObserver(EventBus* eventBus, EventCallback callback, std::type_index eventIndex);
-
-        EventCallback mCallback;
-        std::type_index mEventIndex;
-        EventBus* mEventBus;
+        std::unordered_map<EventIndex, EventCallback> m_Callbacks;
     };
 }
 

@@ -18,7 +18,6 @@ namespace Jerboa
 		virtual int GetWidth() const override { return mData.width; };
 		virtual int GetHeight() const override { return mData.height; };
 		virtual glm::ivec2 GetPosition() const override;
-		virtual std::weak_ptr<EventBus> GetEventBus() override { return mData.eventBus; };
 
 		virtual CursorMode GetCursorMode() override { return mData.cursorMode; }
 		virtual void SetCursorMode(CursorMode mode) override;
@@ -34,8 +33,6 @@ namespace Jerboa
 			int width, height;
 			bool VSync;
 			CursorMode cursorMode;
-
-			std::shared_ptr<EventBus> eventBus = std::make_shared<EventBus>();
 		};
 
 		void Init(const WindowProps& props);
