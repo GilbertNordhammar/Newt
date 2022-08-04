@@ -1,11 +1,9 @@
 #pragma once
 #include "EventBus.h"
-#include "EventObserverBase.h"
-
-#include <memory>
 
 namespace Jerboa {
-    class EventObserver : EventObserverBase {
+    class EventObserver 
+    {
     public:
         template<class EventType, class T>
         static EventObserver Create(EventBus* eventBus, T* instance, void (T::* memberFunction)(const EventType&) ) {
@@ -27,6 +25,9 @@ namespace Jerboa {
                 )
             );
         }
+
+        void Subscribe(EventCallback& callback, std::type_index id);
+        void Unsubscribe(EventCallback& callback, std::type_index id);
         
         ~EventObserver();
 
@@ -35,6 +36,7 @@ namespace Jerboa {
 
         EventCallback mCallback;
         std::type_index mEventIndex;
+        EventBus* mEventBus;
     };
 }
 

@@ -10,12 +10,12 @@
 #include <functional>
 
 namespace Jerboa {
-    class EventObserverBase;
+    class EventObserver;
     
     typedef std::function<void(const Event&)> EventCallback;
 
     class EventBus {
-        friend class Jerboa::EventObserverBase;
+        friend class EventObserver;
 
         typedef std::list<EventCallback*> CallbackList;
     
