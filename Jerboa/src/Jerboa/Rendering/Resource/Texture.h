@@ -1,13 +1,14 @@
 #pragma once
 
-#include "Jerboa/Rendering/GPUResource.h"
+#include "Jerboa/Rendering/Resource/Internal/GPUResource.h"
 #include "Jerboa/Resource/Data/TextureData.h"
 #include "Jerboa/Core/Types.h"
 
 #include <string>
 #include <memory>
 
-namespace Jerboa {
+namespace Jerboa 
+{
 	class GPUResourceAllocator;
 
 	class Texture

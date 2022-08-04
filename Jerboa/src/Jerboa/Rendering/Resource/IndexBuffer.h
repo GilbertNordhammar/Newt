@@ -2,7 +2,7 @@
 
 #include <memory>
 #include "Jerboa/Core/Types.h"
-#include "Jerboa/Rendering/GPUResource.h"
+#include "Jerboa/Rendering/Resource/Internal/GPUResource.h"
 
 
 namespace Jerboa {

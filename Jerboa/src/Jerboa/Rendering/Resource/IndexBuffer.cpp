@@ -3,7 +3,7 @@
 
 #include "Jerboa/Debug.h"
 #include "Jerboa/Platform/Platform.h"
-#include "Jerboa/Rendering/GPUResourceAllocator.h"
+#include "Jerboa/Rendering/Resource/Internal/GPUResourceAllocator.h"
 
 namespace Jerboa {
 	void IndexBuffer::Create(IndexBufferData bufferData, GPUResourceAllocator* resourceAllocator)

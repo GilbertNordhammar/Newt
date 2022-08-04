@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Jerboa/Core/Types.h"
-#include "Jerboa/Rendering/IndexBuffer.h"
-#include "Jerboa/Rendering/VertexBuffer.h"
-#include "Jerboa/Rendering/GPUResource.h"
+#include "Jerboa/Rendering/Resource/IndexBuffer.h"
+#include "Jerboa/Rendering/Resource/VertexBuffer.h"
+#include "Jerboa/Rendering/Resource/Internal/GPUResource.h"
 
 #include <memory>
 

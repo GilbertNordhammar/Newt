@@ -1,7 +1,7 @@
 #include "jerboa-pch.h"
 #include "Mesh.h"
 
-#include "Jerboa/Rendering/GPUResourceAllocator.h"
+#include "Jerboa/Rendering/Resource/Internal/GPUResourceAllocator.h"
 
 namespace Jerboa
 {

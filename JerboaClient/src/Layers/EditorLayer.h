@@ -8,14 +8,14 @@
 #include "Jerboa/Core/Events/MouseMovedEvent.h"
 #include "Jerboa/Core/Events/WindowResizeEvent.h"
 #include "Jerboa/Rendering/Camera.h"
-#include "Jerboa/Rendering/VertexBuffer.h"
-#include "Jerboa/Rendering/IndexBuffer.h"
-#include "Jerboa/Rendering/Shader.h"
-#include "Jerboa/Rendering/Texture.h"
+#include "Jerboa/Rendering/Resource/VertexBuffer.h"
+#include "Jerboa/Rendering/Resource/IndexBuffer.h"
+#include "Jerboa/Rendering/Resource/Shader.h"
+#include "Jerboa/Rendering/Resource/Texture.h"
 #include "Jerboa/Rendering/lights/PointLight.h"
 #include "Jerboa/Scene/Transform.h"
 
-#include "Jerboa/Rendering/Mesh.h"
+#include "Jerboa/Rendering/Resource/Mesh.h"
 #include "Jerboa/Rendering/Renderer.h"
 
 #include <memory>

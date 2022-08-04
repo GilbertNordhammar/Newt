@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Jerboa/Rendering/GPUResource.h"
+#include "Jerboa/Rendering/Resource/Internal/GPUResource.h"
 #include <glm/glm.hpp>
 
 #include <memory>

@@ -1,11 +1,11 @@
 #include "jerboa-pch.h"
 #include "GL_Renderer.h"
 
-#include "Jerboa/Rendering/Mesh.h"
-#include "Jerboa/Platform/OpenGL/GL_RenderState.h"
 #include "Jerboa/Core/Types.h"
-#include "OpenGL.h"
-#include "GL_Types.h"
+#include "Jerboa/Platform/OpenGL/GL_RenderState.h"
+#include "Jerboa/Platform/OpenGL/GL_Types.h"
+#include "Jerboa/Platform/OpenGL/OpenGL.h"
+#include "Jerboa/Rendering/Resource/Mesh.h"
 
 namespace Jerboa {
 	static GLenum ConvertPritimtiveTypeToGL(PrimitiveType primitiveType)

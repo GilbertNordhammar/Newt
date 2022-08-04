@@ -2,12 +2,12 @@
 
 #include "Jerboa/Core/Singleton.h"
 #include "Jerboa/Core/Types.h"
-#include "Jerboa/Rendering/GPUResourceAllocator.h"
-#include "Jerboa/Rendering/Mesh.h"
 #include "Jerboa/Rendering/RenderState.h"
-#include "Jerboa/Rendering/Shader.h"
+#include "Jerboa/Rendering/Resource/Mesh.h"
+#include "Jerboa/Rendering/Resource/Shader.h"
+#include "Jerboa/Rendering/Resource/Texture.h"
+#include "Jerboa/Rendering/Resource/Internal/GPUResourceAllocator.h"
 #include "Jerboa/Rendering/ShaderState.h"
-#include "Jerboa/Rendering/Texture.h"
 #include "Jerboa/Rendering/Types.h"
 
 #include <memory>

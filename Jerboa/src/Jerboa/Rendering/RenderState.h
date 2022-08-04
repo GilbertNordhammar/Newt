@@ -2,9 +2,9 @@
 
 #include "Jerboa/Core/Enum.h"
 #include "Jerboa/Core/Singleton.h"
-#include "Jerboa/Rendering/Mesh.h"
-#include "Jerboa/Rendering/Shader.h"
-#include "Jerboa/Rendering/Texture.h"
+#include "Jerboa/Rendering/Resource/Mesh.h"
+#include "Jerboa/Rendering/Resource/Shader.h"
+#include "Jerboa/Rendering/Resource/Texture.h"
 
 #include "glm/glm.hpp"
 #include <memory>

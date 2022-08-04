@@ -2,7 +2,7 @@
 
 #include "Jerboa/Debug.h"
 #include "Jerboa/Core/Types.h"
-#include "Jerboa/Rendering/GPUResource.h"
+#include "Jerboa/Rendering/Resource/Internal/GPUResource.h"
 #include "Jerboa/Rendering/Types.h"
 
 #include <vector>
