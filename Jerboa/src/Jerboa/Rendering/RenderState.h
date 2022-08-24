@@ -29,11 +29,7 @@ namespace Jerboa
         Stencil = 4
     };
 
-    template<>
-    struct Jerboa::enum_operator_enabler<BufferClearBits> {
-        static constexpr bool enableBitWiseOperators = true;
-    };
-    
+    JERBOA_ENABLE_ENUM_FLAG_OPERATORS(BufferClearBits);
 
     enum class CompareFunction
     {

@@ -12,11 +12,11 @@ namespace Jerboa
     GLbitfield ConvertBufferClearBitsToGL(BufferClearBits clearBits)
     {
         GLbitfield clearBitsGL = 0;
-        if (EnumToInt<int>(clearBits | BufferClearBits::Color))
+        if (EnumHasFlags(clearBits, BufferClearBits::Color))
             clearBitsGL |= GL_COLOR_BUFFER_BIT;
-        if (EnumToInt<int>(clearBits | BufferClearBits::Depth))
+        if (EnumHasFlags(clearBits, BufferClearBits::Depth))
             clearBitsGL |= GL_DEPTH_BUFFER_BIT;
-        if (EnumToInt<int>(clearBits | BufferClearBits::Stencil))
+        if (EnumHasFlags(clearBits, BufferClearBits::Stencil))
             clearBitsGL |= GL_STENCIL_BUFFER_BIT;
 
         return clearBitsGL;
