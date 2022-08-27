@@ -3,7 +3,7 @@
 
 namespace Jerboa 
 {
-	GPUResource GPUResourceAllocator::CreateVertexArrayObject()
+	GPUResource GPUResourceAllocator::CreateVertexArrayObject() const
 	{
 		return GPUResource();
 	}

@@ -6,6 +6,7 @@
 #include "Jerboa/Platform/OpenGL/GL_ShaderUtils.h"
 #include "Jerboa/Platform/OpenGL/GL_Types.h"
 #include "Jerboa/Platform/OpenGL/OpenGL.h"
+#include "Jerboa/Rendering/Resource/Texture.h";
 
 namespace Jerboa
 {
@@ -15,7 +16,7 @@ namespace Jerboa
 		JERBOA_ASSERT(renderState, "Render state is null");
 	}
 
-	GPUResource GL_GPUResourceAllocator::CreateVertexBuffer(const VertexBufferData& bufferData)
+	GPUResource GL_GPUResourceAllocator::CreateVertexBuffer(const VertexBufferData& bufferData) const
 	{
 		auto generateVertexBuffer = [&](uintptr* vertexBufferObject)
 		{
@@ -52,7 +53,7 @@ namespace Jerboa
 		return vertexBuffer;
 	}
 
-	GPUResource GL_GPUResourceAllocator::CreateIndexBuffer(const IndexBufferData& bufferData)
+	GPUResource GL_GPUResourceAllocator::CreateIndexBuffer(const IndexBufferData& bufferData) const
 	{
 		auto generateIndexBuffer = [&](uintptr* indexBufferObject)
 		{
@@ -75,7 +76,7 @@ namespace Jerboa
 		return indexBuffer;
 	}
 
-	GPUResource GL_GPUResourceAllocator::CreateVertexArrayObject()
+	GPUResource GL_GPUResourceAllocator::CreateVertexArrayObject() const
 	{
 		auto generateVAO = [&](uintptr* vao)
 		{
@@ -96,30 +97,13 @@ namespace Jerboa
 		return VAO;
 	}
 
-	GPUResource	GL_GPUResourceAllocator::CreateTexture(const TextureData& textureData)
+	GPUResource	GL_GPUResourceAllocator::CreateTexture([[maybe_unused]] const TextureConfig& config) const
 	{
 		auto generateTexture = [&](uintptr* textureObject)
 		{
 			GLuint glObject = 0;
 			glGenTextures(1, &glObject);
 			*textureObject = glObject;
-
-			GLenum format = GetPixelFormatGL(textureData.GetPixelFormat());
-			GLenum internalFormat = format;
-			/*if (type == TextureType::Albedo)
-				internalFormat = format == GL_RGBA ? GL_SRGB_ALPHA : GL_SRGB;*/
-
-			glBindTexture(GL_TEXTURE_2D, *textureObject);
-			glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, textureData.GetWidth(), textureData.GetHeight(), 0, format, GL_UNSIGNED_BYTE, textureData.GetData());
-			
-			glGenerateMipmap(GL_TEXTURE_2D);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-			// TODO: Rebind currently bound texture
-			glBindTexture(GL_TEXTURE_2D, 0);
 		};
 
 		auto deleteTexture = [](uintptr* vao) {
@@ -133,7 +117,7 @@ namespace Jerboa
 		return texture;
 	}
 
-	GPUResource GL_GPUResourceAllocator::CreateShader(const ShaderDataGLSL& shaderData)
+	GPUResource GL_GPUResourceAllocator::CreateShader(const ShaderDataGLSL& shaderData) const
 	{
 		auto generateShader = [&](uintptr* shaderObject)
 		{
@@ -161,5 +145,31 @@ namespace Jerboa
 		GPUResource shader;
 		shader.Create(generateShader, deleteShader);
 		return shader;
+	}
+
+	void GL_GPUResourceAllocator::UploadTextureData(GPUResource& texture, const TextureData& textureData) const
+	{
+		auto textureGPUResource = texture.Get();
+		JERBOA_ASSERT(textureGPUResource, "Can't upload data since no gpu resource has been created for the texture");
+		if (!textureGPUResource)
+		{
+			return;
+		}
+
+		glBindTexture(GL_TEXTURE_2D, textureGPUResource);
+		GLenum pixelFormat = GetPixelFormatGL(textureData.GetPixelFormat());
+		glTexImage2D(GL_TEXTURE_2D, 0, pixelFormat, textureData.GetWidth(), textureData.GetHeight(), 0, pixelFormat, GL_UNSIGNED_BYTE, textureData.GetData());
+
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, pixelFormat == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, pixelFormat == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		// Rebinding last bound texture in order to not corrupt the bound texture state
+		TextureSlot lastBoundSlot = m_RenderStateGL->GetLastBoundTextureSlot();
+		Texture2D* lastBoundTexture = m_RenderStateGL->GetBoundTexture(lastBoundSlot);
+		if(lastBoundTexture)
+			m_RenderStateGL->BindTexture(*lastBoundTexture, lastBoundSlot);
 	}
 }

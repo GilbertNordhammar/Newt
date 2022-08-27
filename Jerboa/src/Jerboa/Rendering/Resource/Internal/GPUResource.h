@@ -27,7 +27,6 @@ namespace Jerboa
 		void CleanUp();
 		void Move(GPUResource& other);
 
-		//uint64 m_ID = 0;
 		uintptr m_ResourceReference = 0;
 		DeleteResourceFunc fm_DeleteObject;
 		

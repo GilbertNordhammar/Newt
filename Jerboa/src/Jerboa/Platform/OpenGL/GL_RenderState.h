@@ -50,7 +50,13 @@ namespace Jerboa
         void        SetBlendingColorImpl(glm::vec4 color) override;
         void        SetBlendingFactorImpl(BlendingFactor source, BlendingFactor destination) override;
 
-        // Misc
-        bool        m_BoundMeshStateDirty = false;
+        // Internal functions
+        TextureSlot GetLastBoundTextureSlot() { return m_LastBoundTextureSlot; }
+
+        // Internal state variables
+        bool            m_BoundMeshStateDirty = false;
+    private:
+        // Internal state variables
+        TextureSlot     m_LastBoundTextureSlot;
 	};
 }

@@ -209,12 +209,11 @@ namespace JerboaClient {
         m_PBRShader.Create(ShaderLoaderGLSL::Load("assets/shaders/pbr/Standard.glsl"), m_ResourceAllocator);
         m_PointLightShader.Create(ShaderLoaderGLSL::Load("assets/shaders/pbr/PointLight.glsl"), m_ResourceAllocator);
 
-
-        m_AlbedoTexture.Create( Jerboa::TextureType::Albedo, Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/albedo.png"), m_ResourceAllocator);
-        m_AmbientOcclusionTexture.Create(Jerboa::TextureType::AmbientOcclusion, Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/ao.png"), m_ResourceAllocator);
-        m_NormalTexture.Create(Jerboa::TextureType::Normal, Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/normal-ogl.png"), m_ResourceAllocator);
-        m_MetallicTexture.Create(Jerboa::TextureType::Metallic, Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/metallic.png"), m_ResourceAllocator);
-        m_RoughnessTexture.Create(Jerboa::TextureType::Roughness, Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/roughness.png"), m_ResourceAllocator);
+        m_AlbedoTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/albedo.png"), TextureUsage::Read, m_ResourceAllocator);
+        m_AmbientOcclusionTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/ao.png"), TextureUsage::Read, m_ResourceAllocator);
+        m_NormalTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/normal-ogl.png"), TextureUsage::Read, m_ResourceAllocator);
+        m_MetallicTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/metallic.png"), TextureUsage::Read, m_ResourceAllocator);
+        m_RoughnessTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/roughness.png"), TextureUsage::Read, m_ResourceAllocator);
 	}
 
 	void EditorLayer::OnDetach() {

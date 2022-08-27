@@ -11,11 +11,13 @@ namespace Jerboa
 	public:
 		GL_GPUResourceAllocator(GL_RenderState* renderState);
 
-		GPUResource	CreateVertexBuffer(const VertexBufferData& bufferData) override;
-		GPUResource CreateVertexArrayObject() override; // Needed for OpenGL
-		GPUResource	CreateIndexBuffer(const IndexBufferData& bufferData) override;
-		GPUResource	CreateTexture(const TextureData& textureData) override;
-		GPUResource	CreateShader(const ShaderDataGLSL& shaderData) override;
+		GPUResource	CreateVertexBuffer(const VertexBufferData& bufferData) const override;
+		GPUResource CreateVertexArrayObject() const override; // Needed for OpenGL
+		GPUResource	CreateIndexBuffer(const IndexBufferData& bufferData) const override;
+		GPUResource	CreateTexture(const TextureConfig& config) const override;
+		GPUResource	CreateShader(const ShaderDataGLSL& shaderData) const override;
+
+		void UploadTextureData(GPUResource& texture, const TextureData& textureData) const override;
 	private:
 		GL_RenderState* m_RenderStateGL;
 	};
