@@ -38,12 +38,11 @@ namespace Jerboa
         static constexpr bool enabled = true; \
     };
 
-    template<typename IntType, typename EnumType, class = std::enable_if<std::is_enum<EnumType>::value&& std::is_integral<IntType>::value>::type>
+    template<typename IntType, typename EnumType, class = std::enable_if<std::is_enum<EnumType>::value && std::is_integral<IntType>::value>::type>
     constexpr IntType EnumToInt(EnumType arg)
     {
         return static_cast<IntType>(arg);
     }
-
 
     // JERBOA_ENABLE_ENUM_FLAG_OPERATORS(EnumType) must be declared in order to use this function
     template<typename EnumType, class = std::enable_if<enum_flag_operators<EnumType>::enabled>::type>
