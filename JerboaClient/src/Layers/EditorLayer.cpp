@@ -99,6 +99,8 @@ namespace JerboaClient {
             Jerboa::Window::Get()->SetCursorMode(Jerboa::CursorMode::Normal);
 
         // Drawing point light represenations
+
+        //m_RenderState.BeginRenderPass(m_FrameBuffer1); // TODO: Uncomment this once stuff work
      
         m_RenderState.BindShader(m_PointLightShader);
         m_ShaderState.SetMat4("mat_VP", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
@@ -227,7 +229,7 @@ namespace JerboaClient {
         textureConfig1.m_PixelFormat = Jerboa::PixelFormat::RGBA;
         m_ColorAttachment1->Create(textureConfig1, m_ResourceAllocator);
         FrameBufferConfig fbConfig1;
-        fbConfig1.m_ColorAttachments[0] = m_ColorAttachment1;
+        fbConfig1.m_ColorAttachments[0].Set(m_ColorAttachment1, RenderPassBeginAction::Clear);
         m_FrameBuffer1.Create(fbConfig1, m_ResourceAllocator);
 	}
 

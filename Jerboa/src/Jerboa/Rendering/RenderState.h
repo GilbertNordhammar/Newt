@@ -9,6 +9,7 @@
 #include "Jerboa/Rendering/Events/ShaderDestroyedEvent.h"
 #include "Jerboa/Rendering/Events/TextureDestroyedEvent.h"
 
+#include "Jerboa/Rendering/Resource/FrameBuffer.h"
 #include "Jerboa/Rendering/Resource/Mesh.h"
 #include "Jerboa/Rendering/Resource/Shader.h"
 #include "Jerboa/Rendering/Resource/Texture.h"
@@ -100,6 +101,9 @@ namespace Jerboa
         void                ResetStateToDefaultValues();
 
         // Resource binding interface
+        void                BeginRenderPass(FrameBuffer& frameBuffer);
+        void                BeginDefaultRenderPass();
+
         void				BindTexture(Texture2D& texture, TextureSlot slot);
         void				BindShader(Shader& shader);
         void				BindMesh(Mesh& mesh);
@@ -108,6 +112,7 @@ namespace Jerboa
         void                ClearBoundShader();
         void                ClearBoundMesh();
 
+        FrameBuffer*        GetBoundFrameBuffer() { return m_BoundFrameBuffer; }
         Texture2D*          GetBoundTexture(TextureSlot slot) { return m_BoundTextures[EnumToInt<int>(slot)]; }
         Shader*             GetBoundShader() { return m_BoundShader; }
         Mesh*               GetBoundMesh() { return m_BoundMesh; }
@@ -115,7 +120,7 @@ namespace Jerboa
         // Buffer clearing interface
         void                SetClearColor(const glm::vec4& clearColor);
         void                SetClearDepth(float clearDepth);
-        void                SetClearStencil(float clearStencil);
+        void                SetClearStencil(int clearStencil);
         void                SetClearBits(BufferClearBits clearBits);
 
         glm::vec4           GetClearColor() const { return m_ClearColor; }
@@ -162,6 +167,9 @@ namespace Jerboa
 
     protected:
         // Resource binding virtual interface
+        virtual void        BeginRenderPassImpl(FrameBuffer& frameBuffer) = 0;
+        virtual void        BeginDefaultRenderPassImpl() = 0;
+
         virtual void	    BindTextureImpl(Texture2D& texture, TextureSlot slot) = 0;
         virtual void	    BindShaderImpl(Shader& shader) = 0;
         virtual void	    BindMeshImpl(Mesh& mesh) = 0;
@@ -173,7 +181,7 @@ namespace Jerboa
         // Buffer clearing virtual interface
         virtual void        SetClearColorImpl(const glm::vec4& clearColor) = 0;
         virtual void        SetClearDepthImpl(float clearDepth) = 0;
-        virtual void        SetClearStencilImpl(float clearStencil) = 0;
+        virtual void        SetClearStencilImpl(int clearStencil) = 0;
         virtual void        SetClearBitsImpl(BufferClearBits clearBits) = 0;
 
         // Stencil testing virtual interface
@@ -197,14 +205,15 @@ namespace Jerboa
 
         // Resource binding variables
         // TODO: This can lead to dangling pointer if the resource is deallocated. Find a better solution
-        std::array<Texture2D*, EnumToInt<int>(TextureSlot::Count)> m_BoundTextures;
+        FrameBuffer*                m_BoundFrameBuffer = nullptr;
+        std::array<Texture2D*, EnumToInt<int>(TextureSlot::Count)> m_BoundTextures = { nullptr };
         Shader*                     m_BoundShader = nullptr;
         Mesh*                       m_BoundMesh = nullptr;
 
         // Buffer clearing variables
         glm::vec4                   m_ClearColor;
         float                       m_ClearDepth;
-        float                       m_ClearStencil;
+        int                         m_ClearStencil;
         BufferClearBits             m_ClearBits;
 
         // Stencil testing variables

@@ -17,6 +17,9 @@ namespace Jerboa
 	{
     public:
         // Resource binding virtual interface
+        void        BeginRenderPassImpl(FrameBuffer& frameBuffer) override;
+        void        BeginDefaultRenderPassImpl() override;
+
         void	    BindTextureImpl(Texture2D& texture, TextureSlot slot) override;
         void	    BindShaderImpl(Shader& shader) override;
         void	    BindMeshImpl(Mesh& mesh) override;
@@ -28,7 +31,7 @@ namespace Jerboa
         // Buffer clearing
         void        SetClearColorImpl(const glm::vec4& clearColor) override;
         void        SetClearDepthImpl(float clearDepth) override;
-        void        SetClearStencilImpl(float clearStencil) override;
+        void        SetClearStencilImpl(int clearStencil) override;
         void        SetClearBitsImpl(BufferClearBits clearBits) override;
 
         // Stencil testing

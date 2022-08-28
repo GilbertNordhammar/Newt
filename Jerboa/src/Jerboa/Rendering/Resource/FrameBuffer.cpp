@@ -10,61 +10,62 @@ namespace Jerboa
 		FrameBufferGPUResourceConfig gpuConfig;
 		for (int i = 0; i < config.m_ColorAttachments.size(); i++)
 		{
-			std::shared_ptr<Texture2D> texture = config.m_ColorAttachments[i];
-
-			if (!texture)
+			const Texture2D* colorTexture = config.m_ColorAttachments[i].GetTexture();
+			
+			if (!colorTexture)
 				continue;
 
-			const GPUResource& colorAttachmentGPU = texture->GetGPUResouce();
+			const GPUResource& colorAttachmentGPU = colorTexture->GetGPUResouce();
 
-			JERBOA_ASSERT(texture->IsWriteable(), "Texture is not writeable and can therefore not be a color attachment");
+			JERBOA_ASSERT(colorTexture->IsWriteable(), "Texture is not writeable and can therefore not be a color attachment");
 			JERBOA_ASSERT(colorAttachmentGPU.Exists(), "Texture hasn't been allocated on GPU and can therefore not be a color attachment");
 
-			if (texture->IsWriteable() && colorAttachmentGPU.Exists())
+			if (colorTexture->IsWriteable() && colorAttachmentGPU.Exists())
 			{
-				m_ColorAttachments[i] = texture;
+				
+				m_ColorAttachments[i] = config.m_ColorAttachments[i];
 				gpuConfig.m_ColorAttachments[i] = &colorAttachmentGPU;
-				gpuConfig.m_ColorAttachmentsUsage[i] = texture->GetUsage();
+				gpuConfig.m_ColorAttachmentsUsage[i] = colorTexture->GetUsage();
 			}
 		}
 
-		std::shared_ptr<Texture2D> depthAttachment = config.m_DepthAttachment;
-		if (depthAttachment)
+		const Texture2D* depthTexture = config.m_DepthAttachment.GetTexture();
+		if (depthTexture)
 		{
-			const GPUResource& depthAttachmentGPU = depthAttachment->GetGPUResouce();
-			JERBOA_ASSERT(depthAttachment->IsWriteable(), "Texture is not writeable and can therefore not be a depth attachment");
+			const GPUResource& depthAttachmentGPU = depthTexture->GetGPUResouce();
+			JERBOA_ASSERT(depthTexture->IsWriteable(), "Texture is not writeable and can therefore not be a depth attachment");
 			JERBOA_ASSERT(depthAttachmentGPU.Exists(), "Texture hasn't been allocated on GPU and can therefore not be a depth attachment");
-			if (depthAttachment->IsWriteable() && depthAttachmentGPU.Exists())
+			if (depthTexture->IsWriteable() && depthAttachmentGPU.Exists())
 			{
-				m_DepthAttachment = depthAttachment;
+				m_DepthAttachment = config.m_DepthAttachment;
 				gpuConfig.m_DepthAttachment = &depthAttachmentGPU;
-				gpuConfig.m_DepthAttachmentUsage = depthAttachment->GetUsage();
+				gpuConfig.m_DepthAttachmentUsage = depthTexture->GetUsage();
 			}
 		}
 
-		std::shared_ptr<Texture2D> stencilAttachment = config.m_StencilAttachment;
-		if (stencilAttachment)
+		const Texture2D* stencilTexture = config.m_StencilAttachment.GetTexture();
+		if (stencilTexture)
 		{
-			const GPUResource& stencilAttachmentGPU = stencilAttachment->GetGPUResouce();
+			const GPUResource& stencilAttachmentGPU = stencilTexture->GetGPUResouce();
 
-			JERBOA_ASSERT(stencilAttachment->IsWriteable(), "Texture is not writeable and can therefore not be a stencil attachment");
+			JERBOA_ASSERT(stencilTexture->IsWriteable(), "Texture is not writeable and can therefore not be a stencil attachment");
 			JERBOA_ASSERT(stencilAttachmentGPU.Exists(), "Texture hasn't been allocated on GPU and can therefore not be a depth attachment");
-			if (stencilAttachment->IsWriteable() && stencilAttachmentGPU.Exists())
+			if (stencilTexture->IsWriteable() && stencilAttachmentGPU.Exists())
 			{
-				m_StencilAttachment = stencilAttachment;
+				m_StencilAttachment = config.m_StencilAttachment;
 				gpuConfig.m_StencilAttachment = &stencilAttachmentGPU;
-				gpuConfig.m_StencilAttachmentUsage = stencilAttachment->GetUsage();
+				gpuConfig.m_StencilAttachmentUsage = stencilTexture->GetUsage();
 			}
 		}
 		
 		m_GPUResource = allocator.CreateFrameBuffer(gpuConfig);
 	}
 
-	const Texture2D* FrameBuffer::GetColorAttachment(ColorAttachmentSlot slot)
+	const FrameBufferAttachment& FrameBuffer::GetColorAttachment(ColorAttachmentSlot slot) const
 	{
 		JERBOA_ASSERT(slot != ColorAttachmentSlot::Count, "ColorAttachmentSlot::Count is not a valid color attachment slot argument");
 		return slot != ColorAttachmentSlot::Count 
-			? m_ColorAttachments[EnumToInt<int>(slot)].get()
-			: nullptr;
+			? m_ColorAttachments[EnumToInt<int>(slot)]
+			: FrameBufferAttachment();
 	}
 }

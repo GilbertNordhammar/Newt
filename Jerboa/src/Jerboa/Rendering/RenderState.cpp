@@ -47,6 +47,18 @@ namespace Jerboa
 		SetBlendingFactor(BlendingFactor::One, BlendingFactor::One);
 	}
 
+	void RenderState::BeginRenderPass(FrameBuffer& frameBuffer)
+	{
+		BeginRenderPassImpl(frameBuffer);
+		m_BoundFrameBuffer = &frameBuffer;
+	}
+
+	void RenderState::BeginDefaultRenderPass()
+	{
+		BeginDefaultRenderPassImpl();
+		m_BoundFrameBuffer = nullptr;
+	}
+
 	void RenderState::BindTexture(Texture2D& texture, TextureSlot slot)
 	{
 		BindTextureImpl(texture, slot);
@@ -95,7 +107,7 @@ namespace Jerboa
 		m_ClearDepth = clearDepth;
 	}
 
-	void RenderState::SetClearStencil(float clearStencil)
+	void RenderState::SetClearStencil(int clearStencil)
 	{
 		SetClearStencilImpl(clearStencil);
 		m_ClearStencil = clearStencil;

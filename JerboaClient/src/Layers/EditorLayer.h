@@ -46,6 +46,7 @@ namespace JerboaClient {
 		Jerboa::Camera m_Camera;
 		Jerboa::Shader m_PBRShader;
 		Jerboa::Shader m_PointLightShader;
+		Jerboa::Shader m_PassthroughPP;
 
 		std::vector<Jerboa::Transform> mTransforms;
 

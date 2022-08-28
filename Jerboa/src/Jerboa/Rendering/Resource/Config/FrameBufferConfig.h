@@ -13,26 +13,34 @@ namespace Jerboa
 		S0 = 0, S1, S2, S3, S4, S5, S6, S7, Count
 	};
 
-	class ColorAttachment
+	enum class RenderPassBeginAction
 	{
-		ColorAttachment(ColorAttachmentSlot slot, std::shared_ptr<Texture2D> texture)
-			: m_Slot(slot), m_Texture(texture)
+		Clear, Keep
+	};
+
+	class FrameBufferAttachment
+	{
+	public:
+		void Set(std::shared_ptr<Texture2D> texture, RenderPassBeginAction action)
 		{
+			m_Texture = texture;
+			m_RenderPassBeginAction = action;
 		}
 
-	public:
-		ColorAttachmentSlot GetSlot() const { return m_Slot; }
-		std::shared_ptr<Texture2D> GetTexture() const { return m_Texture; }
+		const Texture2D*		GetTexture() const { return m_Texture.get(); }
+		RenderPassBeginAction	GetRenderPassBeginAction() const { return m_RenderPassBeginAction; }
+		bool					Empty() const { return m_Texture == nullptr; }
 
 	private:
-		ColorAttachmentSlot m_Slot = ColorAttachmentSlot::S0;
-		std::shared_ptr<Texture2D> m_Texture;
+		std::shared_ptr<Texture2D> m_Texture = nullptr;
+		RenderPassBeginAction m_RenderPassBeginAction = RenderPassBeginAction::Clear;
 	};
 
 	struct FrameBufferConfig
 	{
-		std::array<std::shared_ptr<Texture2D>, EnumToInt<int>(ColorAttachmentSlot::Count)> m_ColorAttachments;
-		std::shared_ptr<Texture2D> m_DepthAttachment;
-		std::shared_ptr<Texture2D> m_StencilAttachment;
+		std::array<FrameBufferAttachment, EnumToInt<int>(ColorAttachmentSlot::Count)> m_ColorAttachments;
+		FrameBufferAttachment m_DepthAttachment;
+		FrameBufferAttachment m_StencilAttachment;
+
 	};
 }

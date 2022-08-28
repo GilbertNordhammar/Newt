@@ -107,6 +107,39 @@ namespace Jerboa
         return GL_INVALID_ENUM;
     }
 
+    void GL_RenderState::BeginRenderPassImpl(FrameBuffer& frameBuffer)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer.GetGPUResouce().Get());
+
+        std::vector<GLenum> activeColorAttachmentIndexes;
+        auto colorAttachments = frameBuffer.GetColorAttachments();
+        for (int i = 0; i < colorAttachments.size(); i++)
+        {
+            if (!colorAttachments[i].Empty())
+                activeColorAttachmentIndexes.push_back(i);
+        }
+
+        glDrawBuffers(activeColorAttachmentIndexes.size(), activeColorAttachmentIndexes.data());
+        for (const auto& index : activeColorAttachmentIndexes)
+        {
+            if(colorAttachments[index].GetRenderPassBeginAction() == RenderPassBeginAction::Clear)
+                glClearBufferfv(GL_COLOR, GL_COLOR_ATTACHMENT0 + index, &m_ClearColor[0]);
+        }
+
+        auto depthAttachment = frameBuffer.GetDepthAttachment();
+        if (!depthAttachment.Empty() && depthAttachment.GetRenderPassBeginAction() == RenderPassBeginAction::Clear)
+            glClearBufferfv(GL_DEPTH, 0, &m_ClearDepth);
+
+        auto stencilAttachment = frameBuffer.GetStencilAttachment();
+        if (!stencilAttachment.Empty() && stencilAttachment.GetRenderPassBeginAction() == RenderPassBeginAction::Clear)
+            glClearBufferiv(GL_STENCIL, 0, &m_ClearStencil);
+    }
+
+    void GL_RenderState::BeginDefaultRenderPassImpl()
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
     void GL_RenderState::BindTextureImpl(Texture2D& texture, TextureSlot slot)
     {
         m_LastBoundTextureSlot = slot;
@@ -151,7 +184,7 @@ namespace Jerboa
         glClearDepth(clearDepth); // TODO: Add cache check
     }
 
-    void GL_RenderState::SetClearStencilImpl(float clearStencil)
+    void GL_RenderState::SetClearStencilImpl(int clearStencil)
     {
         glClearStencil(clearStencil); // TODO: Add cache check
     }
