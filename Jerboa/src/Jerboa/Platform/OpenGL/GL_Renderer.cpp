@@ -28,6 +28,7 @@ namespace Jerboa {
 		: m_RenderStateGL(renderStateGL)
 	{
 		JERBOA_ASSERT(renderStateGL, "Render state is null");
+		m_EventObserver.Subscribe(this, &GL_Renderer::OnWindowResize);
 	}
 
 	void GL_Renderer::Clear()
@@ -53,5 +54,10 @@ namespace Jerboa {
 		{
 			glDrawArrays(ConvertPritimtiveTypeToGL(mesh.GetPrimitiveType()), 0, mesh.GetVertexBuffer()->GetCount());
 		}
+	}
+
+	void GL_Renderer::OnWindowResize(const WindowResizeEvent& evnt)
+	{
+		glViewport(0, 0, evnt.width, evnt.height); // TODO: Remove explicit OpenGL call
 	}
 }

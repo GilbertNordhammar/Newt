@@ -103,7 +103,6 @@ namespace Jerboa {
 		glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height)
 		{
 			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
-			glViewport(0, 0, width, height);
 
 			data.width = width;
 			data.height = height;

@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Jerboa/Core/Events/WindowResizeEvent.h"
+#include "Jerboa/Core/EventObserver.h"
+
 #include "Jerboa/Rendering/Renderer.h"
 
 namespace Jerboa {
@@ -14,6 +17,10 @@ namespace Jerboa {
 		void Clear() override;
 		void Draw(Mesh& mesh) override;
 	private:
+		void OnWindowResize(const WindowResizeEvent& evnt);
+
 		GL_RenderState* m_RenderStateGL;
+
+		EventObserver m_EventObserver;
 	};
 }

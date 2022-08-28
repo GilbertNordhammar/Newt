@@ -2,7 +2,9 @@
 
 #include "Jerboa/Core/Window.h"
 
-#include "Jerboa/Platform/OpenGL/OpenGL.h" // OpenGL needs to be included before GLFW
+#if defined(JERBOA_RENDER_API_OPENGL)
+	#include "Jerboa/Platform/OpenGL/OpenGL.h" // OpenGL needs to be included before GLFW
+#endif
 #include "GLFW/glfw3.h"
 
 namespace Jerboa 
