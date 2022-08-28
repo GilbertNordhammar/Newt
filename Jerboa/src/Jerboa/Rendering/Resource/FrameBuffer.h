@@ -3,6 +3,7 @@
 #include "Jerboa/Core/Enum.h"
 #include "Jerboa/Rendering/Resource/Config/FrameBufferConfig.h"
 #include "Jerboa/Rendering/Resource/Internal/GPUResource.h"
+#include "Jerboa/Rendering/Resource/Internal/GPUResourceAllocator.h"
 #include "Jerboa/Rendering/Resource/Texture.h"
 
 #include <array>
@@ -13,7 +14,7 @@ namespace Jerboa
 	class FrameBuffer
 	{
 	public:
-		void Create(const FrameBufferConfig& config);
+		void Create(const FrameBufferConfig& config, const GPUResourceAllocator& allocator);
 
 		const GPUResource& GetGPUResouce() const { return m_GPUResource; }
 		const Texture2D* GetColorAttachment(ColorAttachmentSlot slot);

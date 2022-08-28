@@ -32,7 +32,7 @@ namespace Jerboa
 		PixelFormat					m_PixelFormat = PixelFormat::None;
 		uint32						m_Width = 0;
 		uint32						m_Height = 0;
-		TextureSamplingWrapMode			m_SamplerWrappingMode = TextureSamplingWrapMode::Repeat;
+		TextureSamplingWrapMode		m_SamplerWrappingMode = TextureSamplingWrapMode::Repeat;
 		TextureSamplingFilter		m_SamplingFilter = TextureSamplingFilter::Linear;
 		MipmapInterpolationFilter	m_MipMapInterpolationFilter = MipmapInterpolationFilter::None;
 	};

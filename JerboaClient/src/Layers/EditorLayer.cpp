@@ -15,8 +15,9 @@
 using namespace Jerboa;
 
 namespace JerboaClient {
-	EditorLayer::EditorLayer(Jerboa::Renderer& renderer)
-		: m_Renderer(renderer),
+	EditorLayer::EditorLayer(Jerboa::Window& window, Jerboa::Renderer& renderer)
+		: m_Window(window),
+        m_Renderer(renderer),
         m_RenderState(renderer.GetState()),
         m_ShaderState(renderer.GetShaderState()),
         m_ResourceAllocator(renderer.GetAllocator()),
@@ -214,6 +215,20 @@ namespace JerboaClient {
         m_NormalTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/normal-ogl.png"), TextureUsage::Read, m_ResourceAllocator);
         m_MetallicTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/metallic.png"), TextureUsage::Read, m_ResourceAllocator);
         m_RoughnessTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/roughness.png"), TextureUsage::Read, m_ResourceAllocator);
+
+        std::shared_ptr<Texture2D> m_ColorAttachment1 = std::make_shared<Texture2D>();
+        TextureConfig textureConfig1;
+        textureConfig1.m_Width = m_Window.GetWidth();
+        textureConfig1.m_Height = m_Window.GetHeight();
+        textureConfig1.m_MipMapInterpolationFilter = Jerboa::MipmapInterpolationFilter::None;
+        textureConfig1.m_SamplerWrappingMode = Jerboa::TextureSamplingWrapMode::ClampToEdge;
+        textureConfig1.m_SamplingFilter = Jerboa::TextureSamplingFilter::Linear;
+        textureConfig1.m_Usage = Jerboa::TextureUsage::Read | Jerboa::TextureUsage::Write;
+        textureConfig1.m_PixelFormat = Jerboa::PixelFormat::RGBA;
+        m_ColorAttachment1->Create(textureConfig1, m_ResourceAllocator);
+        FrameBufferConfig fbConfig1;
+        fbConfig1.m_ColorAttachments[0] = m_ColorAttachment1;
+        m_FrameBuffer1.Create(fbConfig1, m_ResourceAllocator);
 	}
 
 	void EditorLayer::OnDetach() {

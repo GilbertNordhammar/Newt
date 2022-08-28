@@ -17,12 +17,12 @@ namespace Jerboa
 	{
 	public:
 		~Texture2D();
-		void Create(const TextureConfig& data, GPUResourceAllocator& allocator);
+		void Create(const TextureConfig& config, GPUResourceAllocator& allocator);
 		void CreateFromTextureData(const TextureData& data, TextureUsage usage, const GPUResourceAllocator& allocator);
 		void UploadTextureData(const TextureData& data, const GPUResourceAllocator& allocator);
 
 		const GPUResource&			GetGPUResouce() const { return m_TextureGPUResource; }
-		TextureUsage				GetUsage() const { m_Config.m_Usage; }
+		TextureUsage				GetUsage() const { return m_Config.m_Usage; }
 		PixelFormat					GetPixelFormat() const { return m_Config.m_PixelFormat; }
 		uint32						GetWidth() const { return m_Config.m_Width; }
 		uint32						GetHeight() const { return m_Config.m_Height; };

@@ -37,7 +37,7 @@ namespace Jerboa
 	void Texture2D::UploadTextureData(const TextureData& data, const GPUResourceAllocator& allocator)
 	{
 		JERBOA_ASSERT(m_TextureGPUResource.Get(), "Can't upload texture data since the texture gpu resource doesn't exist. Make sure that Texture2D::Create() has been called before.");
-		if(m_Config.m_PixelFormat == data.GetPixelFormat())
+		if(m_Config.m_PixelFormat != data.GetPixelFormat())
 			JERBOA_LOG_WARN("Texture doesn't have the same pixel format as the data being uploaded. The visual result might look wrong.");
 		if (!m_TextureGPUResource.Get())
 			return;

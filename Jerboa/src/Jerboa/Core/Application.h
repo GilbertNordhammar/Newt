@@ -35,7 +35,7 @@ namespace Jerboa
         void            PushLayer(Layer *layer);
         void            PushOverlay(Layer *overlay);
 
-        Window*         GetWindow() { return m_Window; }
+        Window&         GetWindow() { return *m_Window; }
         Renderer&       GetRenderer() { return *m_Renderer; }
         Renderer*       GetRendererPtr() { return m_Renderer; }
         bool            IsRunning() { return m_Running; }

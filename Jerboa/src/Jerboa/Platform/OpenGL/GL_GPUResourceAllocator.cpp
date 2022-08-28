@@ -212,13 +212,15 @@ namespace Jerboa
 
 			for (int i = 0; i < config.m_ColorAttachments.size(); i++)
 			{
-				GPUResource* colorAttachment = config.m_ColorAttachments[i];
+				const GPUResource* colorAttachment = config.m_ColorAttachments[i];
 				TextureUsage colorAttachmentUsage = config.m_ColorAttachmentsUsage[i];
 				AssignFrameBufferAttachment(GL_COLOR_ATTACHMENT0 + i, colorAttachment, colorAttachmentUsage);
 			}
 
 			AssignFrameBufferAttachment(GL_DEPTH_ATTACHMENT, config.m_DepthAttachment, config.m_DepthAttachmentUsage);
 			AssignFrameBufferAttachment(GL_STENCIL_ATTACHMENT, config.m_StencilAttachment, config.m_StencilAttachmentUsage);
+			
+			glBindFramebuffer(GL_FRAMEBUFFER, 0); // TODO: Do proper state restoration
 		};
 
 		auto deleteFbo = [](uintptr* fbo) 

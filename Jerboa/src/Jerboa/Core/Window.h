@@ -49,7 +49,7 @@ namespace Jerboa {
 		virtual void SetVSync(bool enabled) = 0;
 		virtual bool IsVSync() const = 0;
 
-		float GetAspectRatio() { return (float) GetWidth() / (float) GetHeight(); }
+		float GetAspectRatio() const { return (float) GetWidth() / (float) GetHeight(); }
 
 		static void SetApi(WindowApi api) { sWindowApi = api; }
 		static WindowApi GetApi() { return sWindowApi; }

@@ -18,6 +18,7 @@ namespace Jerboa
 		~GPUResource();
 
 		uintptr Get() const { return m_ResourceReference; }
+		bool	Exists() const { return m_ResourceReference; }
 
 		GPUResource&operator=(GPUResource& other) = delete;
 		GPUResource&operator=(GPUResource&& other) noexcept;
