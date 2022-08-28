@@ -17,7 +17,8 @@ namespace Jerboa
 	void RenderState::ResetStateToDefaultValues()
 	{
 		// Resource binding
-		m_BoundTextures.fill(nullptr);
+		BeginDefaultRenderPass();
+		m_BoundTextures.fill(nullptr); // TODO: Clear these via methods
 		m_BoundShader = nullptr;
 		m_BoundMesh = nullptr;
 
@@ -25,7 +26,7 @@ namespace Jerboa
 		SetClearColor(glm::vec4(0, 0, 0, 0));
 		SetClearDepth(1);
 		SetClearStencil(0);
-		SetClearBits(BufferClearBits::None);
+		SetClearBits(BufferClearBits::Color | BufferClearBits::Depth);
 
 		// Stencil testing
 		SetStencilParameters(CompareFunction::Never, 0, 0xFF, 0);

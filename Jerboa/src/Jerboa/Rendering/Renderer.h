@@ -18,12 +18,14 @@ namespace Jerboa {
 	class Renderer : Singleton<Renderer>
 	{
 	public:
-		static Renderer* Create();
-		virtual ~Renderer() {};
+		static Renderer*		Create();
+		virtual					~Renderer() {};
 
-		virtual void			Clear() = 0;
+		virtual void			BeginFrame();
+		virtual void			EndFrame();
+
 		virtual void			Draw(Mesh& mesh) = 0;
-
+		
 		RenderState&			GetState()			{ return *m_RenderState.get(); }
 		ShaderState&			GetShaderState()	{ return *m_ShaderState.get(); }
 		GPUResourceAllocator&	GetAllocator()		{ return *m_Allocator.get(); }
@@ -33,6 +35,9 @@ namespace Jerboa {
 		GPUResourceAllocator*	GetAllocatorPtr()	{ return m_Allocator.get(); }
 
 	protected:
+		virtual void			BeginFrameImpl() = 0;
+		virtual void			EndFrameImpl() = 0;
+
 		std::shared_ptr<RenderState>			m_RenderState = nullptr;
 		std::shared_ptr<ShaderState>			m_ShaderState = nullptr;
 		std::shared_ptr<GPUResourceAllocator>	m_Allocator = nullptr;

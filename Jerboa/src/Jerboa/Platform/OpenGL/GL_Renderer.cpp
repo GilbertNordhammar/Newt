@@ -31,12 +31,6 @@ namespace Jerboa {
 		m_EventObserver.Subscribe(this, &GL_Renderer::OnWindowResize);
 	}
 
-	void GL_Renderer::Clear()
-	{
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	}
-
 	void GL_Renderer::Draw(Mesh& mesh)
 	{
 		Mesh* boundMesh = m_RenderState->GetBoundMesh();
@@ -54,6 +48,20 @@ namespace Jerboa {
 		{
 			glDrawArrays(ConvertPritimtiveTypeToGL(mesh.GetPrimitiveType()), 0, mesh.GetVertexBuffer()->GetCount());
 		}
+	}
+
+	void GL_Renderer::BeginFrameImpl()
+	{
+		
+	}
+
+	void GL_Renderer::EndFrameImpl()
+	{
+		m_RenderState->BeginDefaultRenderPass();
+		auto clearColor = m_RenderState->GetClearColor();
+		auto clearBits = ConvertBufferClearBitsToGL(m_RenderState->GetClearBits());
+		glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+		glClear(clearBits);
 	}
 
 	void GL_Renderer::OnWindowResize(const WindowResizeEvent& evnt)

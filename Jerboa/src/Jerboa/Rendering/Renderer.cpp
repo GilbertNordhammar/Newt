@@ -27,4 +27,15 @@ namespace Jerboa {
 
 		return renderer;
 	}
+
+	void Renderer::BeginFrame()
+	{
+		m_RenderState->ResetStateToDefaultValues();
+		BeginFrameImpl();
+	}
+
+	void Renderer::EndFrame()
+	{
+		EndFrameImpl();
+	}
 }

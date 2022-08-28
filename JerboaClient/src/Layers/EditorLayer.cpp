@@ -55,6 +55,12 @@ namespace JerboaClient {
 	void EditorLayer::OnUpdate()
 	{
         OPTICK_EVENT("EditorLayer::OnUpdate()");
+
+        using namespace Jerboa;
+
+        m_RenderState.SetClearColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
+        m_RenderState.SetClearBits(BufferClearBits::Color | BufferClearBits::Depth | BufferClearBits::Stencil);
+
         auto& camTrans = m_Camera.GetTransform();
         
         if (Jerboa::Window::Get()->GetCursorMode() == Jerboa::CursorMode::Disabled) {

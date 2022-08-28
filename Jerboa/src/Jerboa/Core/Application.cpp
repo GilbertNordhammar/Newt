@@ -30,7 +30,7 @@ namespace Jerboa {
 
         while (m_Running) {
             OPTICK_FRAME("MainThread");
-            m_Renderer->Clear();
+            m_Renderer->BeginFrame();
 
             {
                 OPTICK_EVENT("Update Layers");
@@ -41,6 +41,7 @@ namespace Jerboa {
             RenderImGui();
 
             m_Window->Update();
+            m_Renderer->EndFrame();
 
             {
                 OPTICK_EVENT("Update Time and Input");
@@ -58,7 +59,6 @@ namespace Jerboa {
         Platform::SetRenderAPI(RenderAPI::OpenGL);
         InputInternals::Init();
         UI::ImGuiApp::Init(m_Window);
-        m_Renderer->GetStatePtr()->ResetStateToDefaultValues();
 
         OnInit();
     }

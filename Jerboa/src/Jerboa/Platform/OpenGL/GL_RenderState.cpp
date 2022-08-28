@@ -137,7 +137,8 @@ namespace Jerboa
 
     void GL_RenderState::BeginDefaultRenderPassImpl()
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        if(m_BoundFrameBuffer)
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
     void GL_RenderState::BindTextureImpl(Texture2D& texture, TextureSlot slot)
