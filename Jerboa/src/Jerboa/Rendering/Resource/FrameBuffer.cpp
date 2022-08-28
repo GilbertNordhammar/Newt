@@ -5,17 +5,38 @@
 
 namespace Jerboa
 {
-	FrameBuffer::FrameBuffer(std::vector<ColorAttachment>* colorAttachments, Texture2D* depthAttachment, Texture2D* stencilAttachment)
-		: m_DepthAttachment(depthAttachment), m_StencilAttachment(stencilAttachment)
+	void FrameBuffer::Create(const FrameBufferConfig& config)
 	{
-		if (colorAttachments)
+		for (int i = 0; i < config.m_ColorAttachments.size(); i++)
 		{
-			for (const auto& colorAttachment : *colorAttachments)
+			std::shared_ptr<Texture2D> texture = config.m_ColorAttachments[i];
+			if (!texture)
+				continue;
+
+			JERBOA_ASSERT(!m_ColorAttachments[i], "Color attachment at slot " + std::to_string(i) + " is assigned twice");
+			JERBOA_ASSERT(texture->IsWriteable(), "Texture is not writeable and can therefore not be a color attachment");
+
+			if (!m_ColorAttachments[i] && texture->IsWriteable())
+				m_ColorAttachments[i] = texture;
+		}
+
+		std::shared_ptr<Texture2D> depthAttachment = config.m_DepthAttachment;
+		if (depthAttachment)
+		{
+			JERBOA_ASSERT(depthAttachment->IsWriteable(), "Texture is not writeable and can therefore not be a depth attachment");
+			if (depthAttachment->IsWriteable())
 			{
-				int index = EnumToInt<int>(colorAttachment.GetSlot());
-				JERBOA_ASSERT(!m_ColorAttachments[index], "Color attachment slot " + std::to_string(index) + " already has a texture assigned");
-				if (!m_ColorAttachments[index])
-					m_ColorAttachments[index] = &colorAttachment.GetTexture();
+				m_DepthAttachment = depthAttachment;
+			}
+		}
+
+		std::shared_ptr<Texture2D> stencilAttachment = config.m_StencilAttachment;
+		if (stencilAttachment)
+		{
+			JERBOA_ASSERT(stencilAttachment->IsWriteable(), "Texture is not writeable and can therefore not be a stencil attachment");
+			if (stencilAttachment->IsWriteable())
+			{
+				m_StencilAttachment = stencilAttachment;
 			}
 		}
 	}
@@ -23,6 +44,8 @@ namespace Jerboa
 	const Texture2D* FrameBuffer::GetColorAttachment(ColorAttachmentSlot slot)
 	{
 		JERBOA_ASSERT(slot != ColorAttachmentSlot::Count, "ColorAttachmentSlot::Count is not a valid color attachment slot argument");
-		return m_ColorAttachments[EnumToInt<int>(slot)];
+		return slot != ColorAttachmentSlot::Count 
+			? m_ColorAttachments[EnumToInt<int>(slot)].get()
+			: nullptr;
 	}
 }

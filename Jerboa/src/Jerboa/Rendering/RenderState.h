@@ -197,7 +197,7 @@ namespace Jerboa
 
         // Resource binding variables
         // TODO: This can lead to dangling pointer if the resource is deallocated. Find a better solution
-        std::array<Texture2D*, EnumToInt<int>(TextureSlot::Count)> m_BoundTextures; // TODO: Replace magic number for array size
+        std::array<Texture2D*, EnumToInt<int>(TextureSlot::Count)> m_BoundTextures;
         Shader*                     m_BoundShader = nullptr;
         Mesh*                       m_BoundMesh = nullptr;
 

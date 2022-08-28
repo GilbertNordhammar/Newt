@@ -1,5 +1,6 @@
 #pragma once
 
+#include "OpenGL.h"
 #include "Jerboa/Rendering/Resource/Internal/GPUResourceAllocator.h"
 
 namespace Jerboa
@@ -16,9 +17,12 @@ namespace Jerboa
 		GPUResource	CreateIndexBuffer(const IndexBufferData& bufferData) const override;
 		GPUResource	CreateTexture(const TextureConfig& config) const override;
 		GPUResource	CreateShader(const ShaderDataGLSL& shaderData) const override;
+		virtual GPUResource CreateFrameBuffer(const FrameBufferGPUResourceConfig& config) const override;
 
-		void UploadTextureData(GPUResource& texture, const TextureData& textureData) const override;
+		void UploadTextureData(GPUResource& texture, const GPUTextureResourceData& data) const override;
 	private:
+		void AssignFrameBufferAttachment(GLenum attachment, const GPUResource* textureResource, TextureUsage usage) const;
+
 		GL_RenderState* m_RenderStateGL;
 	};
 }

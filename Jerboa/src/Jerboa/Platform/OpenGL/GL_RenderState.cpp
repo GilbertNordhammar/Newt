@@ -239,4 +239,17 @@ namespace Jerboa
         if (m_BlendingFactorSource != source || m_BlendingFactorDestination != destination)
             glBlendFunc(ConvertBlendingFactorToGL(source), ConvertBlendingFactorToGL(destination));
     }
+
+    void GL_RenderState::RebindCurrentMesh()
+    {
+        if(m_BoundMesh)
+            BindMesh(*m_BoundMesh);
+    }
+
+    void GL_RenderState::RebindLastBoundTexture()
+    {
+        Texture2D* lastBoundTexture = GetBoundTexture(m_LastBoundTextureSlot);
+        if (lastBoundTexture)
+            BindTexture(*lastBoundTexture, m_LastBoundTextureSlot);
+    }
 }

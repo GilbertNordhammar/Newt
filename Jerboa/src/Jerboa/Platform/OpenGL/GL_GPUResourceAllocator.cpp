@@ -10,6 +10,45 @@
 
 namespace Jerboa
 {
+	static GLenum GetTextureSamplingFilterGL(TextureSamplingFilter samplingFilter, MipmapInterpolationFilter mipmapInterpolationFilter)
+	{
+		switch (samplingFilter)
+		{
+			case TextureSamplingFilter::Linear:
+				if (mipmapInterpolationFilter == MipmapInterpolationFilter::Linear)
+					return GL_LINEAR_MIPMAP_LINEAR;
+				else if (mipmapInterpolationFilter == MipmapInterpolationFilter::Nearest)
+					return GL_LINEAR_MIPMAP_NEAREST;
+				else
+					return GL_LINEAR;
+				break;
+			case TextureSamplingFilter::Nearest:
+				if (mipmapInterpolationFilter == MipmapInterpolationFilter::Linear)
+					return GL_NEAREST_MIPMAP_LINEAR;
+				else if (mipmapInterpolationFilter == MipmapInterpolationFilter::Nearest)
+					return GL_NEAREST_MIPMAP_NEAREST;
+				else
+					return GL_NEAREST;
+				break;
+		}
+
+		JERBOA_ASSERT(false, "Invalid enum argument in GetGLTextureSamplingFilter()");
+		return GL_INVALID_ENUM;
+	}
+
+	static GLenum GetTextureWrappingModeGL(TextureSamplingWrapMode mode)
+	{
+		switch (mode)
+		{
+			case TextureSamplingWrapMode::Repeat:		return GL_REPEAT;
+			case TextureSamplingWrapMode::MirrorRepeat: return GL_MIRRORED_REPEAT;
+			case TextureSamplingWrapMode::ClampToEdge:	return GL_CLAMP_TO_EDGE;
+		}
+
+		JERBOA_ASSERT(false, "Invalid enum argument in GetGLTextureWrappingMode()");
+		return GL_INVALID_ENUM;
+	}
+
 	GL_GPUResourceAllocator::GL_GPUResourceAllocator(GL_RenderState* renderState)
 		: m_RenderStateGL(renderState)
 	{
@@ -104,6 +143,21 @@ namespace Jerboa
 			GLuint glObject = 0;
 			glGenTextures(1, &glObject);
 			*textureObject = glObject;
+
+			glBindTexture(GL_TEXTURE_2D, *textureObject);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GetTextureWrappingModeGL(config.m_SamplerWrappingMode));
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GetTextureWrappingModeGL(config.m_SamplerWrappingMode));
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GetTextureSamplingFilterGL(config.m_SamplingFilter, config.m_MipMapInterpolationFilter));
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GetTextureSamplingFilterGL(config.m_SamplingFilter, config.m_MipMapInterpolationFilter));
+
+			if (EnumHasFlags(config.m_Usage, TextureUsage::Write))
+			{
+				auto pixelFormatGL = GetPixelFormatGL(config.m_PixelFormat);
+				glTexImage2D(GL_TEXTURE_2D, 0, pixelFormatGL, config.m_Width, config.m_Height, 0, pixelFormatGL, GL_UNSIGNED_BYTE, NULL);
+			}
+
+			// Rebinding last bound texture in order to not corrupt the bound texture state
+			m_RenderStateGL->RebindLastBoundTexture();
 		};
 
 		auto deleteTexture = [](uintptr* vao) {
@@ -147,29 +201,73 @@ namespace Jerboa
 		return shader;
 	}
 
-	void GL_GPUResourceAllocator::UploadTextureData(GPUResource& texture, const TextureData& textureData) const
+	GPUResource GL_GPUResourceAllocator::CreateFrameBuffer(const FrameBufferGPUResourceConfig& config) const
+	{
+		auto generateFbo = [&](uintptr* fbo)
+		{
+			GLuint glObject = 0;
+			glGenFramebuffers(1, &glObject);
+			*fbo = glObject;
+			glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
+
+			for (int i = 0; i < config.m_ColorAttachments.size(); i++)
+			{
+				GPUResource* colorAttachment = config.m_ColorAttachments[i];
+				TextureUsage colorAttachmentUsage = config.m_ColorAttachmentsUsage[i];
+				AssignFrameBufferAttachment(GL_COLOR_ATTACHMENT0 + i, colorAttachment, colorAttachmentUsage);
+			}
+
+			AssignFrameBufferAttachment(GL_DEPTH_ATTACHMENT, config.m_DepthAttachment, config.m_DepthAttachmentUsage);
+			AssignFrameBufferAttachment(GL_STENCIL_ATTACHMENT, config.m_StencilAttachment, config.m_StencilAttachmentUsage);
+		};
+
+		auto deleteFbo = [](uintptr* fbo) 
+		{
+			GLuint glObject = *fbo;
+			glDeleteFramebuffers(1, &glObject);
+		};
+
+		GPUResource fbo;
+		fbo.Create(generateFbo, deleteFbo);
+		return fbo;
+	}
+
+	void GL_GPUResourceAllocator::AssignFrameBufferAttachment(GLenum attachment, const GPUResource* textureResource, TextureUsage usage) const
+	{
+		if (!textureResource)
+			return;
+		if (!textureResource->Get())
+			return;
+
+		JERBOA_ASSERT(usage != TextureUsage::None, "Texture usage can't be TextureUsage::None");
+		if (EnumHasFlags(usage, TextureUsage::Read))
+		{
+			glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, textureResource->Get(), 0);
+		}
+		else if (EnumHasFlags(usage, TextureUsage::Write))
+		{
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, textureResource->Get());
+		}
+	}
+
+	void GL_GPUResourceAllocator::UploadTextureData(GPUResource& texture, const GPUTextureResourceData& data) const
 	{
 		auto textureGPUResource = texture.Get();
-		JERBOA_ASSERT(textureGPUResource, "Can't upload data since no gpu resource has been created for the texture");
 		if (!textureGPUResource)
 		{
 			return;
 		}
 
 		glBindTexture(GL_TEXTURE_2D, textureGPUResource);
-		GLenum pixelFormat = GetPixelFormatGL(textureData.GetPixelFormat());
-		glTexImage2D(GL_TEXTURE_2D, 0, pixelFormat, textureData.GetWidth(), textureData.GetHeight(), 0, pixelFormat, GL_UNSIGNED_BYTE, textureData.GetData());
+		GLenum pixelFormatGL = GetPixelFormatGL(data.m_PixelFormat);
+		glTexImage2D(GL_TEXTURE_2D, 0, pixelFormatGL, data.m_Width, data.m_Height, 0, pixelFormatGL, GL_UNSIGNED_BYTE, data.m_PixelData);
 
-		glGenerateMipmap(GL_TEXTURE_2D);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, pixelFormat == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, pixelFormat == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		if (data.m_GenerateMipmaps)
+		{
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
 
 		// Rebinding last bound texture in order to not corrupt the bound texture state
-		TextureSlot lastBoundSlot = m_RenderStateGL->GetLastBoundTextureSlot();
-		Texture2D* lastBoundTexture = m_RenderStateGL->GetBoundTexture(lastBoundSlot);
-		if(lastBoundTexture)
-			m_RenderStateGL->BindTexture(*lastBoundTexture, lastBoundSlot);
+		m_RenderStateGL->RebindLastBoundTexture();
 	}
 }

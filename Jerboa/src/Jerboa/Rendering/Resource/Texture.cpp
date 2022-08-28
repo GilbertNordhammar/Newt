@@ -17,35 +17,47 @@ namespace Jerboa
 	void Texture2D::Create(const TextureConfig& config, GPUResourceAllocator& allocator)
 	{
 		m_TextureGPUResource = allocator.CreateTexture(config);
-		m_Width = config.m_Width;
-		m_Height = config.m_Height;
-		m_PixelFormat = config.m_PixelFormat;
-		m_Usage = config.m_Usage;
+		m_Config = config;
 	}
 
 	void Texture2D::CreateFromTextureData(const TextureData& data, TextureUsage usage, const GPUResourceAllocator& allocator)
 	{
-		m_Width = data.GetWidth();
-		m_Height = data.GetHeight();
-		m_PixelFormat = data.GetPixelFormat();
-		m_Usage = usage;
+		m_Config.m_Usage = usage;
+		m_Config.m_PixelFormat = data.GetPixelFormat();
+		m_Config.m_Width = data.GetWidth();
+		m_Config.m_Height = data.GetHeight();
+		m_Config.m_SamplerWrappingMode = m_Config.m_PixelFormat == PixelFormat::RGBA ? TextureSamplingWrapMode::ClampToEdge : TextureSamplingWrapMode::Repeat;
+		m_Config.m_SamplingFilter = TextureSamplingFilter::Linear;
+		m_Config.m_MipMapInterpolationFilter = MipmapInterpolationFilter::Linear;
 
-		TextureConfig config;
-		config.m_Width = m_Width;
-		config.m_Height = m_Height;
-		config.m_PixelFormat = m_PixelFormat;
-		m_TextureGPUResource = allocator.CreateTexture(config);
+		m_TextureGPUResource = allocator.CreateTexture(m_Config);
 		UploadTextureData(data, allocator);
 	}
 
 	void Texture2D::UploadTextureData(const TextureData& data, const GPUResourceAllocator& allocator)
 	{
 		JERBOA_ASSERT(m_TextureGPUResource.Get(), "Can't upload texture data since the texture gpu resource doesn't exist. Make sure that Texture2D::Create() has been called before.");
-		JERBOA_ASSERT(m_PixelFormat == data.GetPixelFormat(), "Texture doesn't have the same pixel format as the data being uploaded. The visual result might look wrong");
+		if(m_Config.m_PixelFormat == data.GetPixelFormat())
+			JERBOA_LOG_WARN("Texture doesn't have the same pixel format as the data being uploaded. The visual result might look wrong.");
 		if (!m_TextureGPUResource.Get())
 			return;
 
-		allocator.UploadTextureData(m_TextureGPUResource, data);
+		GPUTextureResourceData gpuData;
+		gpuData.m_Width = data.GetWidth();
+		gpuData.m_Height = data.GetHeight();
+		gpuData.m_PixelFormat = m_Config.m_PixelFormat;
+		gpuData.m_PixelData = data.GetData();
+		gpuData.m_GenerateMipmaps = true;
+		allocator.UploadTextureData(m_TextureGPUResource, gpuData);
+	}
+
+	bool Texture2D::IsWriteable() const
+	{
+		return EnumHasFlags(m_Config.m_Usage, TextureUsage::Write);
+	}
+	bool Texture2D::IsReadable() const
+	{
+		return EnumHasFlags(m_Config.m_Usage, TextureUsage::Read);
 	}
 }
 

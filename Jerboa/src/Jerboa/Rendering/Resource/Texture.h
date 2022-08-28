@@ -21,18 +21,20 @@ namespace Jerboa
 		void CreateFromTextureData(const TextureData& data, TextureUsage usage, const GPUResourceAllocator& allocator);
 		void UploadTextureData(const TextureData& data, const GPUResourceAllocator& allocator);
 
-		const GPUResource&	GetGPUResouce() const { return m_TextureGPUResource; }
-		uint32				GetWidth() const { return m_Width; }
-		uint32				GetHeight() const { return m_Height; };
-		PixelFormat			GetPixelFormat() const { return m_PixelFormat; }
-		TextureUsage		GetUsage() const { m_Usage; }
+		const GPUResource&			GetGPUResouce() const { return m_TextureGPUResource; }
+		TextureUsage				GetUsage() const { m_Config.m_Usage; }
+		PixelFormat					GetPixelFormat() const { return m_Config.m_PixelFormat; }
+		uint32						GetWidth() const { return m_Config.m_Width; }
+		uint32						GetHeight() const { return m_Config.m_Height; };
+		TextureSamplingWrapMode		GetSamplerWrappingMode() const{ return m_Config.m_SamplerWrappingMode; }
+		TextureSamplingFilter		GetSamplerFilter() const { return  m_Config.m_SamplingFilter; }
+		MipmapInterpolationFilter	GetMipMapInterpolationFiler() const { return m_Config.m_MipMapInterpolationFilter; }
+		bool						IsWriteable() const;
+		bool						IsReadable() const;
 
 	private:
 		GPUResource m_TextureGPUResource;
-		uint32		m_Width = 0;
-		uint32		m_Height = 0;
-		PixelFormat m_PixelFormat = PixelFormat::None;
-		TextureUsage m_Usage = TextureUsage::None;
+		TextureConfig m_Config;
 	};
 }
 

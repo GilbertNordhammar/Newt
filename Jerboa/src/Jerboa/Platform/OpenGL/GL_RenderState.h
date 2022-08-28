@@ -53,6 +53,9 @@ namespace Jerboa
         // Internal functions
         TextureSlot GetLastBoundTextureSlot() { return m_LastBoundTextureSlot; }
 
+        void RebindCurrentMesh();
+        void RebindLastBoundTexture();
+
         // Internal state variables
         bool            m_BoundMeshStateDirty = false;
     private:
