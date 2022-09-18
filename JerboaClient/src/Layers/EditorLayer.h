@@ -35,6 +35,8 @@ namespace JerboaClient {
 		virtual void OnDetach() override;
 		virtual void OnImGuiRender() override;
 	private:
+		void CreateFramebuffers();
+
 		void OnWindowResize(const Jerboa::WindowResizeEvent& evnt);
 
 		Jerboa::Window& m_Window;

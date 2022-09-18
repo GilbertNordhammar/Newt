@@ -255,6 +255,11 @@ namespace JerboaClient {
         m_RoughnessTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/roughness.png"), TextureUsage::Read, m_ResourceAllocator);
 
         // Create framebuffers
+        CreateFramebuffers();
+	}
+
+    void EditorLayer::CreateFramebuffers()
+    {
         std::shared_ptr<Texture2D> colorAttachment1 = std::make_shared<Texture2D>();
         TextureConfig textureConfig1;
         textureConfig1.m_Width = m_Window.GetWidth();
@@ -274,7 +279,7 @@ namespace JerboaClient {
         fbConfig1.m_DepthStencilAttachment.Set(m_DepthAttachment, RenderPassBeginAction::Clear);
         fbConfig1.m_UseStencil = false;
         m_FrameBuffer1.Create(fbConfig1, m_ResourceAllocator);
-	}
+    }
 
 	void EditorLayer::OnDetach() {
 		JERBOA_LOG_INFO("EditorLayer deattached");
@@ -283,5 +288,6 @@ namespace JerboaClient {
 	void EditorLayer::OnWindowResize(const Jerboa::WindowResizeEvent& evnt)
 	{
 		JERBOA_LOG_TRACE("window resized to {}x{}", evnt.width, evnt.height);
+        CreateFramebuffers();
 	}
 }
