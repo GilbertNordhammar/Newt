@@ -50,6 +50,7 @@ namespace JerboaClient {
         }
 
         ImGui::SliderFloat("Normal Map Mult", &m_NormalMapMult, 0.0f, 10.0f);
+        ImGui::Checkbox("Show color", &m_ShowColorBuffer);
         ImGui::Checkbox("Show depth", &m_ShowDepthBuffer);
 		ImGui::End();
 	}
@@ -175,9 +176,24 @@ namespace JerboaClient {
 
             m_Renderer.Draw(m_SphereMesh);
         }
+    
+        if (m_ShowColorBuffer && m_ShowDepthBuffer)
+        {
+            // Draw color buffer
+            m_RenderState.SetViewport(0, 0, m_Window.GetWidth() / 2, m_Window.GetHeight() / 2);
+            m_Renderer2D.DrawFullscreenPostEffect(m_PassthroughPP, m_FrameBuffer1);
 
-        Shader& shaderPP = m_ShowDepthBuffer ? m_ShowDepthPP : m_PassthroughPP;
-        m_Renderer2D.DrawFullscreenPostEffect(shaderPP, m_FrameBuffer1);
+            // Draw depth buffer
+            m_RenderState.SetViewport(m_Window.GetWidth() / 2, 0, m_Window.GetWidth() / 2, m_Window.GetHeight() / 2);
+            m_Renderer2D.DrawFullscreenPostEffect(m_ShowDepthPP, m_FrameBuffer1);
+
+            m_RenderState.SetViewport(0, 0, m_Window.GetWidth(), m_Window.GetHeight()); // restore viewport
+        }
+        else
+        {
+            Shader& shaderPP = m_ShowDepthBuffer ? m_ShowDepthPP : m_PassthroughPP;
+            m_Renderer2D.DrawFullscreenPostEffect(shaderPP, m_FrameBuffer1);
+        }
 	}
 
 	void EditorLayer::OnAttach() {
@@ -239,7 +255,7 @@ namespace JerboaClient {
         m_RoughnessTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/roughness.png"), TextureUsage::Read, m_ResourceAllocator);
 
         // Create framebuffers
-        std::shared_ptr<Texture2D> m_ColorAttachment1 = std::make_shared<Texture2D>();
+        std::shared_ptr<Texture2D> colorAttachment1 = std::make_shared<Texture2D>();
         TextureConfig textureConfig1;
         textureConfig1.m_Width = m_Window.GetWidth();
         textureConfig1.m_Height = m_Window.GetHeight();
@@ -248,13 +264,13 @@ namespace JerboaClient {
         textureConfig1.m_SamplingFilter = Jerboa::TextureSamplingFilter::Linear;
         textureConfig1.m_Usage = Jerboa::TextureUsage::Read | Jerboa::TextureUsage::Write;
         textureConfig1.m_PixelFormat = Jerboa::PixelFormat::RGBA;
-        m_ColorAttachment1->Create(textureConfig1, m_ResourceAllocator);
+        colorAttachment1->Create(textureConfig1, m_ResourceAllocator);
 
         std::shared_ptr<Texture2D> m_DepthAttachment = std::make_shared<Texture2D>();
         m_DepthAttachment->Create(textureConfig1, m_ResourceAllocator);
 
         FrameBufferConfig fbConfig1;
-        fbConfig1.m_ColorAttachments[0].Set(m_ColorAttachment1, RenderPassBeginAction::Clear);
+        fbConfig1.m_ColorAttachments[0].Set(colorAttachment1, RenderPassBeginAction::Clear);
         fbConfig1.m_DepthStencilAttachment.Set(m_DepthAttachment, RenderPassBeginAction::Clear);
         fbConfig1.m_UseStencil = false;
         m_FrameBuffer1.Create(fbConfig1, m_ResourceAllocator);

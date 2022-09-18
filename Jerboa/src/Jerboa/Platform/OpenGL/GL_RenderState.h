@@ -53,6 +53,9 @@ namespace Jerboa
         void        SetBlendingColorImpl(glm::vec4 color) override;
         void        SetBlendingFactorImpl(BlendingFactor source, BlendingFactor destination) override;
 
+        // Viewport and scissor virtual interface
+        void        SetViewportImpl(int originX, int originY, int width, int height) override;
+
         // Internal functions
         TextureSlot GetLastBoundTextureSlot() { return m_LastBoundTextureSlot; }
 

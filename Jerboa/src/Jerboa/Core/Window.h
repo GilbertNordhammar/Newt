@@ -5,6 +5,8 @@
 #include <memory>
 
 namespace Jerboa {
+	class Renderer;
+
 	enum class WindowApi 
 	{
 		None, GLFW
@@ -51,14 +53,16 @@ namespace Jerboa {
 
 		float GetAspectRatio() const { return (float) GetWidth() / (float) GetHeight(); }
 
-		static void SetApi(WindowApi api) { sWindowApi = api; }
-		static WindowApi GetApi() { return sWindowApi; }
+		static void SetApi(WindowApi api) { sm_WindowApi = api; }
+		static WindowApi GetApi() { return sm_WindowApi; }
 
-		static Window* Create(const WindowProps& props = WindowProps());
+		static Window* Create(const WindowProps& props);
 		static Window* Get();
+
 	private:
-		static std::shared_ptr<Window> sWindow;
-		static WindowApi sWindowApi;
+		static std::shared_ptr<Window> sm_Window;
+		static WindowApi sm_WindowApi;
+		Renderer* m_Renderer;
 	};
 }
 

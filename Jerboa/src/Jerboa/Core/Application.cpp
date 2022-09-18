@@ -16,6 +16,7 @@ namespace Jerboa {
         m_Renderer(Renderer::Create())
     {
         m_EventObserver.Subscribe(this, &Application::OnWindowClose);
+        m_EventObserver.Subscribe(this, &Application::OnWindowResize);
         m_Window->SetVSync(true);
     }
 
@@ -96,5 +97,10 @@ namespace Jerboa {
     void Application::OnWindowClose(const WindowCloseEvent& evnt)
     {
         m_Running = false;
+    }
+
+    void Application::OnWindowResize(const WindowResizeEvent& evnt)
+    {
+        m_Renderer->GetState().SetViewport(0, 0, evnt.width, evnt.height);
     }
 }

@@ -290,6 +290,11 @@ namespace Jerboa
             glBlendFunc(ConvertBlendingFactorToGL(source), ConvertBlendingFactorToGL(destination));
     }
 
+    void GL_RenderState::SetViewportImpl(int originX, int originY, int width, int height)
+    {
+        glViewport(originX, originY, width, height);
+    }
+
     void GL_RenderState::RebindCurrentMesh()
     {
         if(m_BoundMesh)

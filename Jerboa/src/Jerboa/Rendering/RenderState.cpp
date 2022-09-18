@@ -200,6 +200,21 @@ namespace Jerboa
 		m_BlendingFactorDestination = destination;
 	}
 
+	void RenderState::SetViewport(int originX, int originY, int width, int height)
+	{
+		originX = std::max(originX, 0);
+		originY = std::max(originY, 0);
+		width = std::max(width, 0);
+		height = std::max(height, 0);
+		
+		SetViewportImpl(originX, originY, width, height);
+		
+		m_Viewport.m_OriginX = originX;
+		m_Viewport.m_OriginY = originY;
+		m_Viewport.m_Width = width;
+		m_Viewport.m_Height = height;
+	}
+
 	void RenderState::OnMeshDestroyed(const MeshDestroyedEvent& evnt)
 	{
 		if (m_BoundMesh == &evnt.m_Mesh)

@@ -17,17 +17,17 @@ namespace Jerboa
 
 		virtual void Update() override;
 
-		virtual int GetWidth() const override { return mData.width; };
-		virtual int GetHeight() const override { return mData.height; };
+		virtual int GetWidth() const override { return m_WindowData.width; };
+		virtual int GetHeight() const override { return m_WindowData.height; };
 		virtual glm::ivec2 GetPosition() const override;
 
-		virtual CursorMode GetCursorMode() override { return mData.cursorMode; }
+		virtual CursorMode GetCursorMode() override { return m_WindowData.cursorMode; }
 		virtual void SetCursorMode(CursorMode mode) override;
 
 		virtual void SetVSync(bool enabled) override;
-		virtual bool IsVSync() const override { return mData.VSync; };
+		virtual bool IsVSync() const override { return m_WindowData.VSync; };
 
-		virtual void* GetNativeWindow() const { return mWindow; }
+		virtual void* GetNativeWindow() const { return m_WindowGLFW; }
 	private:
 		struct WindowData
 		{
@@ -40,7 +40,7 @@ namespace Jerboa
 		void Init(const WindowProps& props);
 		void ShutDown();
 
-		GLFWwindow* mWindow;
-		WindowData mData;
+		GLFWwindow* m_WindowGLFW;
+		WindowData m_WindowData;
 	};
 }

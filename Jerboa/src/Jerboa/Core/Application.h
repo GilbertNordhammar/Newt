@@ -47,6 +47,7 @@ namespace Jerboa
         void            RenderImGui();
 
         void            OnWindowClose(const WindowCloseEvent &evnt);
+        void            OnWindowResize(const WindowResizeEvent& evnt);
 
         virtual void    OnInit() {}
         virtual void    OnShutdown() {}

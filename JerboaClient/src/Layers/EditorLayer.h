@@ -69,6 +69,7 @@ namespace JerboaClient {
 		Jerboa::EventObserver m_EventObserver;
 		
 		// For debugging
+		bool m_ShowColorBuffer = true;
 		bool m_ShowDepthBuffer = false;
 	};
 }

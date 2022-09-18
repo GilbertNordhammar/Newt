@@ -38,20 +38,20 @@ namespace Jerboa {
 	void GLFW_Window::Update()
 	{
 		OPTICK_EVENT("GLFW_Window::Update()");
-		glfwSwapBuffers(mWindow);
+		glfwSwapBuffers(m_WindowGLFW);
 		glfwPollEvents();
 	}
 
 	glm::ivec2 GLFW_Window::GetPosition() const
 	{
 		int x, y;
-		glfwGetWindowPos(mWindow, &x, &y);
+		glfwGetWindowPos(m_WindowGLFW, &x, &y);
 		return { x, y };
 	}
 
 	void GLFW_Window::SetCursorMode(CursorMode mode)
 	{
-		mData.cursorMode = mode;
+		m_WindowData.cursorMode = mode;
 		int glfwMode = 0;
 		if (mode == CursorMode::Normal)
 			glfwMode = GLFW_CURSOR_NORMAL;
@@ -62,21 +62,21 @@ namespace Jerboa {
 		
 		JERBOA_ASSERT(glfwMode, "CursorMode value is not handled!");
 
-		glfwSetInputMode(mWindow, GLFW_CURSOR, glfwMode);
+		glfwSetInputMode(m_WindowGLFW, GLFW_CURSOR, glfwMode);
 	}
 
 	void GLFW_Window::SetVSync(bool enabled)
 	{
 		glfwSwapInterval(enabled ? 1 : 0);
-		mData.VSync = enabled;
+		m_WindowData.VSync = enabled;
 	}
 
 	void GLFW_Window::Init(const WindowProps& props)
 	{
-		mData.height = props.height;
-		mData.width = props.width;
-		mData.title = mData.title;
-		mData.cursorMode = props.cursorMode;
+		m_WindowData.height = props.height;
+		m_WindowData.width = props.width;
+		m_WindowData.title = m_WindowData.title;
+		m_WindowData.cursorMode = props.cursorMode;
 
 		JERBOA_LOG_INFO("Creating window \"{0}\" ({1}x{2})", props.title, props.width, props.height);
 
@@ -88,19 +88,19 @@ namespace Jerboa {
 			sGLFWInitialized = true;
 		}
 
-		mWindow = glfwCreateWindow(props.width, props.height, props.title.c_str(), NULL, NULL);
-		JERBOA_ASSERT(mWindow, "Could not create GLFW window!");
+		m_WindowGLFW = glfwCreateWindow(props.width, props.height, props.title.c_str(), NULL, NULL);
+		JERBOA_ASSERT(m_WindowGLFW, "Could not create GLFW window!");
 
-		glfwMakeContextCurrent(mWindow);
-		glfwSetWindowUserPointer(mWindow, &mData);
-		SetCursorMode(mData.cursorMode);
+		glfwMakeContextCurrent(m_WindowGLFW);
+		glfwSetWindowUserPointer(m_WindowGLFW, &m_WindowData);
+		SetCursorMode(m_WindowData.cursorMode);
 		
 		// Initialzing OpenGL
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		JERBOA_ASSERT(status, "Failed to initialize Glad!");
 
 		// Setting various callback functions for GLFW
-		glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height)
+		glfwSetWindowSizeCallback(m_WindowGLFW, [](GLFWwindow* window, int width, int height)
 		{
 			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
 
@@ -109,7 +109,7 @@ namespace Jerboa {
 			EventBus::Publish(WindowResizeEvent(width, height));
 		});
 
-		glfwSetWindowCloseCallback(mWindow, [](GLFWwindow* window)
+		glfwSetWindowCloseCallback(m_WindowGLFW, [](GLFWwindow* window)
 		{
 			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
 
@@ -117,7 +117,7 @@ namespace Jerboa {
 			EventBus::Publish(WindowCloseEvent());
 		});
 
-		glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+		glfwSetKeyCallback(m_WindowGLFW, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
 			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
 			auto keyCode = static_cast<KeyCode>(key);
@@ -143,19 +143,19 @@ namespace Jerboa {
 			}
 		});
 
-		glfwSetCursorPosCallback(mWindow, [](GLFWwindow* window, double x, double y)
+		glfwSetCursorPosCallback(m_WindowGLFW, [](GLFWwindow* window, double x, double y)
 		{
 			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
 			EventBus::Publish(MouseMovedEvent(x, y));
 		});
 
-		glfwSetScrollCallback(mWindow, [](GLFWwindow* window, double xOffset, double yOffset)
+		glfwSetScrollCallback(m_WindowGLFW, [](GLFWwindow* window, double xOffset, double yOffset)
 		{
 			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
 			EventBus::Publish(MouseScrolledEvent(xOffset, yOffset));
 		});
 
-		glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods)
+		glfwSetMouseButtonCallback(m_WindowGLFW, [](GLFWwindow* window, int button, int action, int mods)
 		{
 			auto& data = *((WindowData*)glfwGetWindowUserPointer(window));
 			auto buttonCode = static_cast<MouseButtonCode>(button);
