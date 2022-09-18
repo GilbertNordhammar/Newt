@@ -48,6 +48,7 @@ namespace JerboaClient {
 		Jerboa::Shader m_PBRShader;
 		Jerboa::Shader m_PointLightShader;
 		Jerboa::Shader m_PassthroughPP;
+		Jerboa::Shader m_ShowDepthPP;
 
 		std::vector<Jerboa::Transform> mTransforms;
 
@@ -61,11 +62,14 @@ namespace JerboaClient {
 		Jerboa::Texture2D m_MetallicTexture;
 		Jerboa::Texture2D m_RoughnessTexture;
 
-		float mNormalMapMult = 5.0f;
+		float m_NormalMapMult = 5.0f;
 
 		std::vector<Jerboa::PointLight> mPointLights;
 
 		Jerboa::EventObserver m_EventObserver;
+		
+		// For debugging
+		bool m_ShowDepthBuffer = false;
 	};
 }
 

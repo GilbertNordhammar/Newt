@@ -49,7 +49,8 @@ namespace JerboaClient {
             pl.SetPower(power);
         }
 
-        ImGui::SliderFloat("Normal Map Mult", &mNormalMapMult, 0.0f, 10.0f);
+        ImGui::SliderFloat("Normal Map Mult", &m_NormalMapMult, 0.0f, 10.0f);
+        ImGui::Checkbox("Show depth", &m_ShowDepthBuffer);
 		ImGui::End();
 	}
 
@@ -160,7 +161,7 @@ namespace JerboaClient {
         m_ShaderState.SetBool("useNormalMap", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::N));
         m_ShaderState.SetBool("reorthogonalize", !Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::B));
         m_ShaderState.SetBool("toggle", Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::T));
-        m_ShaderState.SetFloat("normalMapMult", mNormalMapMult);
+        m_ShaderState.SetFloat("normalMapMult", m_NormalMapMult);
  
         static const float rotationSpeed = 0.2;
         float rotation = 0;
@@ -175,7 +176,8 @@ namespace JerboaClient {
             m_Renderer.Draw(m_SphereMesh);
         }
 
-        m_Renderer2D.DrawFullscreenPostEffect(m_FrameBuffer1);
+        Shader& shaderPP = m_ShowDepthBuffer ? m_ShowDepthPP : m_PassthroughPP;
+        m_Renderer2D.DrawFullscreenPostEffect(shaderPP, m_FrameBuffer1);
 	}
 
 	void EditorLayer::OnAttach() {
@@ -216,17 +218,27 @@ namespace JerboaClient {
         int indicesSize = sphereIndices.size() * sizeof(sphereIndices[0]);
         auto sphereIndexData = Jerboa::IndexBufferData(sphereIndices.data(), indicesSize);
 
+        // Create meshes
         m_SphereMesh.Create(sphereVertexData, &sphereIndexData, Jerboa::PrimitiveType::Triangle, m_Renderer.GetAllocatorPtr());
 
+        // Create shaders
         m_PBRShader.Create(ShaderLoaderGLSL::Load("assets/shaders/pbr/Standard.glsl"), m_ResourceAllocator);
         m_PointLightShader.Create(ShaderLoaderGLSL::Load("assets/shaders/pbr/PointLight.glsl"), m_ResourceAllocator);
 
+        ShaderDataGLSL dataPassthroughPP = ShaderLoaderGLSL::Load("assets/shaders/PostProcessing/default.vert", "assets/shaders/PostProcessing/Passthrough.frag");
+        m_PassthroughPP.Create(dataPassthroughPP, m_Renderer.GetAllocator());
+
+        ShaderDataGLSL dataShowDepthPP = ShaderLoaderGLSL::Load("assets/shaders/PostProcessing/default.vert", "assets/shaders/PostProcessing/ShowDepth.frag");
+        m_ShowDepthPP.Create(dataShowDepthPP, m_Renderer.GetAllocator());
+
+        // Create read-only textures
         m_AlbedoTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/albedo.png"), TextureUsage::Read, m_ResourceAllocator);
         m_AmbientOcclusionTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/ao.png"), TextureUsage::Read, m_ResourceAllocator);
         m_NormalTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/normal-ogl.png"), TextureUsage::Read, m_ResourceAllocator);
         m_MetallicTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/metallic.png"), TextureUsage::Read, m_ResourceAllocator);
         m_RoughnessTexture.CreateFromTextureData(Jerboa::TextureLoader::LoadTexture("assets/textures/pbr/beaten-up-metal/roughness.png"), TextureUsage::Read, m_ResourceAllocator);
 
+        // Create framebuffers
         std::shared_ptr<Texture2D> m_ColorAttachment1 = std::make_shared<Texture2D>();
         TextureConfig textureConfig1;
         textureConfig1.m_Width = m_Window.GetWidth();

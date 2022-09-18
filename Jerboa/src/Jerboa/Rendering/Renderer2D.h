@@ -10,14 +10,12 @@ namespace Jerboa
 	public:
 		Renderer2D(Renderer& renderer);
 
-		void					DrawFullscreenPostEffect(const FrameBuffer& source, FrameBuffer* destination = nullptr);
+		void					DrawFullscreenPostEffect(Shader& shader, const FrameBuffer& source, FrameBuffer* destination = nullptr);
 
 	private:
 		void					CreateFullscreenQuad();
-		void					CreateFullscreenShader();
 
 		Renderer&				m_Renderer;
 		Mesh					m_FullscreenQuad;
-		Shader					m_PassthroughShader;
 	};
 }

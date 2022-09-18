@@ -34,7 +34,7 @@ namespace Jerboa
 		{
 			const GPUResource& depthStencilAttachmentGPU = depthStencilTexture->GetGPUResouce();
 			JERBOA_ASSERT(depthStencilTexture->IsWriteable(), "Texture is not writeable and can therefore not be a depth attachment");
-			JERBOA_ASSERT(depthStencilAttachmentGPU.Exists(), "Texture hasn't been allocated on GPU and can therefore not be a depth attachment");
+			JERBOA_ASSERT(depthStencilAttachmentGPU.Exists(), "Texture hasn't been allocated on GPU and can therefore not be a depth stencil attachment");
 			if (depthStencilTexture->IsWriteable() && depthStencilAttachmentGPU.Exists())
 			{
 				gpuConfig.m_DepthStencilAttachment = &depthStencilAttachmentGPU;
