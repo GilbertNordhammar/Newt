@@ -111,28 +111,44 @@ namespace Jerboa
     {
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer.GetGPUResouce().Get());
 
-        std::vector<GLenum> activeColorAttachmentIndexes;
+        std::vector<GLenum> colorAttachmentsToDraw;
+        std::vector<GLint> colorAttachmentsToClear;
         auto colorAttachments = frameBuffer.GetColorAttachments();
         for (int i = 0; i < colorAttachments.size(); i++)
         {
-            if (!colorAttachments[i].Empty())
-                activeColorAttachmentIndexes.push_back(i);
+            if (colorAttachments[i].Assigned())
+            {
+                colorAttachmentsToDraw.push_back(GL_COLOR_ATTACHMENT0 + i);
+                if(colorAttachments[i].GetRenderPassBeginAction() == RenderPassBeginAction::Clear)
+                    colorAttachmentsToClear.push_back(i);
+            }
         }
 
-        glDrawBuffers(activeColorAttachmentIndexes.size(), activeColorAttachmentIndexes.data());
-        for (const auto& index : activeColorAttachmentIndexes)
+        FrameBufferAttachment depthStencilAttachment = frameBuffer.GetDepthStencilAttachment();
+        bool shouldClearDepthStencil = depthStencilAttachment.Assigned() && depthStencilAttachment.GetRenderPassBeginAction() == RenderPassBeginAction::Clear;
+        GLenum depthStencilClearFlags = frameBuffer.UseStencil()
+            ? GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT 
+            : GL_DEPTH_BUFFER_BIT;
+        
+        GLenum clearFlags = shouldClearDepthStencil 
+            ? depthStencilClearFlags
+            : GL_NONE;
+
+        if (colorAttachmentsToClear.size() == colorAttachmentsToDraw.size())
         {
-            if(colorAttachments[index].GetRenderPassBeginAction() == RenderPassBeginAction::Clear)
-                glClearBufferfv(GL_COLOR, GL_COLOR_ATTACHMENT0 + index, &m_ClearColor[0]);
+            clearFlags |= GL_COLOR_BUFFER_BIT;
+        }
+        else
+        {
+            for (const auto& index : colorAttachmentsToClear)
+            {
+                if (colorAttachments[index].GetRenderPassBeginAction() == RenderPassBeginAction::Clear)
+                    glClearBufferfv(GL_COLOR, index, &m_ClearColor[0]);
+            }
         }
 
-        auto depthAttachment = frameBuffer.GetDepthAttachment();
-        if (!depthAttachment.Empty() && depthAttachment.GetRenderPassBeginAction() == RenderPassBeginAction::Clear)
-            glClearBufferfv(GL_DEPTH, 0, &m_ClearDepth);
-
-        auto stencilAttachment = frameBuffer.GetStencilAttachment();
-        if (!stencilAttachment.Empty() && stencilAttachment.GetRenderPassBeginAction() == RenderPassBeginAction::Clear)
-            glClearBufferiv(GL_STENCIL, 0, &m_ClearStencil);
+        glClear(clearFlags);
+        glDrawBuffers(colorAttachmentsToDraw.size(), colorAttachmentsToDraw.data());
     }
 
     void GL_RenderState::BeginDefaultRenderPassImpl()

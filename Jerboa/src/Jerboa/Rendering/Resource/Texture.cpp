@@ -55,6 +55,7 @@ namespace Jerboa
 	{
 		return EnumHasFlags(m_Config.m_Usage, TextureUsage::Write);
 	}
+
 	bool Texture2D::IsReadable() const
 	{
 		return EnumHasFlags(m_Config.m_Usage, TextureUsage::Read);

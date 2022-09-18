@@ -20,17 +20,15 @@ namespace Jerboa
 
 		const GPUResource&					GetGPUResouce() const { return m_GPUResource; }
 		const FrameBufferAttachment&		GetColorAttachment(ColorAttachmentSlot slot) const;
-		const FrameBufferAttachmentArray&	GetColorAttachments() const { return m_ColorAttachments; }
-		const FrameBufferAttachment&		GetDepthAttachment() const { return m_DepthAttachment; }
-		const FrameBufferAttachment&		GetStencilAttachment() const { return m_StencilAttachment; }
-
+		const FrameBufferAttachmentArray&	GetColorAttachments() const { return m_Config.m_ColorAttachments; }
+		const FrameBufferAttachment&		GetDepthStencilAttachment() const { return m_Config.m_DepthStencilAttachment; }
+		const bool							UseStencil() const { return m_Config.m_UseStencil; }
+		const FrameBufferConfig&			GetConfig() const { return m_Config; }
 
 	private:
 		GPUResource m_GPUResource;
 
 		// TODO: Don't store textures as raw pointers
-		FrameBufferAttachmentArray m_ColorAttachments;
-		FrameBufferAttachment m_DepthAttachment;
-		FrameBufferAttachment m_StencilAttachment;
+		FrameBufferConfig m_Config;
 	};
 }

@@ -14,12 +14,12 @@ namespace Jerboa {
 
 	struct VertexBufferData
 	{
-		VertexBufferData(float* data, uint32_t size, VertexBufferUsage usage, VertexBufferLayout layout)
+		VertexBufferData(const float* data, uint32_t size, VertexBufferUsage usage, VertexBufferLayout layout)
 			: m_Data(data), m_Size(size), m_Usage(usage), m_Layout(layout)
 		{
 		}
 
-		float* m_Data;
+		const float* m_Data;
 		uint32 m_Size;
 		VertexBufferUsage m_Usage;
 		VertexBufferLayout m_Layout;

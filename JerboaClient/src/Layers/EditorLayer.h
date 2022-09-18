@@ -17,9 +17,9 @@
 #include "Jerboa/Rendering/lights/PointLight.h"
 #include "Jerboa/Scene/Transform.h"
 
-
 #include "Jerboa/Rendering/Resource/Mesh.h"
 #include "Jerboa/Rendering/Renderer.h"
+#include "Jerboa/Rendering/Renderer2D.h"
 
 #include <memory>
 #include <vector>
@@ -42,6 +42,7 @@ namespace JerboaClient {
 		Jerboa::RenderState& m_RenderState;
 		Jerboa::ShaderState& m_ShaderState;
 		Jerboa::GPUResourceAllocator& m_ResourceAllocator;
+		Jerboa::Renderer2D m_Renderer2D;
 
 		Jerboa::Camera m_Camera;
 		Jerboa::Shader m_PBRShader;

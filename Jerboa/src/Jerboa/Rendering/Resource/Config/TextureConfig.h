@@ -6,10 +6,13 @@ namespace Jerboa
 {
 	enum class TextureUsage
 	{
-		None = 0, Read = 1, Write = 2
+		None = 0,
+		Read = 1,
+		Write = 2
 	};
 
-	JERBOA_ENABLE_ENUM_FLAG_OPERATORS(TextureUsage);
+	JERBOA_ENABLE_ENUM_FLAG_OPERATORS(TextureUsage)
+	
 
 	enum class TextureSamplingFilter
 	{

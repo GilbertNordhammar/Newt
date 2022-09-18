@@ -22,6 +22,7 @@ namespace Jerboa
 		void UploadTextureData(const TextureData& data, const GPUResourceAllocator& allocator);
 
 		const GPUResource&			GetGPUResouce() const { return m_TextureGPUResource; }
+		const TextureConfig&		GetConfig() const { return m_Config; }
 		TextureUsage				GetUsage() const { return m_Config.m_Usage; }
 		PixelFormat					GetPixelFormat() const { return m_Config.m_PixelFormat; }
 		uint32						GetWidth() const { return m_Config.m_Width; }

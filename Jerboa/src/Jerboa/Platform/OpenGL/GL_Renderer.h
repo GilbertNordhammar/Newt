@@ -14,10 +14,10 @@ namespace Jerboa {
 	public:
 		GL_Renderer(GL_RenderState* renderStateGL);
 
-		void			Draw(Mesh& mesh) override;
-	private:
 		virtual void	BeginFrameImpl() override;
 		virtual void	EndFrameImpl() override;
+
+		void			Draw(Mesh& mesh) override;
 
 		void OnWindowResize(const WindowResizeEvent& evnt);
 

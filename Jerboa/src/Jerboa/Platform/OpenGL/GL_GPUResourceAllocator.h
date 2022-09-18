@@ -21,7 +21,8 @@ namespace Jerboa
 
 		void UploadTextureData(GPUResource& texture, const GPUTextureResourceData& data) const override;
 	private:
-		void AssignFrameBufferAttachment(GLenum attachment, const GPUResource* textureResource, TextureUsage usage) const;
+		void AssignFrameBufferAttachment(GLenum attachment, const GPUResource* textureResource, TextureConfig textureConfig) const;
+		void CheckFrambufferStatus() const;
 
 		GL_RenderState* m_RenderStateGL;
 	};

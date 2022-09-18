@@ -141,20 +141,23 @@ namespace Jerboa
 		auto generateTexture = [&](uintptr* textureObject)
 		{
 			GLuint glObject = 0;
-			glGenTextures(1, &glObject);
-			*textureObject = glObject;
 
-			glBindTexture(GL_TEXTURE_2D, *textureObject);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GetTextureWrappingModeGL(config.m_SamplerWrappingMode));
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GetTextureWrappingModeGL(config.m_SamplerWrappingMode));
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GetTextureSamplingFilterGL(config.m_SamplingFilter, config.m_MipMapInterpolationFilter));
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GetTextureSamplingFilterGL(config.m_SamplingFilter, config.m_MipMapInterpolationFilter));
-
-			if (EnumHasFlags(config.m_Usage, TextureUsage::Write))
+			if (EnumHasFlags(config.m_Usage, TextureUsage::Read))
 			{
-				auto pixelFormatGL = GetPixelFormatGL(config.m_PixelFormat);
-				glTexImage2D(GL_TEXTURE_2D, 0, pixelFormatGL, config.m_Width, config.m_Height, 0, pixelFormatGL, GL_UNSIGNED_BYTE, NULL);
+				glGenTextures(1, &glObject);
+				glBindTexture(GL_TEXTURE_2D, glObject);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GetTextureWrappingModeGL(config.m_SamplerWrappingMode));
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GetTextureWrappingModeGL(config.m_SamplerWrappingMode));
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GetTextureSamplingFilterGL(config.m_SamplingFilter, config.m_MipMapInterpolationFilter));
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GetTextureSamplingFilterGL(config.m_SamplingFilter, config.m_MipMapInterpolationFilter));
 			}
+			else if(EnumHasFlags(config.m_Usage, TextureUsage::Write))
+			{
+				glGenRenderbuffers(1, &glObject);
+				glBindRenderbuffer(GL_RENDERBUFFER, glObject);		
+			}
+			*textureObject = glObject;
 
 			// Rebinding last bound texture in order to not corrupt the bound texture state
 			m_RenderStateGL->RebindLastBoundTexture();
@@ -213,13 +216,14 @@ namespace Jerboa
 			for (int i = 0; i < config.m_ColorAttachments.size(); i++)
 			{
 				const GPUResource* colorAttachment = config.m_ColorAttachments[i];
-				TextureUsage colorAttachmentUsage = config.m_ColorAttachmentsUsage[i];
+				const TextureConfig& colorAttachmentUsage = config.m_ColorAttachmentsTextureConfig[i];
 				AssignFrameBufferAttachment(GL_COLOR_ATTACHMENT0 + i, colorAttachment, colorAttachmentUsage);
 			}
 
-			AssignFrameBufferAttachment(GL_DEPTH_ATTACHMENT, config.m_DepthAttachment, config.m_DepthAttachmentUsage);
-			AssignFrameBufferAttachment(GL_STENCIL_ATTACHMENT, config.m_StencilAttachment, config.m_StencilAttachmentUsage);
+			GLenum depthStencilAttachmentGL = config.m_UseStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT;
+			AssignFrameBufferAttachment(depthStencilAttachmentGL, config.m_DepthStencilAttachment, config.m_DepthStencilAttachmentTextureConfig);
 			
+			CheckFrambufferStatus();
 			glBindFramebuffer(GL_FRAMEBUFFER, 0); // TODO: Do proper state restoration
 		};
 
@@ -234,22 +238,60 @@ namespace Jerboa
 		return fbo;
 	}
 
-	void GL_GPUResourceAllocator::AssignFrameBufferAttachment(GLenum attachment, const GPUResource* textureResource, TextureUsage usage) const
+	void GL_GPUResourceAllocator::AssignFrameBufferAttachment(GLenum attachment, const GPUResource* textureResource, TextureConfig textureConfig) const
 	{
 		if (!textureResource)
 			return;
 		if (!textureResource->Get())
 			return;
 
-		JERBOA_ASSERT(usage != TextureUsage::None, "Texture usage can't be TextureUsage::None");
-		if (EnumHasFlags(usage, TextureUsage::Read))
+		GLenum pixelFormat = GL_INVALID_ENUM;
+		switch (attachment)
 		{
+		case GL_DEPTH_ATTACHMENT:
+			pixelFormat = GL_DEPTH_COMPONENT;
+			break;
+		case GL_DEPTH_STENCIL_ATTACHMENT:
+			pixelFormat = GL_DEPTH24_STENCIL8;
+			break;
+		default:
+			pixelFormat = GetPixelFormatGL(textureConfig.m_PixelFormat);
+			JERBOA_ASSERT(attachment >= GL_COLOR_ATTACHMENT0 && attachment < GL_COLOR_ATTACHMENT0 + EnumToInt<int>(TextureSlot::Count), "Invalid GL attachment");
+		}
+
+		JERBOA_ASSERT(textureConfig.m_Usage != TextureUsage::None, "Texture usage can't be TextureUsage::None");
+		if (EnumHasFlags(textureConfig.m_Usage, TextureUsage::Read))
+		{
+			glBindTexture(GL_TEXTURE_2D, textureResource->Get());
+			glTexImage2D(GL_TEXTURE_2D, 0, pixelFormat, textureConfig.m_Width, textureConfig.m_Height, 0, pixelFormat, GL_UNSIGNED_BYTE, NULL);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, textureResource->Get(), 0);
 		}
-		else if (EnumHasFlags(usage, TextureUsage::Write))
+		else if(EnumHasFlags(textureConfig.m_Usage, TextureUsage::Write))
 		{
+			glBindRenderbuffer(GL_RENDERBUFFER, textureResource->Get());
+			glRenderbufferStorage(GL_RENDERBUFFER, pixelFormat, textureConfig.m_Width, textureConfig.m_Height);
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, textureResource->Get());
 		}
+	}
+
+	void GL_GPUResourceAllocator::CheckFrambufferStatus() const {
+		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		if (status != GL_FRAMEBUFFER_COMPLETE) {
+			JERBOA_LOG_ERROR("Framebuffer is not complete!");
+
+			switch (status)
+			{
+			case GL_FRAMEBUFFER_UNSUPPORTED:
+				JERBOA_LOG_ERROR(" - GL_FRAMEBUFFER_UNSUPPORTED");
+				break;
+			case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+				JERBOA_LOG_ERROR(" - GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+				break;
+			default:
+				JERBOA_LOG_ERROR(" - UNKNOWN_GL_ERROR");
+			}
+		}
+
 	}
 
 	void GL_GPUResourceAllocator::UploadTextureData(GPUResource& texture, const GPUTextureResourceData& data) const

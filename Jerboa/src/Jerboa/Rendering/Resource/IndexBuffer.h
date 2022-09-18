@@ -10,12 +10,12 @@ namespace Jerboa {
 
 	struct IndexBufferData
 	{
-		IndexBufferData(uint32* data, uint32_t size)
+		IndexBufferData(const uint32* data, uint32_t size)
 			: m_Data(data), m_Size(size)
 		{
 		}
 
-		uint32* m_Data;
+		const uint32* m_Data;
 		uint32 m_Size;
 	};
 

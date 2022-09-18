@@ -21,7 +21,8 @@ namespace JerboaClient {
         m_RenderState(renderer.GetState()),
         m_ShaderState(renderer.GetShaderState()),
         m_ResourceAllocator(renderer.GetAllocator()),
-        m_Camera(Jerboa::Camera(glm::vec3(-1, 0, 5), Jerboa::CameraType::Perspective, glm::radians(60.0)))
+        m_Camera(Jerboa::Camera(glm::vec3(-1, 0, 5), Jerboa::CameraType::Perspective, glm::radians(60.0))),
+        m_Renderer2D(renderer)
 	{
         m_EventObserver.Subscribe(this, &EditorLayer::OnWindowResize);
     }
@@ -104,10 +105,10 @@ namespace JerboaClient {
         else if (Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::_2))
             Jerboa::Window::Get()->SetCursorMode(Jerboa::CursorMode::Normal);
 
-        // Drawing point light represenations
+        // TODO: Uncomment this once stuff work
+        m_RenderState.BeginRenderPass(m_FrameBuffer1); 
 
-        //m_RenderState.BeginRenderPass(m_FrameBuffer1); // TODO: Uncomment this once stuff work
-     
+        // Drawing point light represenations
         m_RenderState.BindShader(m_PointLightShader);
         m_ShaderState.SetMat4("mat_VP", m_Camera.GetProjectionMatrix() * m_Camera.GetViewMatrix());
         for (auto& pointLight : mPointLights) {
@@ -173,6 +174,8 @@ namespace JerboaClient {
 
             m_Renderer.Draw(m_SphereMesh);
         }
+
+        m_Renderer2D.DrawFullscreenPostEffect(m_FrameBuffer1);
 	}
 
 	void EditorLayer::OnAttach() {
@@ -234,8 +237,14 @@ namespace JerboaClient {
         textureConfig1.m_Usage = Jerboa::TextureUsage::Read | Jerboa::TextureUsage::Write;
         textureConfig1.m_PixelFormat = Jerboa::PixelFormat::RGBA;
         m_ColorAttachment1->Create(textureConfig1, m_ResourceAllocator);
+
+        std::shared_ptr<Texture2D> m_DepthAttachment = std::make_shared<Texture2D>();
+        m_DepthAttachment->Create(textureConfig1, m_ResourceAllocator);
+
         FrameBufferConfig fbConfig1;
         fbConfig1.m_ColorAttachments[0].Set(m_ColorAttachment1, RenderPassBeginAction::Clear);
+        fbConfig1.m_DepthStencilAttachment.Set(m_DepthAttachment, RenderPassBeginAction::Clear);
+        fbConfig1.m_UseStencil = false;
         m_FrameBuffer1.Create(fbConfig1, m_ResourceAllocator);
 	}
 

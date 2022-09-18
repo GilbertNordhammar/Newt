@@ -27,9 +27,10 @@ namespace Jerboa
 			m_RenderPassBeginAction = action;
 		}
 
-		const Texture2D*		GetTexture() const { return m_Texture.get(); }
+		Texture2D*				GetTexture() const { return m_Texture.get(); }
 		RenderPassBeginAction	GetRenderPassBeginAction() const { return m_RenderPassBeginAction; }
 		bool					Empty() const { return m_Texture == nullptr; }
+		bool					Assigned() const { return m_Texture != nullptr; }
 
 	private:
 		std::shared_ptr<Texture2D> m_Texture = nullptr;
@@ -39,8 +40,7 @@ namespace Jerboa
 	struct FrameBufferConfig
 	{
 		std::array<FrameBufferAttachment, EnumToInt<int>(ColorAttachmentSlot::Count)> m_ColorAttachments;
-		FrameBufferAttachment m_DepthAttachment;
-		FrameBufferAttachment m_StencilAttachment;
-
+		FrameBufferAttachment m_DepthStencilAttachment;
+		bool m_UseStencil;
 	};
 }
