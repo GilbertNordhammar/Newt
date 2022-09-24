@@ -97,6 +97,6 @@ namespace Jerboa
 
 	enum class PixelFormat
 	{
-		None, Red, RGB, RGBA
+		None, Red, RGB, RGBA, Depth, Depth_Stencil
 	};
 }

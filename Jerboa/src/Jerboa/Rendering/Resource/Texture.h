@@ -32,6 +32,9 @@ namespace Jerboa
 		MipmapInterpolationFilter	GetMipMapInterpolationFiler() const { return m_Config.m_MipMapInterpolationFilter; }
 		bool						IsWriteable() const;
 		bool						IsReadable() const;
+		bool						IsColorTexture() const;
+		bool						IsDepthTexture() const;
+		bool						IsDepthStencilTexture() const;
 
 	private:
 		GPUResource m_TextureGPUResource;

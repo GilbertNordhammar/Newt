@@ -21,7 +21,6 @@ namespace Jerboa
 
 		const GPUResource* m_DepthStencilAttachment = nullptr;
 		TextureConfig m_DepthStencilAttachmentTextureConfig;
-		bool m_UseStencil = false;
 	};
 
 	struct GPUTextureResourceData

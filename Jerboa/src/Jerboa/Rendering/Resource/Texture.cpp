@@ -60,5 +60,20 @@ namespace Jerboa
 	{
 		return EnumHasFlags(m_Config.m_Usage, TextureUsage::Read);
 	}
+
+	bool Texture2D::IsColorTexture() const
+	{
+		return !IsDepthTexture() && !IsDepthStencilTexture();
+	}
+
+	bool Texture2D::IsDepthTexture() const
+	{
+		return m_Config.m_PixelFormat == PixelFormat::Depth;
+	}
+
+	bool Texture2D::IsDepthStencilTexture() const
+	{
+		return m_Config.m_PixelFormat == PixelFormat::Depth_Stencil;
+	}
 }
 

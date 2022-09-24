@@ -124,16 +124,17 @@ namespace Jerboa
             }
         }
 
-        FrameBufferAttachment depthStencilAttachment = frameBuffer.GetDepthStencilAttachment();
-        bool shouldClearDepthStencil = depthStencilAttachment.Assigned() && depthStencilAttachment.GetRenderPassBeginAction() == RenderPassBeginAction::Clear;
-        GLenum depthStencilClearFlags = frameBuffer.UseStencil()
-            ? GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT 
-            : GL_DEPTH_BUFFER_BIT;
-        
-        GLenum clearFlags = shouldClearDepthStencil 
-            ? depthStencilClearFlags
-            : GL_NONE;
+        GLenum clearFlags = GL_NONE;
 
+        FrameBufferAttachment depthStencilAttachment = frameBuffer.GetDepthStencilAttachment();
+        if (depthStencilAttachment.Assigned() && depthStencilAttachment.GetRenderPassBeginAction() == RenderPassBeginAction::Clear)
+        {
+            clearFlags |= depthStencilAttachment.GetTexture()->IsDepthStencilTexture()
+                ? GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
+                : GL_DEPTH_BUFFER_BIT;
+        }
+
+        // TODO: Check if all attachments are set to clear
         if (colorAttachmentsToClear.size() == colorAttachmentsToDraw.size())
         {
             clearFlags |= GL_COLOR_BUFFER_BIT;
@@ -147,7 +148,8 @@ namespace Jerboa
             }
         }
 
-        glClear(clearFlags);
+        if(clearFlags != GL_NONE)
+            glClear(clearFlags);
         glDrawBuffers(colorAttachmentsToDraw.size(), colorAttachmentsToDraw.data());
     }
 

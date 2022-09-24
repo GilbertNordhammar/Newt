@@ -22,7 +22,6 @@ namespace Jerboa
 		const FrameBufferAttachment&		GetColorAttachment(ColorAttachmentSlot slot) const;
 		const FrameBufferAttachmentArray&	GetColorAttachments() const { return m_Config.m_ColorAttachments; }
 		const FrameBufferAttachment&		GetDepthStencilAttachment() const { return m_Config.m_DepthStencilAttachment; }
-		const bool							UseStencil() const { return m_Config.m_UseStencil; }
 		const FrameBufferConfig&			GetConfig() const { return m_Config; }
 
 	private:

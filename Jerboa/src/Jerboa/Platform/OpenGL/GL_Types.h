@@ -41,9 +41,11 @@ namespace Jerboa
 	{
 		switch (pixelFormat)
 		{
-			case PixelFormat::Red:		return GL_RED;
-			case PixelFormat::RGB:		return GL_RGB;
-			case PixelFormat::RGBA:		return GL_RGBA;
+			case PixelFormat::Red:					return GL_RED;
+			case PixelFormat::RGB:					return GL_RGB;
+			case PixelFormat::RGBA:					return GL_RGBA;
+			case PixelFormat::Depth:				return GL_DEPTH_COMPONENT;
+			case PixelFormat::Depth_Stencil:		return GL_DEPTH24_STENCIL8;
 		}
 
 		JERBOA_ASSERT(false, "Unhandled PixelFormat entry");

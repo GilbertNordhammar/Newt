@@ -216,12 +216,17 @@ namespace Jerboa
 			for (int i = 0; i < config.m_ColorAttachments.size(); i++)
 			{
 				const GPUResource* colorAttachment = config.m_ColorAttachments[i];
-				const TextureConfig& colorAttachmentUsage = config.m_ColorAttachmentsTextureConfig[i];
-				AssignFrameBufferAttachment(GL_COLOR_ATTACHMENT0 + i, colorAttachment, colorAttachmentUsage);
+				const TextureConfig& colorAttachmentConfig = config.m_ColorAttachmentsTextureConfig[i];
+				AssignFrameBufferAttachment(GL_COLOR_ATTACHMENT0 + i, colorAttachment, colorAttachmentConfig);
 			}
-
-			GLenum depthStencilAttachmentGL = config.m_UseStencil ? GL_DEPTH_STENCIL_ATTACHMENT : GL_DEPTH_ATTACHMENT;
-			AssignFrameBufferAttachment(depthStencilAttachmentGL, config.m_DepthStencilAttachment, config.m_DepthStencilAttachmentTextureConfig);
+			
+			if (config.m_DepthStencilAttachment)
+			{
+				GLenum attachment = config.m_DepthStencilAttachmentTextureConfig.m_PixelFormat == PixelFormat::Depth_Stencil
+					? GL_DEPTH_STENCIL_ATTACHMENT
+					: GL_DEPTH_ATTACHMENT;
+				AssignFrameBufferAttachment(attachment, config.m_DepthStencilAttachment, config.m_DepthStencilAttachmentTextureConfig);
+			}
 			
 			CheckFrambufferStatus();
 			glBindFramebuffer(GL_FRAMEBUFFER, 0); // TODO: Do proper state restoration
@@ -245,19 +250,7 @@ namespace Jerboa
 		if (!textureResource->Get())
 			return;
 
-		GLenum pixelFormat = GL_INVALID_ENUM;
-		switch (attachment)
-		{
-		case GL_DEPTH_ATTACHMENT:
-			pixelFormat = GL_DEPTH_COMPONENT;
-			break;
-		case GL_DEPTH_STENCIL_ATTACHMENT:
-			pixelFormat = GL_DEPTH24_STENCIL8;
-			break;
-		default:
-			pixelFormat = GetPixelFormatGL(textureConfig.m_PixelFormat);
-			JERBOA_ASSERT(attachment >= GL_COLOR_ATTACHMENT0 && attachment < GL_COLOR_ATTACHMENT0 + EnumToInt<int>(TextureSlot::Count), "Invalid GL attachment");
-		}
+		GLenum pixelFormat = GetPixelFormatGL(textureConfig.m_PixelFormat);
 
 		JERBOA_ASSERT(textureConfig.m_Usage != TextureUsage::None, "Texture usage can't be TextureUsage::None");
 		if (EnumHasFlags(textureConfig.m_Usage, TextureUsage::Read))

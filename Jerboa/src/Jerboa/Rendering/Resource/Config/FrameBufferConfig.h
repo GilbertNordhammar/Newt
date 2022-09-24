@@ -41,6 +41,5 @@ namespace Jerboa
 	{
 		std::array<FrameBufferAttachment, EnumToInt<int>(ColorAttachmentSlot::Count)> m_ColorAttachments;
 		FrameBufferAttachment m_DepthStencilAttachment;
-		bool m_UseStencil;
 	};
 }

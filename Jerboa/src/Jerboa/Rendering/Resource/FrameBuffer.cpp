@@ -8,7 +8,6 @@ namespace Jerboa
 	void FrameBuffer::Create(const FrameBufferConfig& config, const GPUResourceAllocator& allocator)
 	{
 		FrameBufferGPUResourceConfig gpuConfig;
-		gpuConfig.m_UseStencil = config.m_UseStencil;
 
 		for (int i = 0; i < config.m_ColorAttachments.size(); i++)
 		{
@@ -19,8 +18,11 @@ namespace Jerboa
 
 			const GPUResource& colorAttachmentGPU = colorTexture->GetGPUResouce();
 
+			JERBOA_ASSERT(colorTexture->IsColorTexture(), "Texture has incompatible pixel format to be a color attachment");
 			JERBOA_ASSERT(colorTexture->IsWriteable(), "Texture is not writeable and can therefore not be a color attachment");
 			JERBOA_ASSERT(colorAttachmentGPU.Exists(), "Texture hasn't been allocated on GPU and can therefore not be a color attachment");
+
+			const bool validColorAttachment = colorTexture->IsColorTexture() && colorTexture->IsWriteable() && colorAttachmentGPU.Exists();
 
 			if (colorTexture->IsWriteable() && colorAttachmentGPU.Exists())
 			{
@@ -33,9 +35,21 @@ namespace Jerboa
 		if (depthStencilTexture)
 		{
 			const GPUResource& depthStencilAttachmentGPU = depthStencilTexture->GetGPUResouce();
-			JERBOA_ASSERT(depthStencilTexture->IsWriteable(), "Texture is not writeable and can therefore not be a depth attachment");
-			JERBOA_ASSERT(depthStencilAttachmentGPU.Exists(), "Texture hasn't been allocated on GPU and can therefore not be a depth stencil attachment");
-			if (depthStencilTexture->IsWriteable() && depthStencilAttachmentGPU.Exists())
+			bool textureIsCompatibleForDepthStencil = depthStencilTexture->IsDepthStencilTexture() || depthStencilTexture->IsDepthTexture();
+
+			bool validDepthStencilAttachment = textureIsCompatibleForDepthStencil && depthStencilTexture->IsWriteable() && depthStencilAttachmentGPU.Exists();
+
+			JERBOA_ASSERT(textureIsCompatibleForDepthStencil, "Texture has incompatible pixel format for to be a depth + stencil attachment");
+			JERBOA_ASSERT(depthStencilTexture->IsWriteable(), "Texture is not writeable and can therefore not be a depth + stencil attachment");
+			if (depthStencilTexture->IsDepthStencilTexture())
+			{
+				JERBOA_ASSERT(!depthStencilTexture->IsReadable(), "Combined depth + stencil attachment cannot be readable");
+				validDepthStencilAttachment &= !depthStencilTexture->IsReadable();
+			}
+			JERBOA_ASSERT(depthStencilAttachmentGPU.Exists(), "Texture hasn't been allocated on GPU and can therefore not be a depth + stencil attachment");
+
+			JERBOA_ASSERT(validDepthStencilAttachment, "Invalid depth + stencil attachment!");
+			if (validDepthStencilAttachment)
 			{
 				gpuConfig.m_DepthStencilAttachment = &depthStencilAttachmentGPU;
 				gpuConfig.m_DepthStencilAttachmentTextureConfig = depthStencilTexture->GetConfig();

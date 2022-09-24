@@ -1,6 +1,7 @@
 #include "jerboa-pch.h"
 #include "Renderer2D.h"
 
+#include "Jerboa/Core/Enum.h"
 #include "Jerboa/Rendering/Resource/Mesh.h"
 #include "Jerboa/Rendering/Renderer.h"
 #include "Jerboa/Resource/Loaders/ShaderLoaderGLSL.h"
@@ -33,12 +34,15 @@ namespace Jerboa
 			}
 		}
 
-		if (source.GetDepthStencilAttachment().Assigned())
+		auto depthStencilAttachment = source.GetDepthStencilAttachment();
+		if (depthStencilAttachment.Assigned())
 		{
-			constexpr int DEPTH_TEXTURE_SLOT = 7;
-			shaderState.SetInt("JB_uDepthTexture", DEPTH_TEXTURE_SLOT);
-			Texture2D* depthStencilTexture = source.GetDepthStencilAttachment().GetTexture();
-			renderState.BindTexture(*depthStencilTexture, TextureSlot::S7);
+			Texture2D* texture = depthStencilAttachment.GetTexture();
+			if (texture->IsDepthTexture() && texture->IsReadable())
+			{
+				shaderState.SetInt("JB_uDepthTexture", EnumToInt<int>(TextureSlot::S7));
+				renderState.BindTexture(*depthStencilAttachment.GetTexture(), TextureSlot::S7);
+			}
 		}
 
 		if (destination)

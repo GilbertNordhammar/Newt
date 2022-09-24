@@ -164,6 +164,11 @@ namespace JerboaClient {
         m_ShaderState.SetBool("toggle", Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::T));
         m_ShaderState.SetFloat("normalMapMult", m_NormalMapMult);
  
+
+        m_RenderState.SetStencilTestingEnabled(true);
+        m_RenderState.SetStencilParameters(CompareFunction::Always, 255, 0xFF, 0xFF);
+        m_RenderState.SetStencilOperations(StencilOperation::Replace, StencilOperation::Replace, StencilOperation::Replace);
+
         static const float rotationSpeed = 0.2;
         float rotation = 0;
         if(!Jerboa::Input::IsKeyHeldDown(Jerboa::KeyCode::R))
@@ -176,6 +181,8 @@ namespace JerboaClient {
 
             m_Renderer.Draw(m_SphereMesh);
         }
+
+        m_RenderState.SetStencilTestingEnabled(false);
     
         if (m_ShowColorBuffer && m_ShowDepthBuffer)
         {
@@ -196,7 +203,8 @@ namespace JerboaClient {
         }
 	}
 
-	void EditorLayer::OnAttach() {
+	void EditorLayer::OnAttach() 
+    {
 		JERBOA_LOG_INFO("EditorLayer attached");
 
         Jerboa::Window::Get()->SetCursorMode(Jerboa::CursorMode::Disabled);
@@ -261,23 +269,23 @@ namespace JerboaClient {
     void EditorLayer::CreateFramebuffers()
     {
         std::shared_ptr<Texture2D> colorAttachment1 = std::make_shared<Texture2D>();
-        TextureConfig textureConfig1;
-        textureConfig1.m_Width = m_Window.GetWidth();
-        textureConfig1.m_Height = m_Window.GetHeight();
-        textureConfig1.m_MipMapInterpolationFilter = Jerboa::MipmapInterpolationFilter::None;
-        textureConfig1.m_SamplerWrappingMode = Jerboa::TextureSamplingWrapMode::ClampToEdge;
-        textureConfig1.m_SamplingFilter = Jerboa::TextureSamplingFilter::Linear;
-        textureConfig1.m_Usage = Jerboa::TextureUsage::Read | Jerboa::TextureUsage::Write;
-        textureConfig1.m_PixelFormat = Jerboa::PixelFormat::RGBA;
-        colorAttachment1->Create(textureConfig1, m_ResourceAllocator);
+        TextureConfig textureConfig;
+        textureConfig.m_Width = m_Window.GetWidth();
+        textureConfig.m_Height = m_Window.GetHeight();
+        textureConfig.m_MipMapInterpolationFilter = Jerboa::MipmapInterpolationFilter::None;
+        textureConfig.m_SamplerWrappingMode = Jerboa::TextureSamplingWrapMode::ClampToEdge;
+        textureConfig.m_SamplingFilter = Jerboa::TextureSamplingFilter::Linear;
+        textureConfig.m_Usage = Jerboa::TextureUsage::Read | Jerboa::TextureUsage::Write;
+        textureConfig.m_PixelFormat = Jerboa::PixelFormat::RGBA;
+        colorAttachment1->Create(textureConfig, m_ResourceAllocator);
 
-        std::shared_ptr<Texture2D> m_DepthAttachment = std::make_shared<Texture2D>();
-        m_DepthAttachment->Create(textureConfig1, m_ResourceAllocator);
+        textureConfig.m_PixelFormat = PixelFormat::Depth;
+        std::shared_ptr<Texture2D> depthStencilAttachment = std::make_shared<Texture2D>();
+        depthStencilAttachment->Create(textureConfig, m_ResourceAllocator);
 
         FrameBufferConfig fbConfig1;
         fbConfig1.m_ColorAttachments[0].Set(colorAttachment1, RenderPassBeginAction::Clear);
-        fbConfig1.m_DepthStencilAttachment.Set(m_DepthAttachment, RenderPassBeginAction::Clear);
-        fbConfig1.m_UseStencil = false;
+        fbConfig1.m_DepthStencilAttachment.Set(depthStencilAttachment, RenderPassBeginAction::Clear);
         m_FrameBuffer1.Create(fbConfig1, m_ResourceAllocator);
     }
 
