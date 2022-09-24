@@ -28,20 +28,16 @@ namespace Jerboa {
 	class VertexBuffer
 	{
 	public:
+		VertexBuffer() = default;
+
 		void Create(const VertexBufferData& bufferData, GPUResourceAllocator* resourceAllocator);
 
-		virtual void Bind() {};
-		virtual void UnBind() {};
-
-		GPUResource&				GetGPUResource() { return m_GPUResource; }
+		const GPUResource&			GetGPUResource() const { return m_GPUResource; }
 		const VertexBufferUsage&	GetUsage() const { return m_Usage; };
 		const VertexBufferLayout&	GetLayout() const { return m_Layout; };
 		uint32						GetSize() const { return m_Size; }
 		uint32						GetCount() const { return m_Size / sizeof(float); }
 
-		// Temp remove 
-		VertexBuffer() = default;
-		virtual ~VertexBuffer() {};
 	protected:
 		VertexBuffer(uint32 size, VertexBufferUsage usage, VertexBufferLayout layout);
 
