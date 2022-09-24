@@ -9,7 +9,7 @@
 
 ### glad
 * **Upstream:** https://github.com/Dav1dde/glad
-* **Version**: OpenGL 3.3
+* **Version**: OpenGL 4.6, GLES1 1.0, GLES2 3.2, GLSC 2.0
 * **License:** MIT
 * **Build system:** Premake 5
 * **Custom changes:** -
