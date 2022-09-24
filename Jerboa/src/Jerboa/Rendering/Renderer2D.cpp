@@ -40,8 +40,8 @@ namespace Jerboa
 			Texture2D* texture = depthStencilAttachment.GetTexture();
 			if (texture->IsDepthTexture() && texture->IsReadable())
 			{
-				shaderState.SetInt("JB_uDepthTexture", EnumToInt<int>(TextureSlot::S7));
-				renderState.BindTexture(*depthStencilAttachment.GetTexture(), TextureSlot::S7);
+				shaderState.SetInt("JB_uDepthTexture", EnumToInt<int>(TextureSlot::_7));
+				renderState.BindTexture(*depthStencilAttachment.GetTexture(), TextureSlot::_7);
 			}
 		}
 

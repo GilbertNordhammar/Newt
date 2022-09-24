@@ -89,7 +89,7 @@ namespace Jerboa
 
     enum class TextureSlot
     {
-        S0 = 0, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, S13, S14, S15, Count
+        _0 = 0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, Count
     };
 
     struct RenderViewport

@@ -131,19 +131,19 @@ namespace JerboaClient {
         
         // Textures
         m_ShaderState.SetInt("material.albedo", 0);
-        m_RenderState.BindTexture(m_AlbedoTexture, Jerboa::TextureSlot::S0);
+        m_RenderState.BindTexture(m_AlbedoTexture, Jerboa::TextureSlot::_0);
         
         m_ShaderState.SetInt("material.ao", 1);
-        m_RenderState.BindTexture(m_AmbientOcclusionTexture, Jerboa::TextureSlot::S1);
+        m_RenderState.BindTexture(m_AmbientOcclusionTexture, Jerboa::TextureSlot::_1);
 
         m_ShaderState.SetInt("material.normal", 2);
-        m_RenderState.BindTexture(m_NormalTexture, Jerboa::TextureSlot::S2);
+        m_RenderState.BindTexture(m_NormalTexture, Jerboa::TextureSlot::_2);
 
         m_ShaderState.SetInt("material.metallic", 3);
-        m_RenderState.BindTexture(m_MetallicTexture, Jerboa::TextureSlot::S3);
+        m_RenderState.BindTexture(m_MetallicTexture, Jerboa::TextureSlot::_3);
 
         m_ShaderState.SetInt("material.roughness", 4);
-        m_RenderState.BindTexture(m_RoughnessTexture, Jerboa::TextureSlot::S4);
+        m_RenderState.BindTexture(m_RoughnessTexture, Jerboa::TextureSlot::_4);
 
         // Camera & Lights
         m_ShaderState.SetVec3("cameraWorldPos", m_Camera.GetTransform().GetPosition());
