@@ -17,7 +17,7 @@ namespace Jerboa
 		GPUResource	CreateIndexBuffer(const IndexBufferData& bufferData) const override;
 		GPUResource	CreateTexture(const TextureConfig& config) const override;
 		GPUResource	CreateShader(const ShaderDataGLSL& shaderData) const override;
-		virtual GPUResource CreateFrameBuffer(const FrameBufferGPUResourceConfig& config) const override;
+		GPUResource CreateFrameBuffer(const FrameBufferGPUResourceConfig& config) const override;
 
 		void UploadTextureData(GPUResource& texture, const GPUTextureResourceData& data) const override;
 	private:
