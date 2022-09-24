@@ -6,7 +6,6 @@ namespace Jerboa
 {
 	enum class TextureUsage
 	{
-		None = 0,
 		Read = 1,
 		Write = 2
 	};
@@ -31,7 +30,7 @@ namespace Jerboa
 
 	struct TextureConfig
 	{
-		TextureUsage				m_Usage = TextureUsage::None;
+		TextureUsage				m_Usage = TextureUsage::Read;
 		PixelFormat					m_PixelFormat = PixelFormat::None;
 		uint32						m_Width = 0;
 		uint32						m_Height = 0;

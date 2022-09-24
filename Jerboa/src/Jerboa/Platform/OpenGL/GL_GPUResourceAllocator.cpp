@@ -252,7 +252,6 @@ namespace Jerboa
 
 		GLenum pixelFormat = GetPixelFormatGL(textureConfig.m_PixelFormat);
 
-		JERBOA_ASSERT(textureConfig.m_Usage != TextureUsage::None, "Texture usage can't be TextureUsage::None");
 		if (EnumHasFlags(textureConfig.m_Usage, TextureUsage::Read))
 		{
 			glBindTexture(GL_TEXTURE_2D, textureResource->Get());
