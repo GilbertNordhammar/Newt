@@ -6,9 +6,9 @@
 #include "Jerboa/Rendering/Resource/Internal/GPUResourceAllocator.h"
 
 namespace Jerboa {
-	void IndexBuffer::Create(IndexBufferData bufferData, GPUResourceAllocator* resourceAllocator)
+	void IndexBuffer::Create(IndexBufferData bufferData, const GPUResourceAllocator& resourceAllocator)
 	{
-		m_GPUResource = resourceAllocator->CreateIndexBuffer(bufferData);
+		m_GPUResource = resourceAllocator.CreateIndexBuffer(bufferData);
 		m_Size = bufferData.m_Size;
 	}
 }

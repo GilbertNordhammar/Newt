@@ -243,7 +243,7 @@ namespace JerboaClient {
         auto sphereIndexData = Jerboa::IndexBufferData(sphereIndices.data(), indicesSize);
 
         // Create meshes
-        m_SphereMesh.AddSubMesh(sphereVertexData, &sphereIndexData, Jerboa::PrimitiveType::Triangle, m_Renderer.GetAllocatorPtr());
+        m_SphereMesh.AddSubMesh(sphereVertexData, &sphereIndexData, Jerboa::PrimitiveType::Triangle, m_Renderer.GetAllocator());
 
         // Create shaders
         m_PBRShader.Create(ShaderLoaderGLSL::Load("assets/shaders/pbr/Standard.glsl"), m_ResourceAllocator);

@@ -22,7 +22,7 @@ namespace Jerboa {
 	class IndexBuffer
 	{
 	public:
-		void Create(IndexBufferData bufferData, GPUResourceAllocator* resourceAllocator);
+		void Create(IndexBufferData bufferData, const GPUResourceAllocator& resourceAllocator);
 
 		const GPUResource&		GetGPUResource() const { return m_GPUResource; }
 		const uint32			GetSize() const { return m_Size; };

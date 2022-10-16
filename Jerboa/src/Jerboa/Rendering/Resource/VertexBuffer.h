@@ -30,7 +30,7 @@ namespace Jerboa {
 	public:
 		VertexBuffer() = default;
 
-		void Create(const VertexBufferData& bufferData, GPUResourceAllocator* resourceAllocator);
+		void Create(const VertexBufferData& bufferData, const GPUResourceAllocator& resourceAllocator);
 
 		const GPUResource&			GetGPUResource() const { return m_GPUResource; }
 		const VertexBufferUsage&	GetUsage() const { return m_Usage; };

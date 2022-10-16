@@ -78,6 +78,6 @@ namespace Jerboa
 				VertexAttribute(VertexAttributeType::TextureCoordinates)
 			});
 
-		m_FullscreenQuad.Create(vertexData, nullptr, PrimitiveType::Triangle, m_Renderer.GetAllocatorPtr());
+		m_FullscreenQuad.Create(vertexData, nullptr, PrimitiveType::Triangle, m_Renderer.GetAllocator());
 	}
 }
