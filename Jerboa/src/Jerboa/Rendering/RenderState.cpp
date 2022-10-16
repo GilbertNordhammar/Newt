@@ -9,7 +9,6 @@ namespace Jerboa
 {
 	RenderState::RenderState()
 	{
-		m_EventObserver.Subscribe(this, &RenderState::OnMeshDestroyed);
 		m_EventObserver.Subscribe(this, &RenderState::OnShaderDestroyed);
 		m_EventObserver.Subscribe(this, &RenderState::OnTextureDestroyed);
 	}
@@ -20,7 +19,6 @@ namespace Jerboa
 		BeginDefaultRenderPass();
 		m_BoundTextures.fill(nullptr); // TODO: Clear these via methods
 		m_BoundShader = nullptr;
-		m_BoundMesh = nullptr;
 
 		// Buffer clearing
 		SetClearColor(glm::vec4(0, 0, 0, 0));
@@ -72,12 +70,6 @@ namespace Jerboa
 		m_BoundShader = &shader;
 	}
 
-	void RenderState::BindMesh(Mesh& mesh)
-	{
-		BindMeshImpl(mesh);
-		m_BoundMesh = &mesh;
-	}
-
 	void RenderState::ClearBoundTexture(TextureSlot slot)
 	{
 		ClearBoundTextureImpl(slot);
@@ -88,12 +80,6 @@ namespace Jerboa
 	{
 		ClearBoundShaderImpl();
 		m_BoundShader = nullptr;
-	}
-
-	void RenderState::ClearBoundMesh()
-	{
-		ClearBoundMeshImpl();
-		m_BoundMesh = nullptr;
 	}
 
 	void RenderState::SetClearColor(const glm::vec4& clearColor)
@@ -213,12 +199,6 @@ namespace Jerboa
 		m_Viewport.m_OriginY = originY;
 		m_Viewport.m_Width = width;
 		m_Viewport.m_Height = height;
-	}
-
-	void RenderState::OnMeshDestroyed(const MeshDestroyedEvent& evnt)
-	{
-		if (m_BoundMesh == &evnt.m_Mesh)
-			ClearBoundMesh();
 	}
 
 	void RenderState::OnShaderDestroyed(const ShaderDestroyedEvent& evnt)

@@ -123,7 +123,7 @@ namespace Jerboa
 			glGenVertexArrays(1, &glObject);
 			*vao = glObject;
 			glBindVertexArray(*vao);
-			m_RenderStateGL->m_BoundMeshStateDirty = true;
+			m_RenderStateGL->m_BoundVAO = glObject;
 		};
 
 		auto deleteVAO = [](uintptr* vao) {

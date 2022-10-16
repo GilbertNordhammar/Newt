@@ -24,7 +24,8 @@ namespace Jerboa {
 		virtual void			BeginFrame();
 		virtual void			EndFrame();
 
-		virtual void			Draw(Mesh& mesh) = 0;
+		virtual void			Draw(Mesh& mesh);
+		virtual void			Draw(const SubMesh& mesh) = 0;
 		
 		RenderState&			GetState()			{ return *m_RenderState.get(); }
 		ShaderState&			GetShaderState()	{ return *m_ShaderState.get(); }

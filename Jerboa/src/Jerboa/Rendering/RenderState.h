@@ -112,16 +112,13 @@ namespace Jerboa
 
         void				    BindTexture(Texture2D& texture, TextureSlot slot);
         void				    BindShader(Shader& shader);
-        void				    BindMesh(Mesh& mesh);
 
         void                    ClearBoundTexture(TextureSlot slot);
         void                    ClearBoundShader();
-        void                    ClearBoundMesh();
 
         FrameBuffer*            GetBoundFrameBuffer() { return m_BoundFrameBuffer; }
         Texture2D*              GetBoundTexture(TextureSlot slot) { return m_BoundTextures[EnumToInt<int>(slot)]; }
         Shader*                 GetBoundShader() { return m_BoundShader; }
-        Mesh*                   GetBoundMesh() { return m_BoundMesh; }
 
         // Buffer clearing interface
         void                    SetClearColor(const glm::vec4& clearColor);
@@ -183,11 +180,9 @@ namespace Jerboa
 
         virtual void	        BindTextureImpl(Texture2D& texture, TextureSlot slot) = 0;
         virtual void	        BindShaderImpl(Shader& shader) = 0;
-        virtual void	        BindMeshImpl(Mesh& mesh) = 0;
 
         virtual void            ClearBoundTextureImpl(TextureSlot slot) = 0;
         virtual void            ClearBoundShaderImpl() = 0;
-        virtual void            ClearBoundMeshImpl() = 0;
 
         // Buffer clearing virtual interface
         virtual void            SetClearColorImpl(const glm::vec4& clearColor) = 0;
@@ -222,7 +217,6 @@ namespace Jerboa
         FrameBuffer*                m_BoundFrameBuffer = nullptr;
         std::array<Texture2D*, EnumToInt<int>(TextureSlot::Count)> m_BoundTextures = { nullptr };
         Shader*                     m_BoundShader = nullptr;
-        Mesh*                       m_BoundMesh = nullptr;
 
         // Buffer clearing variables
         glm::vec4                   m_ClearColor;
@@ -260,7 +254,6 @@ namespace Jerboa
 
     private:
         // Internal stuff
-        void OnMeshDestroyed(const MeshDestroyedEvent& evnt);
         void OnShaderDestroyed(const ShaderDestroyedEvent& evnt);
         void OnTextureDestroyed(const TextureDestroyedEvent& evnt);
 

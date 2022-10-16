@@ -6,6 +6,7 @@
 #include "Jerboa/Rendering/Resource/Internal/GPUResource.h"
 
 #include <memory>
+#include <vector>
 
 namespace Jerboa
 {
@@ -20,22 +21,33 @@ namespace Jerboa
 		TriangleStrip
 	};
 
-	class Mesh
+	class SubMesh
 	{
 	public:
-		~Mesh();
 		void Create(const VertexBufferData& vertexBufferData, const IndexBufferData* indexBufferData, PrimitiveType primitiveType, GPUResourceAllocator* resourceAllocator);
-		
+
 		bool						IsIndexed() const;
 		PrimitiveType				GetPrimitiveType() const { return m_PrimitiveType; }
-		VertexBuffer*				GetVertexBuffer() { return &m_VertexBuffer; }
-		IndexBuffer*				GetIndexBuffer() { return &m_IndexBuffer; }
+		const VertexBuffer*			GetVertexBuffer() const { return &m_VertexBuffer; }
+		const IndexBuffer*			GetIndexBuffer() const { return &m_IndexBuffer; }
 		const GPUResource&			GetVAO() const { return m_VAO; }
 
-	protected:
+	private:
 		GPUResource						m_VAO; // TODO: This is OpenGL specific. Find a way of hiding it from the general implementation
 		VertexBuffer					m_VertexBuffer;
 		IndexBuffer						m_IndexBuffer;
 		PrimitiveType					m_PrimitiveType;
+	};
+
+	class Mesh
+	{
+	public:
+		~Mesh();
+
+		void						AddSubMesh(const VertexBufferData& vertexBufferData, const IndexBufferData* indexBufferData, PrimitiveType primitiveType, GPUResourceAllocator* resourceAllocator);
+		void						RemoveSubMeshAtIndex(int i);
+		const std::vector<SubMesh>& GetSubMeshes() const { return m_SubMeshes; }
+	private:
+		std::vector<SubMesh> m_SubMeshes;
 	};
 }

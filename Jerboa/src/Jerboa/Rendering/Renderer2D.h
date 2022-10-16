@@ -16,6 +16,6 @@ namespace Jerboa
 		void					CreateFullscreenQuad();
 
 		Renderer&				m_Renderer;
-		Mesh					m_FullscreenQuad;
+		SubMesh					m_FullscreenQuad;
 	};
 }

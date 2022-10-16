@@ -22,11 +22,9 @@ namespace Jerboa
 
         void	    BindTextureImpl(Texture2D& texture, TextureSlot slot) override;
         void	    BindShaderImpl(Shader& shader) override;
-        void	    BindMeshImpl(Mesh& mesh) override;
 
         void        ClearBoundTextureImpl(TextureSlot slot) override;
         void        ClearBoundShaderImpl() override;
-        void        ClearBoundMeshImpl() override;
 
         // Buffer clearing
         void        SetClearColorImpl(const glm::vec4& clearColor) override;
@@ -59,11 +57,11 @@ namespace Jerboa
         // Internal functions
         TextureSlot GetLastBoundTextureSlot() { return m_LastBoundTextureSlot; }
 
-        void RebindCurrentMesh();
         void RebindLastBoundTexture();
 
         // Internal state variables
-        bool            m_BoundMeshStateDirty = false;
+        uint32          m_BoundVAO = 0;
+
     private:
         // Internal state variables
         TextureSlot     m_LastBoundTextureSlot;

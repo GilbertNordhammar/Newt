@@ -30,22 +30,22 @@ namespace Jerboa {
 		JERBOA_ASSERT(renderStateGL, "Render state is null");
 	}
 
-	void GL_Renderer::Draw(Mesh& mesh)
+	void GL_Renderer::Draw(const SubMesh& subMesh)
 	{
-		Mesh* boundMesh = m_RenderState->GetBoundMesh();
-		if (!boundMesh || boundMesh != &mesh || m_RenderStateGL->m_BoundMeshStateDirty)
+		uint32 newVAO = subMesh.GetVAO().Get();
+		if (m_RenderStateGL->m_BoundVAO != newVAO)
 		{
-			m_RenderState->BindMesh(mesh);
-			m_RenderStateGL->m_BoundMeshStateDirty = false;
+			glBindVertexArray(newVAO);
+			m_RenderStateGL->m_BoundVAO = newVAO;
 		}
 
-		if (mesh.IsIndexed())
+		if (subMesh.IsIndexed())
 		{
-			glDrawElements(ConvertPritimtiveTypeToGL(mesh.GetPrimitiveType()), mesh.GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+			glDrawElements(ConvertPritimtiveTypeToGL(subMesh.GetPrimitiveType()), subMesh.GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 		}
 		else
 		{
-			glDrawArrays(ConvertPritimtiveTypeToGL(mesh.GetPrimitiveType()), 0, mesh.GetVertexBuffer()->GetCount());
+			glDrawArrays(ConvertPritimtiveTypeToGL(subMesh.GetPrimitiveType()), 0, subMesh.GetVertexBuffer()->GetCount());
 		}
 	}
 

@@ -171,11 +171,6 @@ namespace Jerboa
         glUseProgram(shader.GetGPUResource().Get());
     }
 
-    void GL_RenderState::BindMeshImpl(Mesh& mesh)
-    {
-        glBindVertexArray(mesh.GetVAO().Get());
-    }
-
     void GL_RenderState::ClearBoundTextureImpl(TextureSlot slot)
     {
         glActiveTexture(GL_TEXTURE0 + EnumToInt<int>(slot));
@@ -185,11 +180,6 @@ namespace Jerboa
     void GL_RenderState::ClearBoundShaderImpl()
     {
         glUseProgram(0);
-    }
-
-    void GL_RenderState::ClearBoundMeshImpl()
-    {
-        glBindVertexArray(0);
     }
 
     void GL_RenderState::SetClearColorImpl(const glm::vec4& clearColor)
@@ -295,12 +285,6 @@ namespace Jerboa
     void GL_RenderState::SetViewportImpl(int originX, int originY, int width, int height)
     {
         glViewport(originX, originY, width, height);
-    }
-
-    void GL_RenderState::RebindCurrentMesh()
-    {
-        if(m_BoundMesh)
-            BindMesh(*m_BoundMesh);
     }
 
     void GL_RenderState::RebindLastBoundTexture()

@@ -12,18 +12,34 @@ namespace Jerboa
 		EventBus::Publish(MeshDestroyedEvent(*this));
 	}
 
-	void Mesh::Create(const VertexBufferData& vertexBufferData, const IndexBufferData* indexBufferData, PrimitiveType primitiveType, GPUResourceAllocator* resourceAllocator)
+	void SubMesh::Create(const VertexBufferData& vertexBufferData, const IndexBufferData* indexBufferData, PrimitiveType primitiveType, GPUResourceAllocator* resourceAllocator)
 	{
 		m_VAO = resourceAllocator->CreateVertexArrayObject();
 		m_VertexBuffer.Create(vertexBufferData, resourceAllocator);
-		if(indexBufferData)
+		if (indexBufferData)
 			m_IndexBuffer.Create(*indexBufferData, resourceAllocator);
 		m_PrimitiveType = primitiveType;
 	}
 
-	bool Mesh::IsIndexed() const
+	bool SubMesh::IsIndexed() const
 	{
 		return m_IndexBuffer.GetSize() > 0;
+	}
+
+	void Mesh::AddSubMesh(const VertexBufferData& vertexBufferData, const IndexBufferData* indexBufferData, PrimitiveType primitiveType, GPUResourceAllocator* resourceAllocator)
+	{
+		m_SubMeshes.emplace_back(SubMesh());
+		m_SubMeshes.back().Create(vertexBufferData, indexBufferData, primitiveType, resourceAllocator);
+	}
+
+	void Mesh::RemoveSubMeshAtIndex(int i)
+	{
+		bool validIndex = i > 0 && i < m_SubMeshes.size();
+		JERBOA_ASSERT(validIndex, "Given submesh index is out of range");
+		if (validIndex)
+		{
+			m_SubMeshes.erase(m_SubMeshes.begin() + i);
+		}
 	}
 }
 

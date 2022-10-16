@@ -14,7 +14,7 @@ namespace Jerboa {
 		virtual void	BeginFrameImpl() override;
 		virtual void	EndFrameImpl() override;
 
-		void			Draw(Mesh& mesh) override;
+		void			Draw(const SubMesh& mesh) override;
 
 		GL_RenderState* m_RenderStateGL;
 	};
