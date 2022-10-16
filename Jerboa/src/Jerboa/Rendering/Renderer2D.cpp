@@ -72,7 +72,11 @@ namespace Jerboa
 			 1.0f, -1.0f,	1.0f, 0.0f,
 			 1.0f, 1.0f,	1.0f, 1.0f
 		};
-		VertexBufferData vertexData(quadVertices, sizeof(quadVertices), VertexBufferUsage::Static, { Jerboa::ShaderDataType::Float2, Jerboa::ShaderDataType::Float2 });
+		VertexBufferData vertexData(quadVertices, sizeof(quadVertices), VertexBufferUsage::Static, 
+			{ 
+				VertexAttribute(VertexAttributeType::Position2D), 
+				VertexAttribute(VertexAttributeType::TextureCoordinates)
+			});
 
 		m_FullscreenQuad.Create(vertexData, nullptr, PrimitiveType::Triangle, m_Renderer.GetAllocatorPtr());
 	}

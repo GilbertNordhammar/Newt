@@ -73,11 +73,11 @@ namespace Jerboa
 				glEnableVertexAttribArray(index);
 				glVertexAttribPointer(
 					index,
-					elem.ComponentCount,
-					GetOpenGLBaseType(elem.Type),
-					elem.Normalized ? GL_TRUE : GL_FALSE,
+					elem.GetComponentCount(),
+					GetOpenGLBaseType(elem.GetDataType()),
+					elem.m_Normalized ? GL_TRUE : GL_FALSE,
 					layout.GetStride(),
-					(void*)elem.Offset);
+					(void*)elem.m_Offset);
 				index++;
 			}
 		};
