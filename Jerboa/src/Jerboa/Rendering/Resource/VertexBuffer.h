@@ -14,7 +14,7 @@ namespace Jerboa {
 
 	struct VertexBufferData
 	{
-		VertexBufferData(const float* data, uint32_t size, VertexBufferUsage usage, VertexBufferLayout layout)
+		VertexBufferData(const float* data, uint32_t size, VertexBufferUsage usage, VertexLayout layout)
 			: m_Data(data), m_Size(size), m_Usage(usage), m_Layout(layout)
 		{
 		}
@@ -22,7 +22,7 @@ namespace Jerboa {
 		const float* m_Data;
 		uint32 m_Size;
 		VertexBufferUsage m_Usage;
-		VertexBufferLayout m_Layout;
+		VertexLayout m_Layout;
 	};
 	
 	class VertexBuffer
@@ -34,16 +34,16 @@ namespace Jerboa {
 
 		const GPUResource&			GetGPUResource() const { return m_GPUResource; }
 		const VertexBufferUsage&	GetUsage() const { return m_Usage; };
-		const VertexBufferLayout&	GetLayout() const { return m_Layout; };
+		const VertexLayout&	GetLayout() const { return m_Layout; };
 		uint32						GetSize() const { return m_Size; }
 		uint32						GetCount() const { return m_Size / sizeof(float); }
 
 	protected:
-		VertexBuffer(uint32 size, VertexBufferUsage usage, VertexBufferLayout layout);
+		VertexBuffer(uint32 size, VertexBufferUsage usage, VertexLayout layout);
 
 		GPUResource m_GPUResource;
 		VertexBufferUsage m_Usage;
-		VertexBufferLayout m_Layout;
+		VertexLayout m_Layout;
 		uint32 m_Size = 0;
 	};
 }

@@ -9,9 +9,9 @@ namespace Jerboa
 		Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool
 	};
 
-	class VertexBufferElement {
+	class VertexAttribute {
 	public:
-		VertexBufferElement(ShaderDataType type, bool normalized = false)
+		VertexAttribute(ShaderDataType type, bool normalized = false)
 			: Type(type), Normalized(normalized), Size(GetSize(type)), ComponentCount(GetComponentCount(type))
 		{}
 
@@ -62,32 +62,33 @@ namespace Jerboa
 		}
 	};
 
-	class VertexBufferLayout {
+	class VertexLayout {
 	public:
-		VertexBufferLayout() = default;
-		VertexBufferLayout(std::initializer_list<VertexBufferElement> elements)
-			: mElements(elements)
+		VertexLayout() = default;
+		VertexLayout(std::initializer_list<VertexAttribute> attributes)
+			: m_Attributes(attributes)
 		{
 			CalcOffsetAndStride();
 		}
 
-		std::vector<VertexBufferElement>::iterator begin() { return mElements.begin(); }
-		std::vector<VertexBufferElement>::iterator end() { return mElements.end(); }
+		std::vector<VertexAttribute>::iterator begin() { return m_Attributes.begin(); }
+		std::vector<VertexAttribute>::iterator end() { return m_Attributes.end(); }
 
-		int GetStride() const { return mStride; }
+		int GetStride() const { return m_Stride; }
 	private:
-		void CalcOffsetAndStride() {
+		void CalcOffsetAndStride() 
+		{
 			int offset = 0;
-			mStride = 0;
-			for (auto& elem : mElements) {
+			m_Stride = 0;
+			for (auto& elem : m_Attributes) {
 				elem.Offset = offset;
 				offset += elem.Size;
 			}
-			mStride = offset;
+			m_Stride = offset;
 		}
 
-		std::vector<VertexBufferElement> mElements;
-		int mStride = 0;
+		std::vector<VertexAttribute> m_Attributes;
+		int m_Stride = 0;
 	};
 
 	enum class VertexBufferUsage

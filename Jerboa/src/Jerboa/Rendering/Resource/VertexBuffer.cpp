@@ -15,7 +15,7 @@ namespace Jerboa {
 		m_Size = bufferData.m_Size;
 	}
 
-	VertexBuffer::VertexBuffer(uint32 size, VertexBufferUsage usage, VertexBufferLayout layout)
+	VertexBuffer::VertexBuffer(uint32 size, VertexBufferUsage usage, VertexLayout layout)
 		: m_Usage(usage), m_Layout(layout), m_Size(size)
 	{
 	}
