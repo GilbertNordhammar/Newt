@@ -107,7 +107,7 @@ namespace Jerboa
         return GL_INVALID_ENUM;
     }
 
-    void GL_RenderState::BeginRenderPassImpl(FrameBuffer& frameBuffer)
+    void GL_RenderState::BeginRenderPassImpl(const FrameBuffer& frameBuffer)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer.GetGPUResouce().Get());
 
@@ -159,14 +159,14 @@ namespace Jerboa
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    void GL_RenderState::BindTextureImpl(Texture2D& texture, TextureSlot slot)
+    void GL_RenderState::BindTextureImpl(const Texture2D& texture, TextureSlot slot)
     {
         m_LastBoundTextureSlot = slot;
         glActiveTexture(GL_TEXTURE0 + EnumToInt<int>(slot));
         glBindTexture(GL_TEXTURE_2D, texture.GetGPUResouce().Get());
     }
 
-    void GL_RenderState::BindShaderImpl(Shader& shader)
+    void GL_RenderState::BindShaderImpl(const Shader& shader)
     {
         glUseProgram(shader.GetGPUResource().Get());
     }
@@ -289,7 +289,7 @@ namespace Jerboa
 
     void GL_RenderState::RebindLastBoundTexture()
     {
-        Texture2D* lastBoundTexture = GetBoundTexture(m_LastBoundTextureSlot);
+        const Texture2D* lastBoundTexture = GetBoundTexture(m_LastBoundTextureSlot);
         if (lastBoundTexture)
             BindTexture(*lastBoundTexture, m_LastBoundTextureSlot);
     }

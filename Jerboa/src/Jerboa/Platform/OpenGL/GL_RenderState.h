@@ -17,11 +17,11 @@ namespace Jerboa
 	{
     public:
         // Resource binding virtual interface
-        void        BeginRenderPassImpl(FrameBuffer& frameBuffer) override;
+        void        BeginRenderPassImpl(const FrameBuffer& frameBuffer) override;
         void        BeginDefaultRenderPassImpl() override;
 
-        void	    BindTextureImpl(Texture2D& texture, TextureSlot slot) override;
-        void	    BindShaderImpl(Shader& shader) override;
+        void	    BindTextureImpl(const Texture2D& texture, TextureSlot slot) override;
+        void	    BindShaderImpl(const Shader& shader) override;
 
         void        ClearBoundTextureImpl(TextureSlot slot) override;
         void        ClearBoundShaderImpl() override;

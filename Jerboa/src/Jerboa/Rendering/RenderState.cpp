@@ -46,7 +46,7 @@ namespace Jerboa
 		SetBlendingFactor(BlendingFactor::One, BlendingFactor::One);
 	}
 
-	void RenderState::BeginRenderPass(FrameBuffer& frameBuffer)
+	void RenderState::BeginRenderPass(const FrameBuffer& frameBuffer)
 	{
 		BeginRenderPassImpl(frameBuffer);
 		m_BoundFrameBuffer = &frameBuffer;
@@ -58,13 +58,13 @@ namespace Jerboa
 		m_BoundFrameBuffer = nullptr;
 	}
 
-	void RenderState::BindTexture(Texture2D& texture, TextureSlot slot)
+	void RenderState::BindTexture(const Texture2D& texture, TextureSlot slot)
 	{
 		BindTextureImpl(texture, slot);
 		m_BoundTextures[EnumToInt<int>(slot)] = &texture;
 	}
 
-	void RenderState::BindShader(Shader& shader)
+	void RenderState::BindShader(const Shader& shader)
 	{
 		BindShaderImpl(shader);
 		m_BoundShader = &shader;

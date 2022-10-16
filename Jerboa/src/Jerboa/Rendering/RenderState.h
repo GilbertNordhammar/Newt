@@ -107,18 +107,18 @@ namespace Jerboa
         void                    ResetStateToDefaultValues();
 
         // Resource binding interface
-        void                    BeginRenderPass(FrameBuffer& frameBuffer);
+        void                    BeginRenderPass(const FrameBuffer& frameBuffer);
         void                    BeginDefaultRenderPass();
 
-        void				    BindTexture(Texture2D& texture, TextureSlot slot);
-        void				    BindShader(Shader& shader);
+        void				    BindTexture(const Texture2D& texture, TextureSlot slot);
+        void				    BindShader(const Shader& shader);
 
         void                    ClearBoundTexture(TextureSlot slot);
         void                    ClearBoundShader();
 
-        FrameBuffer*            GetBoundFrameBuffer() { return m_BoundFrameBuffer; }
-        Texture2D*              GetBoundTexture(TextureSlot slot) { return m_BoundTextures[EnumToInt<int>(slot)]; }
-        Shader*                 GetBoundShader() { return m_BoundShader; }
+        const FrameBuffer*      GetBoundFrameBuffer() const { return m_BoundFrameBuffer; }
+        const Texture2D*        GetBoundTexture(TextureSlot slot) const { return m_BoundTextures[EnumToInt<int>(slot)]; }
+        const Shader*           GetBoundShader() const { return m_BoundShader; }
 
         // Buffer clearing interface
         void                    SetClearColor(const glm::vec4& clearColor);
@@ -175,11 +175,11 @@ namespace Jerboa
 
     protected:
         // Resource binding virtual interface
-        virtual void            BeginRenderPassImpl(FrameBuffer& frameBuffer) = 0;
+        virtual void            BeginRenderPassImpl(const FrameBuffer& frameBuffer) = 0;
         virtual void            BeginDefaultRenderPassImpl() = 0;
 
-        virtual void	        BindTextureImpl(Texture2D& texture, TextureSlot slot) = 0;
-        virtual void	        BindShaderImpl(Shader& shader) = 0;
+        virtual void	        BindTextureImpl(const Texture2D& texture, TextureSlot slot) = 0;
+        virtual void	        BindShaderImpl(const Shader& shader) = 0;
 
         virtual void            ClearBoundTextureImpl(TextureSlot slot) = 0;
         virtual void            ClearBoundShaderImpl() = 0;
@@ -214,9 +214,9 @@ namespace Jerboa
 
         // Resource binding variables
         // TODO: This can lead to dangling pointer if the resource is deallocated. Find a better solution
-        FrameBuffer*                m_BoundFrameBuffer = nullptr;
-        std::array<Texture2D*, EnumToInt<int>(TextureSlot::Count)> m_BoundTextures = { nullptr };
-        Shader*                     m_BoundShader = nullptr;
+        const FrameBuffer*          m_BoundFrameBuffer = nullptr;
+        std::array<const Texture2D*, EnumToInt<int>(TextureSlot::Count)> m_BoundTextures = { nullptr };
+        const Shader*               m_BoundShader = nullptr;
 
         // Buffer clearing variables
         glm::vec4                   m_ClearColor;

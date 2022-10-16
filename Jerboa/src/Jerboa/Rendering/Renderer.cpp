@@ -39,7 +39,7 @@ namespace Jerboa {
 		EndFrameImpl();
 	}
 
-	void Renderer::Draw(Mesh& mesh)
+	void Renderer::Draw(const Mesh& mesh)
 	{
 		const auto& subMeshes = mesh.GetSubMeshes();
 		for (const auto& subMesh : subMeshes)
