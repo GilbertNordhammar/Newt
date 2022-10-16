@@ -77,7 +77,7 @@ namespace Jerboa
 					GetOpenGLBaseType(elem.GetDataType()),
 					elem.m_Normalized ? GL_TRUE : GL_FALSE,
 					layout.GetStride(),
-					(void*)elem.m_Offset);
+					(void*)elem.GetOffset());
 				index++;
 			}
 		};

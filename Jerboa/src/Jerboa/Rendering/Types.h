@@ -24,7 +24,9 @@ namespace Jerboa
 	};
 	JERBOA_ENABLE_ENUM_FLAG_OPERATORS(VertexAttributeType);
 
-	class VertexAttribute {
+	class VertexAttribute 
+	{
+		friend class VertexLayout;
 	public:
 		VertexAttribute(VertexAttributeType attributeType, bool normalized = false)
 			: m_AttributeType(attributeType), m_Normalized(normalized)
@@ -33,9 +35,10 @@ namespace Jerboa
 
 		VertexAttributeType m_AttributeType;
 		bool m_Normalized = false;
-		uint32 m_Offset = 0;
 
-		uint32 GetComponentCount() 
+		uint32 GetOffset() const { return m_Offset; }
+
+		uint32 GetComponentCount() const
 		{
 			switch (GetDataType())
 			{
@@ -56,20 +59,20 @@ namespace Jerboa
 			return 0;
 		}
 
-		int GetSize()
+		uint32 GetSize() const
 		{
 			switch (GetDataType())
 			{
 				case ShaderDataType::Float:    return 4;
-				case ShaderDataType::Float2:   return 4 * 2;
-				case ShaderDataType::Float3:   return 4 * 3;
-				case ShaderDataType::Float4:   return 4 * 4;
-				case ShaderDataType::Mat3:     return 4 * 3 * 3;
-				case ShaderDataType::Mat4:     return 4 * 4 * 4;
+				case ShaderDataType::Float2:   return 8;
+				case ShaderDataType::Float3:   return 12;
+				case ShaderDataType::Float4:   return 16;
+				case ShaderDataType::Mat3:     return 36;
+				case ShaderDataType::Mat4:     return 64;
 				case ShaderDataType::Int:      return 4;
-				case ShaderDataType::Int2:     return 4 * 2;
-				case ShaderDataType::Int3:     return 4 * 3;
-				case ShaderDataType::Int4:     return 4 * 4;
+				case ShaderDataType::Int2:     return 8;
+				case ShaderDataType::Int3:     return 12;
+				case ShaderDataType::Int4:     return 16;
 				case ShaderDataType::Bool:     return 1;
 			}
 
@@ -77,7 +80,7 @@ namespace Jerboa
 			return 0;
 		}
 
-		ShaderDataType GetDataType()
+		ShaderDataType GetDataType() const
 		{
 			switch (m_AttributeType)
 			{
@@ -93,6 +96,9 @@ namespace Jerboa
 
 			return ShaderDataType::Float; // What to return here?
 		}
+
+	private:
+		uint32 m_Offset = 0;
 	};
 
 	class VertexLayout {
