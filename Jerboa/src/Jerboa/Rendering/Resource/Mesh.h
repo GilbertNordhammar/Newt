@@ -45,6 +45,7 @@ namespace Jerboa
 		~Mesh();
 
 		void						AddSubMesh(const VertexBufferData& vertexBufferData, const IndexBufferData* indexBufferData, PrimitiveType primitiveType, const GPUResourceAllocator& resourceAllocator);
+		void						AddSubMesh(SubMesh&& subMesh);
 		void						RemoveSubMeshAtIndex(int i);
 		const std::vector<SubMesh>& GetSubMeshes() const { return m_SubMeshes; }
 	private:

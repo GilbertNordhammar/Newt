@@ -32,6 +32,11 @@ namespace Jerboa
 		m_SubMeshes.back().Create(vertexBufferData, indexBufferData, primitiveType, resourceAllocator);
 	}
 
+	void Mesh::AddSubMesh(SubMesh&& subMesh)
+	{
+		m_SubMeshes.push_back(std::move(subMesh));
+	}
+
 	void Mesh::RemoveSubMeshAtIndex(int i)
 	{
 		bool validIndex = i > 0 && i < m_SubMeshes.size();

@@ -13,14 +13,13 @@ namespace Jerboa
 	enum class VertexAttributeType : uint32
 	{
 		NONE = 0,
-		START_ITERATOR = 1,
 		Position = 1,
 		Position2D = 2,
 		Normal = 4,
 		TextureCoordinates = 8,
 		Tangent = 16,
 		Bitangent = 32,
-		END_ITERATOR
+		Color = 64,
 	};
 	JERBOA_ENABLE_ENUM_FLAG_OPERATORS(VertexAttributeType);
 
@@ -107,7 +106,24 @@ namespace Jerboa
 		VertexLayout(std::initializer_list<VertexAttribute> attributes)
 			: m_Attributes(attributes)
 		{
-			if (!HasDuplicateOfSameAttribute())
+			if (HasDuplicateOfSameAttribute())
+			{
+				m_Attributes.clear();
+			}
+			else
+			{
+				CalcOffsetAndStride();
+			}
+		}
+
+		VertexLayout(const std::vector<VertexAttribute>& attributes)
+			: m_Attributes(attributes)
+		{
+			if (HasDuplicateOfSameAttribute())
+			{
+				m_Attributes.clear();
+			}
+			else
 			{
 				CalcOffsetAndStride();
 			}
@@ -139,7 +155,8 @@ namespace Jerboa
 		{
 			int offset = 0;
 			m_Stride = 0;
-			for (auto& elem : m_Attributes) {
+			for (auto& elem : m_Attributes) 
+			{
 				elem.m_Offset = offset;
 				offset += elem.GetSize();
 			}

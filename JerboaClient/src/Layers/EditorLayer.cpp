@@ -3,6 +3,7 @@
 #include "Jerboa/Core/Input.h"
 #include "Jerboa/Core/Time.h"
 #include "Jerboa/Rendering/PrimitiveFactory.h"
+#include "Jerboa/Resource/Loaders/MeshLoader.h"
 #include "Jerboa/Resource/Loaders/ShaderLoaderGLSL.h"
 #include "Jerboa/Resource/Loaders/TextureLoader.h"
 #include "Jerboa/UI/ImGui/ImGuiApp.h"
@@ -179,7 +180,8 @@ namespace JerboaClient {
             modelMatrix = modelMatrix * glm::toMat4(trans.GetOrientation());
             m_ShaderState.SetMat4("mat_model", modelMatrix);
 
-            m_Renderer.Draw(m_SphereMesh);
+            m_Renderer.Draw(*m_TestMesh);
+            //m_Renderer.Draw(m_SphereMesh);
         }
 
         m_RenderState.SetStencilTestingEnabled(false);
@@ -225,7 +227,7 @@ namespace JerboaClient {
         }
 
         std::vector<float> sphereVertices;
-        std::vector<uint32_t> sphereIndices;
+        std::vector<uint32> sphereIndices;
         Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, 1.0f, glm::vec2(1.0), sphereVertices, sphereIndices);
        
         int verticesSize = sphereVertices.size() * sizeof(sphereVertices[0]);
@@ -243,6 +245,8 @@ namespace JerboaClient {
         auto sphereIndexData = Jerboa::IndexBufferData(sphereIndices.data(), indicesSize);
 
         // Create meshes
+        Jerboa::MeshLoader meshLoader(m_ResourceAllocator);
+        m_TestMesh = std::unique_ptr<Jerboa::Mesh>(meshLoader.Load("assets/meshes/cube.fbx"));
         m_SphereMesh.AddSubMesh(sphereVertexData, &sphereIndexData, Jerboa::PrimitiveType::Triangle, m_Renderer.GetAllocator());
 
         // Create shaders
