@@ -16,8 +16,8 @@ namespace Jerboa
 {
 	struct FrameBufferGPUResourceConfig
 	{
-		std::array<const GPUResource*, EnumToInt<int>(ColorAttachmentSlot::Count)> m_ColorAttachments = { nullptr };
-		std::array<TextureConfig, EnumToInt<int>(ColorAttachmentSlot::Count)> m_ColorAttachmentsTextureConfig;
+		std::array<const GPUResource*, EnumToInt(ColorAttachmentSlot::Count)> m_ColorAttachments = { nullptr };
+		std::array<TextureConfig, EnumToInt(ColorAttachmentSlot::Count)> m_ColorAttachmentsTextureConfig;
 
 		const GPUResource* m_DepthStencilAttachment = nullptr;
 		TextureConfig m_DepthStencilAttachmentTextureConfig;

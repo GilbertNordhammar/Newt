@@ -39,7 +39,7 @@ namespace Jerboa
 
 	struct FrameBufferConfig
 	{
-		std::array<FrameBufferAttachment, EnumToInt<int>(ColorAttachmentSlot::Count)> m_ColorAttachments;
+		std::array<FrameBufferAttachment, EnumToInt(ColorAttachmentSlot::Count)> m_ColorAttachments;
 		FrameBufferAttachment m_DepthStencilAttachment;
 	};
 }

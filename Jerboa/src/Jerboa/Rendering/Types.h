@@ -2,6 +2,7 @@
 
 #include "Jerboa/Debug.h"
 #include "Jerboa/Core/Enum.h"
+#include "Jerboa/Core/Bit.h"
 
 namespace Jerboa
 {
@@ -12,30 +13,61 @@ namespace Jerboa
 
 	enum class VertexAttributeType : uint32
 	{
-		NONE = 0,
-		Position = 1,
-		Position2D = 2,
-		Normal = 4,
-		TextureCoordinates = 8,
-		Tangent = 16,
-		Bitangent = 32,
-		Color = 64,
+		NONE					= 0,
+		Position				= BITMASK_1,
+		Position2D				= BITMASK_2,
+		TextureCoordinates1		= BITMASK_3,
+		TextureCoordinates2		= BITMASK_4,
+		TextureCoordinates3		= BITMASK_5,
+		TextureCoordinates4		= BITMASK_6,
+		Normal					= BITMASK_7,
+		Tangent					= BITMASK_8,	
+		Color1					= BITMASK_9,
+		Color2					= BITMASK_10,
+		Color3					= BITMASK_11,
+		Color4					= BITMASK_12,
 	};
 	JERBOA_ENABLE_ENUM_FLAG_OPERATORS(VertexAttributeType);
+
+	constexpr uint32 JERBOA_VERTEX_ATTRIBUTE_MAX_TEXTURE_COORDINATES = 4;
+	constexpr uint32 JERBOA_VERTEX_ATTRIBUTE_MAX_COLORS = 4;
+
+	static uint32 GetVertexAttributeLayoutIndex(VertexAttributeType attributeType)
+	{
+		switch (attributeType)
+		{
+			case VertexAttributeType::Position:				return 0;
+			case VertexAttributeType::Position2D:			return 0;
+			case VertexAttributeType::TextureCoordinates1:	return 1;
+			case VertexAttributeType::TextureCoordinates2:	return 2;
+			case VertexAttributeType::TextureCoordinates3:	return 3;
+			case VertexAttributeType::TextureCoordinates4:	return 4;
+			case VertexAttributeType::Normal:				return 5;
+			case VertexAttributeType::Tangent:				return 6;
+			case VertexAttributeType::Color1:				return 7;
+			case VertexAttributeType::Color2:				return 8;
+			case VertexAttributeType::Color3:				return 9;
+			case VertexAttributeType::Color4:				return 10;
+			default:
+				JERBOA_ASSERT(false, "Unhandled vertex attribute");
+				return 0;
+		}
+	}
 
 	class VertexAttribute 
 	{
 		friend class VertexLayout;
 	public:
 		VertexAttribute(VertexAttributeType attributeType, bool normalized = false)
-			: m_AttributeType(attributeType), m_Normalized(normalized)
+			: m_AttributeType(attributeType), 
+			m_LayoutIndex(GetVertexAttributeLayoutIndex(attributeType)), 
+			m_Normalized(normalized)
 		{
 		}
 
-		VertexAttributeType m_AttributeType;
-		bool m_Normalized = false;
-
-		uint32 GetOffset() const { return m_Offset; }
+		uint32	GetLayoutIndex() const	{ return m_LayoutIndex; }
+		uint32	GetOffset() const		{ return m_Offset; }
+		bool	Normalized() const		{ return m_Normalized; }
 
 		uint32 GetComponentCount() const
 		{
@@ -85,12 +117,18 @@ namespace Jerboa
 			{
 				case VertexAttributeType::Position:				return ShaderDataType::Float3;
 				case VertexAttributeType::Position2D:			return ShaderDataType::Float2;
+				case VertexAttributeType::TextureCoordinates1:	return ShaderDataType::Float2;
+				case VertexAttributeType::TextureCoordinates2:	return ShaderDataType::Float2;
+				case VertexAttributeType::TextureCoordinates3:	return ShaderDataType::Float2;
+				case VertexAttributeType::TextureCoordinates4:	return ShaderDataType::Float2;
 				case VertexAttributeType::Normal:				return ShaderDataType::Float3;
-				case VertexAttributeType::TextureCoordinates:	return ShaderDataType::Float2;
 				case VertexAttributeType::Tangent:				return ShaderDataType::Float3;
-				case VertexAttributeType::Bitangent:			return ShaderDataType::Float3;
+				case VertexAttributeType::Color1:				return ShaderDataType::Float4;
+				case VertexAttributeType::Color2:				return ShaderDataType::Float4;
+				case VertexAttributeType::Color3:				return ShaderDataType::Float4;
+				case VertexAttributeType::Color4:				return ShaderDataType::Float4;
 				default:
-					JERBOA_ASSERT(false, "Unknown vertex attribute type");
+					JERBOA_ASSERT(false, "Unhandled vertex attribute");
 			}
 
 			return ShaderDataType::Float; // What to return here?
@@ -98,6 +136,9 @@ namespace Jerboa
 
 	private:
 		uint32 m_Offset = 0;
+		VertexAttributeType m_AttributeType;
+		uint32 m_LayoutIndex = 0;
+		bool m_Normalized = false;
 	};
 
 	class VertexLayout {
@@ -106,26 +147,26 @@ namespace Jerboa
 		VertexLayout(std::initializer_list<VertexAttribute> attributes)
 			: m_Attributes(attributes)
 		{
-			if (HasDuplicateOfSameAttribute())
+			if (AreAttributesValid())
 			{
-				m_Attributes.clear();
+				CalculateAttributeOffsetsAndStride();
 			}
 			else
 			{
-				CalcOffsetAndStride();
+				m_Attributes.clear();
 			}
 		}
 
 		VertexLayout(const std::vector<VertexAttribute>& attributes)
 			: m_Attributes(attributes)
 		{
-			if (HasDuplicateOfSameAttribute())
+			if (AreAttributesValid())
 			{
-				m_Attributes.clear();
+				CalculateAttributeOffsetsAndStride();
 			}
 			else
 			{
-				CalcOffsetAndStride();
+				m_Attributes.clear();
 			}
 		}
 
@@ -134,24 +175,27 @@ namespace Jerboa
 
 		int GetStride() const { return m_Stride; }
 	private:
-		bool HasDuplicateOfSameAttribute()
+		bool AreAttributesValid()
 		{
-			bool duplicateAttribute = false;
+			bool validAttributes = true;
 			VertexAttributeType accumulatedAttributeTypes = VertexAttributeType::NONE;
 
 			for (const auto attribute : m_Attributes)
 			{
-				duplicateAttribute = static_cast<bool>(accumulatedAttributeTypes & attribute.m_AttributeType);
-				accumulatedAttributeTypes = accumulatedAttributeTypes | attribute.m_AttributeType;
-				JERBOA_ASSERT(!duplicateAttribute, "Duplicate of same vertex attribute found");
-				if (duplicateAttribute)
+				validAttributes = !EnumHasFlags(accumulatedAttributeTypes, attribute.m_AttributeType);
+				JERBOA_ASSERT(validAttributes, "Duplicate of same vertex attribute found");
+				if (!validAttributes)
 					break;
+				accumulatedAttributeTypes = accumulatedAttributeTypes | attribute.m_AttributeType;
 			}
 
-			return duplicateAttribute;
+			validAttributes = !EnumHasFlags(accumulatedAttributeTypes, VertexAttributeType::Position | VertexAttributeType::Position2D);
+			JERBOA_ASSERT(validAttributes, "VertexAttributeType::Position and VertexAttributeType::Position2D can't both exist in the same vertex layout!");
+
+			return validAttributes;
 		}
 
-		void CalcOffsetAndStride() 
+		void CalculateAttributeOffsetsAndStride() 
 		{
 			int offset = 0;
 			m_Stride = 0;

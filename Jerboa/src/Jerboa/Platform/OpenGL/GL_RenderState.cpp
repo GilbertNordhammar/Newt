@@ -162,7 +162,7 @@ namespace Jerboa
     void GL_RenderState::BindTextureImpl(const Texture2D& texture, TextureSlot slot)
     {
         m_LastBoundTextureSlot = slot;
-        glActiveTexture(GL_TEXTURE0 + EnumToInt<int>(slot));
+        glActiveTexture(GL_TEXTURE0 + EnumToInt(slot));
         glBindTexture(GL_TEXTURE_2D, texture.GetGPUResouce().Get());
     }
 
@@ -173,7 +173,7 @@ namespace Jerboa
 
     void GL_RenderState::ClearBoundTextureImpl(TextureSlot slot)
     {
-        glActiveTexture(GL_TEXTURE0 + EnumToInt<int>(slot));
+        glActiveTexture(GL_TEXTURE0 + EnumToInt(slot));
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 

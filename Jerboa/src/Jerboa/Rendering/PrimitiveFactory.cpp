@@ -12,9 +12,9 @@ namespace Jerboa::PrimitiveFactory {
 		JERBOA_ASSERT(nRings >= MIN_RINGS, "A UV sphere can't have less than 3 rings");
 		JERBOA_ASSERT(nSegments >= MIN_SEGMENTS, "A UV sphere can't have less than 3 segments");
 
-		/* Generating vertices data (excluding tangents and bitangents) */
+		/* Generating vertices data (excluding tangents) */
 		int nVertices = (nRings + 1) * (nSegments + 1);
-		int nDataPerVertex = 3 + 2 + 3 + 3 + 3; // position + uv + normal + tangent + bitangent
+		int nDataPerVertex = 3 + 2 + 3 + 3; // position + uv + normal + tangent
 		int nVertexDatas = nVertices * nDataPerVertex;
 		out_vertices.resize(nVertexDatas);
 
@@ -47,13 +47,10 @@ namespace Jerboa::PrimitiveFactory {
 				out_vertices[v + 8] = 0; // tangent.x
 				out_vertices[v + 9] = 0; //tangent.y
 				out_vertices[v + 10] = 0; // tangent.z
-				out_vertices[v + 11] = 0; // bitangent.x
-				out_vertices[v + 12] = 0; // bitangent.y
-				out_vertices[v + 13] = 0; //bitangent.z
 			}
 		}
 
-		/* Generting indices (plus tangents and bitangents for vertices) */
+		/* Generting indices (plus tangents for vertices) */
 		int nExtraRings = nRings - MIN_RINGS;
 		int nTriangles = nRings * nSegments + (1 + nExtraRings) * nSegments;
 		int nIndices = 3 * nTriangles;
@@ -85,12 +82,6 @@ namespace Jerboa::PrimitiveFactory {
 				int v2_tangent = v2_pos + tangentOffset;
 				int v3_tangent = v3_pos + tangentOffset;
 				int v4_tangent = v4_pos + tangentOffset;
-
-				int bitangentOffset = 11;
-				int v1_bitangent = v1_pos + bitangentOffset;
-				int v2_bitangent = v2_pos + bitangentOffset;
-				int v3_bitangent = v3_pos + bitangentOffset;
-				int v4_bitangent = v4_pos + bitangentOffset;
 
 				// triangle 1
 				if (i != 0) {
@@ -126,21 +117,6 @@ namespace Jerboa::PrimitiveFactory {
 					out_vertices[v3_tangent]	 += tangent.x;
 					out_vertices[v3_tangent + 1] += tangent.y;
 					out_vertices[v3_tangent + 2] += tangent.z;
-
-					glm::vec3 bitangent;
-					bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-					bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-					bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
-
-					out_vertices[v1_bitangent]	   += bitangent.x;
-					out_vertices[v1_bitangent + 1] += bitangent.y;
-					out_vertices[v1_bitangent + 2] += bitangent.z;
-					out_vertices[v2_bitangent]	   += bitangent.x;
-					out_vertices[v2_bitangent + 1] += bitangent.y;
-					out_vertices[v2_bitangent + 2] += bitangent.z;
-					out_vertices[v3_bitangent]	   += bitangent.x;
-					out_vertices[v3_bitangent + 1] += bitangent.y;
-					out_vertices[v3_bitangent + 2] += bitangent.z;
 				}
 
 				// triangle 2
@@ -177,26 +153,11 @@ namespace Jerboa::PrimitiveFactory {
 					out_vertices[v4_tangent]	 += tangent.x;
 					out_vertices[v4_tangent + 1] += tangent.y;
 					out_vertices[v4_tangent + 2] += tangent.z;
-
-					glm::vec3 bitangent;
-					bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-					bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-					bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
-
-					out_vertices[v2_bitangent]	   += bitangent.x;
-					out_vertices[v2_bitangent + 1] += bitangent.y;
-					out_vertices[v2_bitangent + 2] += bitangent.z;
-					out_vertices[v3_bitangent]	   += bitangent.x;
-					out_vertices[v3_bitangent + 1] += bitangent.y;
-					out_vertices[v3_bitangent + 2] += bitangent.z;
-					out_vertices[v4_bitangent]	   += bitangent.x;
-					out_vertices[v4_bitangent + 1] += bitangent.y;
-					out_vertices[v4_bitangent + 2] += bitangent.z;
 				}
 			}
 		}
 
-		// Normalizing tangents and bitangents sums (effectively averaging them)
+		// Normalizing tangents sums (effectively averaging them)
 		for (int i = 0; i <= nRings; ++i)
 		{
 			for (int j = 0; j <= nSegments; j++)
@@ -208,12 +169,6 @@ namespace Jerboa::PrimitiveFactory {
 				out_vertices[v + 8] = tangent.x; // tangent.x
 				out_vertices[v + 9] = tangent.y; //tangent.y
 				out_vertices[v + 10] = tangent.z; // tangent.z
-
-				auto bitangent = glm::vec3(out_vertices[v + 11], out_vertices[v + 12], out_vertices[v + 13]);
-				bitangent = glm::normalize(bitangent);
-				out_vertices[v + 11] = bitangent.x; // bitangent.x
-				out_vertices[v + 12] = bitangent.y; // bitangent.y
-				out_vertices[v + 13] = bitangent.z; //bitangent.z
 			}
 		}
 	}

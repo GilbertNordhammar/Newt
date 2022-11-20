@@ -40,7 +40,7 @@ namespace Jerboa
 			Texture2D* texture = depthStencilAttachment.GetTexture();
 			if (texture->IsDepthTexture() && texture->IsReadable())
 			{
-				shaderState.SetInt("JB_uDepthTexture", EnumToInt<int>(TextureSlot::_7));
+				shaderState.SetInt("JB_uDepthTexture", EnumToInt(TextureSlot::_7));
 				renderState.BindTexture(*depthStencilAttachment.GetTexture(), TextureSlot::_7);
 			}
 		}
@@ -72,11 +72,13 @@ namespace Jerboa
 			 1.0f, -1.0f,	1.0f, 0.0f,
 			 1.0f, 1.0f,	1.0f, 1.0f
 		};
-		VertexBufferData vertexData(quadVertices, sizeof(quadVertices), VertexBufferUsage::Static, 
-			{ 
-				VertexAttribute(VertexAttributeType::Position2D), 
-				VertexAttribute(VertexAttributeType::TextureCoordinates)
-			});
+
+		VertexBufferData vertexData(quadVertices, sizeof(quadVertices), VertexBufferUsage::Static,
+			{
+				VertexAttribute(VertexAttributeType::Position2D),
+				VertexAttribute(VertexAttributeType::TextureCoordinates1)
+			}
+		);
 
 		m_FullscreenQuad.Create(vertexData, nullptr, PrimitiveType::Triangle, m_Renderer.GetAllocator());
 	}

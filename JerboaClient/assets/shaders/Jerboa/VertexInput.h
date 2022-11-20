@@ -1,0 +1,11 @@
+layout (location = 0)   in vec3 JB_VertexIn_Position;
+layout (location = 1)   in vec2 JB_VertexIn_TexCoord1;
+layout (location = 2)   in vec2 JB_VertexIn_TexCoord2;
+layout (location = 3)   in vec2 JB_VertexIn_TexCoord3;
+layout (location = 4)   in vec2 JB_VertexIn_TexCoord4;
+layout (location = 5)   in vec3 JB_VertexIn_Normal;
+layout (location = 6)   in vec3 JB_VertexIn_Tangent;
+layout (location = 7)   in vec3 JB_VertexIn_Color1;
+layout (location = 8)   in vec3 JB_VertexIn_Color2;
+layout (location = 9)   in vec3 JB_VertexIn_Color3;
+layout (location = 10)  in vec3 JB_VertexIn_Color4;

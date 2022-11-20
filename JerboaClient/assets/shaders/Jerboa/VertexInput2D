@@ -1,0 +1,2 @@
+layout (location = 0)   in vec2 JB_VertexIn_Position2D;
+layout (location = 1)   in vec2 JB_VertexIn_TexCoord1;

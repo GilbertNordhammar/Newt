@@ -64,7 +64,7 @@ namespace Jerboa
 	{
 		JERBOA_ASSERT(slot != ColorAttachmentSlot::Count, "ColorAttachmentSlot::Count is not a valid color attachment slot argument");
 		return slot != ColorAttachmentSlot::Count 
-			? m_Config.m_ColorAttachments[EnumToInt<int>(slot)]
+			? m_Config.m_ColorAttachments[EnumToInt(slot)]
 			: FrameBufferAttachment();
 	}
 }

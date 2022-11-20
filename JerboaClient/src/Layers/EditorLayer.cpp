@@ -234,10 +234,9 @@ namespace JerboaClient {
         auto sphereVertexData = Jerboa::VertexBufferData(sphereVertices.data(), verticesSize, Jerboa::VertexBufferUsage::Static,
             {
                 Jerboa::VertexAttributeType::Position,
-                Jerboa::VertexAttributeType::TextureCoordinates,
+                Jerboa::VertexAttributeType::TextureCoordinates1,
                 Jerboa::VertexAttributeType::Normal,
-                Jerboa::VertexAttributeType::Tangent,
-                Jerboa::VertexAttributeType::Bitangent 
+                Jerboa::VertexAttributeType::Tangent
             }
         );
 
@@ -246,7 +245,7 @@ namespace JerboaClient {
 
         // Create meshes
         Jerboa::MeshLoader meshLoader(m_ResourceAllocator);
-        m_TestMesh = std::unique_ptr<Jerboa::Mesh>(meshLoader.Load("assets/meshes/cube.fbx"));
+        m_TestMesh = std::unique_ptr<Jerboa::Mesh>(meshLoader.Load("assets/meshes/monkey.fbx", Jerboa::MeshLoader::LoadConfig::CalculateTangents));
         m_SphereMesh.AddSubMesh(sphereVertexData, &sphereIndexData, Jerboa::PrimitiveType::Triangle, m_Renderer.GetAllocator());
 
         // Create shaders

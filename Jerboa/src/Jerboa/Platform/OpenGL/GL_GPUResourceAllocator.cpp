@@ -67,18 +67,17 @@ namespace Jerboa
 			glBufferData(GL_ARRAY_BUFFER, bufferData.m_Size, bufferData.m_Data, GetOpenGLUsage(bufferData.m_Usage));
 
 			VertexLayout layout = bufferData.m_Layout;
-			int index = 0;
 			for (auto& elem : layout)
 			{
-				glEnableVertexAttribArray(index);
+				glEnableVertexAttribArray(elem.GetLayoutIndex());
 				glVertexAttribPointer(
-					index,
+					elem.GetLayoutIndex(),
 					elem.GetComponentCount(),
 					GetOpenGLBaseType(elem.GetDataType()),
-					elem.m_Normalized ? GL_TRUE : GL_FALSE,
+					elem.Normalized() ? GL_TRUE : GL_FALSE,
 					layout.GetStride(),
-					(void*)elem.GetOffset());
-				index++;
+					(void*)elem.GetOffset()
+				);
 			}
 		};
 

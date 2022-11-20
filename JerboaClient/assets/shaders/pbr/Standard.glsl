@@ -1,11 +1,7 @@
 #begin vertex
 #version 330 core
 
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoord;
-layout (location = 2) in vec3 aNormal;
-layout (location = 3) in vec3 aTangent;
-layout (location = 4) in vec3 aBitangent;
+#include <VertexInput.h>
 
 out vec2 v2f_texCoord;
 out vec3 v2f_worldPos;
@@ -19,13 +15,13 @@ uniform mat4 mat_projection;
 
 void main()
 {
-    v2f_normal = mat3(transpose(inverse(mat_model))) * aNormal; // TODO: Move transpose calculation to CPU and pass via uniform
+    v2f_normal = mat3(transpose(inverse(mat_model))) * JB_VertexIn_Normal; // TODO: Move transpose calculation to CPU and pass via uniform
     v2f_normal = normalize(v2f_normal);
-    v2f_texCoord = aTexCoord;
-    v2f_worldPos = (mat_model * vec4(aPos, 1.0)).xyz;
+    v2f_texCoord = JB_VertexIn_TexCoord1;
+    v2f_worldPos = (mat_model * vec4(JB_VertexIn_Position, 1.0)).xyz;
 
     mat3 normalMatrix = transpose(inverse(mat3(mat_model)));
-    vec3 T = normalize(normalMatrix * aTangent);
+    vec3 T = normalize(normalMatrix * JB_VertexIn_Tangent);
     vec3 N = v2f_normal;
     
     // re-orthogonalize T with respect to N

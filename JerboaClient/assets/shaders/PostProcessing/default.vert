@@ -1,10 +1,11 @@
 #version 330 core
-layout (location = 0) in vec2 aPos;
-layout (location = 1) in vec2 aTexCoord;
+
+#include <VertexInput2D>
+
 out vec2 TexCoords;
 
 void main()
 {
-    TexCoords = aTexCoord;
-    gl_Position = vec4(aPos.x, aPos.y, 0.0, 1.0); 
+    TexCoords = JB_VertexIn_TexCoord1;
+    gl_Position = vec4(JB_VertexIn_Position2D.x, JB_VertexIn_Position2D.y, 0.0, 1.0); 
 } 

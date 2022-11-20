@@ -117,7 +117,7 @@ namespace Jerboa
         void                    ClearBoundShader();
 
         const FrameBuffer*      GetBoundFrameBuffer() const { return m_BoundFrameBuffer; }
-        const Texture2D*        GetBoundTexture(TextureSlot slot) const { return m_BoundTextures[EnumToInt<int>(slot)]; }
+        const Texture2D*        GetBoundTexture(TextureSlot slot) const { return m_BoundTextures[EnumToInt(slot)]; }
         const Shader*           GetBoundShader() const { return m_BoundShader; }
 
         // Buffer clearing interface
@@ -215,7 +215,7 @@ namespace Jerboa
         // Resource binding variables
         // TODO: This can lead to dangling pointer if the resource is deallocated. Find a better solution
         const FrameBuffer*          m_BoundFrameBuffer = nullptr;
-        std::array<const Texture2D*, EnumToInt<int>(TextureSlot::Count)> m_BoundTextures = { nullptr };
+        std::array<const Texture2D*, EnumToInt(TextureSlot::Count)> m_BoundTextures = { nullptr };
         const Shader*               m_BoundShader = nullptr;
 
         // Buffer clearing variables

@@ -61,7 +61,7 @@ namespace Jerboa
 	void RenderState::BindTexture(const Texture2D& texture, TextureSlot slot)
 	{
 		BindTextureImpl(texture, slot);
-		m_BoundTextures[EnumToInt<int>(slot)] = &texture;
+		m_BoundTextures[EnumToInt(slot)] = &texture;
 	}
 
 	void RenderState::BindShader(const Shader& shader)
@@ -73,7 +73,7 @@ namespace Jerboa
 	void RenderState::ClearBoundTexture(TextureSlot slot)
 	{
 		ClearBoundTextureImpl(slot);
-		m_BoundTextures[EnumToInt<int>(slot)] = nullptr;
+		m_BoundTextures[EnumToInt(slot)] = nullptr;
 	}
 
 	void RenderState::ClearBoundShader()
@@ -209,7 +209,7 @@ namespace Jerboa
 
 	void RenderState::OnTextureDestroyed(const TextureDestroyedEvent& evnt)
 	{
-		for (int i = 0; i < EnumToInt<int>(TextureSlot::Count); i++)
+		for (int i = 0; i < EnumToInt(TextureSlot::Count); i++)
 		{
 			if (m_BoundTextures[i] == &evnt.m_Texture)
 				ClearBoundTexture(static_cast<TextureSlot>(i));

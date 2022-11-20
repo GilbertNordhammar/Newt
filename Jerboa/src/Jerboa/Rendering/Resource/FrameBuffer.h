@@ -11,7 +11,7 @@
 
 namespace Jerboa
 {
-	using FrameBufferAttachmentArray = std::array<FrameBufferAttachment, EnumToInt<int>(ColorAttachmentSlot::Count)>;
+	using FrameBufferAttachmentArray = std::array<FrameBufferAttachment, EnumToInt(ColorAttachmentSlot::Count)>;
 
 	class FrameBuffer
 	{
