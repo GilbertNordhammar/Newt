@@ -12,12 +12,12 @@ namespace Jerboa
 		EventBus::Publish(MeshDestroyedEvent(*this));
 	}
 
-	void SubMesh::Create(const VertexBufferData& vertexBufferData, const IndexBufferData* indexBufferData, PrimitiveType primitiveType, const GPUResourceAllocator& resourceAllocator)
+	void SubMesh::Create(const SubMeshData& subMeshData, PrimitiveType primitiveType, const GPUResourceAllocator& resourceAllocator)
 	{
 		m_VAO = resourceAllocator.CreateVertexArrayObject();
-		m_VertexBuffer.Create(vertexBufferData, resourceAllocator);
-		if (indexBufferData)
-			m_IndexBuffer.Create(*indexBufferData, resourceAllocator);
+		m_VertexBuffer.Create(subMeshData.m_VertexBufferData, resourceAllocator);
+		if (subMeshData.m_IndexBufferData.m_Data.size() > 0)
+			m_IndexBuffer.Create(subMeshData.m_IndexBufferData, resourceAllocator);
 		m_PrimitiveType = primitiveType;
 	}
 
@@ -26,10 +26,10 @@ namespace Jerboa
 		return m_IndexBuffer.GetSize() > 0;
 	}
 
-	void Mesh::AddSubMesh(const VertexBufferData& vertexBufferData, const IndexBufferData* indexBufferData, PrimitiveType primitiveType, const GPUResourceAllocator& resourceAllocator)
+	void Mesh::AddSubMesh(const SubMeshData& subMeshData, PrimitiveType primitiveType, const GPUResourceAllocator& resourceAllocator)
 	{
 		m_SubMeshes.emplace_back();
-		m_SubMeshes.back().Create(vertexBufferData, indexBufferData, primitiveType, resourceAllocator);
+		m_SubMeshes.back().Create(subMeshData, primitiveType, resourceAllocator);
 	}
 
 	void Mesh::AddSubMesh(SubMesh&& subMesh)

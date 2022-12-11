@@ -118,19 +118,19 @@ namespace Jerboa
 			JERBOA_LOG_WARN("Mesh '{0}' has more vertex colors than the maximally supported {1}. The excessive ones won't get loaded. ", m_PathToMeshGettingLoaded, JERBOA_VERTEX_ATTRIBUTE_MAX_COLORS);
 		}
 
-		VertexLayout vertexLayout = VertexLayout(vertexAttributes);
-		VertexBufferData vertexBufferData = VertexBufferData(vertexLayout);
+		SubMeshData subMeshData;
+		subMeshData.m_VertexBufferData.m_Layout = VertexLayout(vertexAttributes);
 
-		vertexBufferData.m_Data.resize(vertexStride * aiMesh->mNumVertices);
+		subMeshData.m_VertexBufferData.m_Data.resize(vertexStride * aiMesh->mNumVertices);
 		for (int i = 0; i < aiMesh->mNumVertices; i++)
 		{
 			int offset = i * vertexStride;
 
 			if (aiMesh->HasPositions())
 			{
-				vertexBufferData.m_Data[offset] = aiMesh->mVertices[i].x;
-				vertexBufferData.m_Data[offset + 1] = aiMesh->mVertices[i].y;
-				vertexBufferData.m_Data[offset + 2] = aiMesh->mVertices[i].z;
+				subMeshData.m_VertexBufferData.m_Data[offset] = aiMesh->mVertices[i].x;
+				subMeshData.m_VertexBufferData.m_Data[offset + 1] = aiMesh->mVertices[i].y;
+				subMeshData.m_VertexBufferData.m_Data[offset + 2] = aiMesh->mVertices[i].z;
 				offset += positionSize;
 			}
 
@@ -138,24 +138,24 @@ namespace Jerboa
 			{
 				if (!aiMesh->HasTextureCoords(texCoordIndex))
 					break;
-				vertexBufferData.m_Data[offset] = aiMesh->mTextureCoords[texCoordIndex][i].x;
-				vertexBufferData.m_Data[offset + 1] = aiMesh->mTextureCoords[texCoordIndex][i].y;
+				subMeshData.m_VertexBufferData.m_Data[offset] = aiMesh->mTextureCoords[texCoordIndex][i].x;
+				subMeshData.m_VertexBufferData.m_Data[offset + 1] = aiMesh->mTextureCoords[texCoordIndex][i].y;
 				offset += textureCoordSize;
 			}
 
 			if (aiMesh->HasNormals())
 			{
-				vertexBufferData.m_Data[offset] = aiMesh->mNormals[i].x;
-				vertexBufferData.m_Data[offset + 1] = aiMesh->mNormals[i].y;
-				vertexBufferData.m_Data[offset + 2] = aiMesh->mNormals[i].z;
+				subMeshData.m_VertexBufferData.m_Data[offset] = aiMesh->mNormals[i].x;
+				subMeshData.m_VertexBufferData.m_Data[offset + 1] = aiMesh->mNormals[i].y;
+				subMeshData.m_VertexBufferData.m_Data[offset + 2] = aiMesh->mNormals[i].z;
 				offset += normalSize;
 			}
 
 			if (aiMesh->HasTangentsAndBitangents())
 			{
-				vertexBufferData.m_Data[offset] = aiMesh->mTangents[0].x;
-				vertexBufferData.m_Data[offset + 1] = aiMesh->mTangents[0].y;
-				vertexBufferData.m_Data[offset + 2] = aiMesh->mTangents[0].z;
+				subMeshData.m_VertexBufferData.m_Data[offset] = aiMesh->mTangents[0].x;
+				subMeshData.m_VertexBufferData.m_Data[offset + 1] = aiMesh->mTangents[0].y;
+				subMeshData.m_VertexBufferData.m_Data[offset + 2] = aiMesh->mTangents[0].z;
 				offset += tangentSize;
 			}
 
@@ -163,28 +163,27 @@ namespace Jerboa
 			{
 				if (!aiMesh->HasVertexColors(colorIndex))
 					break;
-				vertexBufferData.m_Data[offset] = aiMesh->mColors[colorIndex][i].r;
-				vertexBufferData.m_Data[offset + 1] = aiMesh->mColors[colorIndex][i].g;
-				vertexBufferData.m_Data[offset + 2] = aiMesh->mColors[colorIndex][i].b;
-				vertexBufferData.m_Data[offset + 3] = aiMesh->mColors[colorIndex][i].a;
+				subMeshData.m_VertexBufferData.m_Data[offset] = aiMesh->mColors[colorIndex][i].r;
+				subMeshData.m_VertexBufferData.m_Data[offset + 1] = aiMesh->mColors[colorIndex][i].g;
+				subMeshData.m_VertexBufferData.m_Data[offset + 2] = aiMesh->mColors[colorIndex][i].b;
+				subMeshData.m_VertexBufferData.m_Data[offset + 3] = aiMesh->mColors[colorIndex][i].a;
 				offset += colorSize;
 			}
 		}
 		
-		IndexBufferData indexBufferData;
 		if (aiMesh->HasFaces())
 		{
 			for (int i = 0; i < aiMesh->mNumFaces; i++)
 			{
 				for (int j = 0; j < aiMesh->mFaces[i].mNumIndices; j++)
 				{
-					indexBufferData.m_Data.push_back(aiMesh->mFaces[i].mIndices[j]);
+					subMeshData.m_IndexBufferData.m_Data.push_back(aiMesh->mFaces[i].mIndices[j]);
 				}
 			}
 		}
 
 		SubMesh subMesh;
-		subMesh.Create(vertexBufferData, &indexBufferData, PrimitiveType::Triangle, m_ResourceAllocator);
+		subMesh.Create(subMeshData, PrimitiveType::Triangle, m_ResourceAllocator);
 
 		return subMesh;
 	}

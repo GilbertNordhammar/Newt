@@ -62,13 +62,14 @@ namespace Jerboa
 
 	void Renderer2D::CreateFullscreenQuad()
 	{
-		VertexBufferData vertexData(
-			{
-				VertexAttribute(VertexAttributeType::Position2D),
-				VertexAttribute(VertexAttributeType::TextureCoordinates1)
-			}
-		);
-		vertexData.m_Data = {
+		SubMeshData subMeshData;
+
+		subMeshData.m_VertexBufferData.m_Layout = {
+			VertexAttribute(VertexAttributeType::Position2D),
+			VertexAttribute(VertexAttributeType::TextureCoordinates1)
+		};
+
+		subMeshData.m_VertexBufferData.m_Data = {
 			// positions   // texCoords
 			-1.0f, -1.0f,	0.0f, 0.0f,
 			 1.0f, 1.0f,	1.0f, 1.0f,
@@ -79,6 +80,6 @@ namespace Jerboa
 			 1.0f, 1.0f,	1.0f, 1.0f
 		};
 
-		m_FullscreenQuad.Create(vertexData, nullptr, PrimitiveType::Triangle, m_Renderer.GetAllocator());
+		m_FullscreenQuad.Create(subMeshData, PrimitiveType::Triangle, m_Renderer.GetAllocator());
 	}
 }

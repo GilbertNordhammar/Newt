@@ -6,11 +6,6 @@ namespace Jerboa
 {
     struct VertexBufferData
     {
-        VertexBufferData(VertexLayout layout)
-            : m_Layout(layout)
-        {
-        }
-
         uint32 GetDataByteSize() const
         {
             return m_Data.size() * sizeof(float);

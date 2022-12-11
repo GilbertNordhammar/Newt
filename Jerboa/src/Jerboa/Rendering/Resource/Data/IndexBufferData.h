@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Jerboa/Core/Types.h"
+#include <vector>
+
 namespace Jerboa
 {
     struct IndexBufferData

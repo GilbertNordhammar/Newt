@@ -225,27 +225,22 @@ namespace JerboaClient {
             auto posPointLight = position + glm::vec3(dist(rand), dist(rand), dist(rand));
             mPointLights.push_back(Jerboa::PointLight(glm::vec3(1.0f), 1.0f, posPointLight));
         }
-
-        /*std::vector<float> sphereVertices;
-        std::vector<uint32> sphereIndices;*/
-        //Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, 1.0f, glm::vec2(1.0), sphereVertices, sphereIndices);
        
-        auto sphereVertexData = Jerboa::VertexBufferData(
-            {
+
+        Jerboa::SubMeshData sphereSubMeshData;
+        sphereSubMeshData.m_VertexBufferData.m_Layout = {
                 Jerboa::VertexAttributeType::Position,
                 Jerboa::VertexAttributeType::TextureCoordinates1,
                 Jerboa::VertexAttributeType::Normal,
                 Jerboa::VertexAttributeType::Tangent
-            }
-        );
-        Jerboa::IndexBufferData sphereIndexData;
+        };
 
-        Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, 1.0f, glm::vec2(1.0), sphereVertexData.m_Data, sphereIndexData.m_Data);
+        Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, 1.0f, glm::vec2(1.0), sphereSubMeshData.m_VertexBufferData.m_Data, sphereSubMeshData.m_IndexBufferData.m_Data);
 
         // Create meshes
         Jerboa::MeshLoader meshLoader(m_ResourceAllocator);
         m_TestMesh = std::unique_ptr<Jerboa::Mesh>(meshLoader.Load("assets/meshes/monkey.fbx", Jerboa::MeshLoader::LoadConfig::CalculateTangents));
-        m_SphereMesh.AddSubMesh(sphereVertexData, &sphereIndexData, Jerboa::PrimitiveType::Triangle, m_Renderer.GetAllocator());
+        m_SphereMesh.AddSubMesh(sphereSubMeshData, Jerboa::PrimitiveType::Triangle, m_Renderer.GetAllocator());
 
         // Create shaders
         m_PBRShader.Create(ShaderLoaderGLSL::Load("assets/shaders/pbr/Standard.glsl"), m_ResourceAllocator);

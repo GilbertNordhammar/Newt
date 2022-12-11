@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Jerboa/Core/Types.h"
+#include "Jerboa/Rendering/Resource/Data/MeshData.h"
 #include "Jerboa/Rendering/Resource/IndexBuffer.h"
 #include "Jerboa/Rendering/Resource/VertexBuffer.h"
 #include "Jerboa/Rendering/Resource/Internal/GPUResource.h"
@@ -24,7 +25,7 @@ namespace Jerboa
 	class SubMesh
 	{
 	public:
-		void Create(const VertexBufferData& vertexBufferData, const IndexBufferData* indexBufferData, PrimitiveType primitiveType, const GPUResourceAllocator& resourceAllocator);
+		void Create(const SubMeshData& subMeshData, PrimitiveType primitiveType, const GPUResourceAllocator& resourceAllocator);
 
 		bool						IsIndexed() const;
 		PrimitiveType				GetPrimitiveType() const { return m_PrimitiveType; }
@@ -44,7 +45,7 @@ namespace Jerboa
 	public:
 		~Mesh();
 
-		void						AddSubMesh(const VertexBufferData& vertexBufferData, const IndexBufferData* indexBufferData, PrimitiveType primitiveType, const GPUResourceAllocator& resourceAllocator);
+		void						AddSubMesh(const SubMeshData& subMeshData, PrimitiveType primitiveType, const GPUResourceAllocator& resourceAllocator);
 		void						AddSubMesh(SubMesh&& subMesh);
 		void						RemoveSubMeshAtIndex(int i);
 		const std::vector<SubMesh>& GetSubMeshes() const { return m_SubMeshes; }
