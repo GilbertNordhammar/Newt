@@ -119,18 +119,18 @@ namespace Jerboa
 		}
 
 		VertexLayout vertexLayout = VertexLayout(vertexAttributes);
+		VertexBufferData vertexBufferData = VertexBufferData(vertexLayout);
 
-		std::vector<float> vertexBuffer;
-		vertexBuffer.resize(vertexStride * aiMesh->mNumVertices);
+		vertexBufferData.m_Data.resize(vertexStride * aiMesh->mNumVertices);
 		for (int i = 0; i < aiMesh->mNumVertices; i++)
 		{
 			int offset = i * vertexStride;
 
 			if (aiMesh->HasPositions())
 			{
-				vertexBuffer[offset] = aiMesh->mVertices[i].x;
-				vertexBuffer[offset + 1] = aiMesh->mVertices[i].y;
-				vertexBuffer[offset + 2] = aiMesh->mVertices[i].z;
+				vertexBufferData.m_Data[offset] = aiMesh->mVertices[i].x;
+				vertexBufferData.m_Data[offset + 1] = aiMesh->mVertices[i].y;
+				vertexBufferData.m_Data[offset + 2] = aiMesh->mVertices[i].z;
 				offset += positionSize;
 			}
 
@@ -138,24 +138,24 @@ namespace Jerboa
 			{
 				if (!aiMesh->HasTextureCoords(texCoordIndex))
 					break;
-				vertexBuffer[offset] = aiMesh->mTextureCoords[texCoordIndex][i].x;
-				vertexBuffer[offset + 1] = aiMesh->mTextureCoords[texCoordIndex][i].y;
+				vertexBufferData.m_Data[offset] = aiMesh->mTextureCoords[texCoordIndex][i].x;
+				vertexBufferData.m_Data[offset + 1] = aiMesh->mTextureCoords[texCoordIndex][i].y;
 				offset += textureCoordSize;
 			}
 
 			if (aiMesh->HasNormals())
 			{
-				vertexBuffer[offset] = aiMesh->mNormals[i].x;
-				vertexBuffer[offset + 1] = aiMesh->mNormals[i].y;
-				vertexBuffer[offset + 2] = aiMesh->mNormals[i].z;
+				vertexBufferData.m_Data[offset] = aiMesh->mNormals[i].x;
+				vertexBufferData.m_Data[offset + 1] = aiMesh->mNormals[i].y;
+				vertexBufferData.m_Data[offset + 2] = aiMesh->mNormals[i].z;
 				offset += normalSize;
 			}
 
 			if (aiMesh->HasTangentsAndBitangents())
 			{
-				vertexBuffer[offset] = aiMesh->mTangents[0].x;
-				vertexBuffer[offset + 1] = aiMesh->mTangents[0].y;
-				vertexBuffer[offset + 2] = aiMesh->mTangents[0].z;
+				vertexBufferData.m_Data[offset] = aiMesh->mTangents[0].x;
+				vertexBufferData.m_Data[offset + 1] = aiMesh->mTangents[0].y;
+				vertexBufferData.m_Data[offset + 2] = aiMesh->mTangents[0].z;
 				offset += tangentSize;
 			}
 
@@ -163,10 +163,10 @@ namespace Jerboa
 			{
 				if (!aiMesh->HasVertexColors(colorIndex))
 					break;
-				vertexBuffer[offset] = aiMesh->mColors[colorIndex][i].r;
-				vertexBuffer[offset + 1] = aiMesh->mColors[colorIndex][i].g;
-				vertexBuffer[offset + 2] = aiMesh->mColors[colorIndex][i].b;
-				vertexBuffer[offset + 3] = aiMesh->mColors[colorIndex][i].a;
+				vertexBufferData.m_Data[offset] = aiMesh->mColors[colorIndex][i].r;
+				vertexBufferData.m_Data[offset + 1] = aiMesh->mColors[colorIndex][i].g;
+				vertexBufferData.m_Data[offset + 2] = aiMesh->mColors[colorIndex][i].b;
+				vertexBufferData.m_Data[offset + 3] = aiMesh->mColors[colorIndex][i].a;
 				offset += colorSize;
 			}
 		}
@@ -190,7 +190,6 @@ namespace Jerboa
 		}
 
 		SubMesh subMesh;
-		VertexBufferData vertexBufferData = VertexBufferData(vertexBuffer.data(), vertexBuffer.size() * sizeof(vertexBuffer[0]), VertexBufferUsage::Static, vertexLayout);
 		subMesh.Create(vertexBufferData, indexBufferData, PrimitiveType::Triangle, m_ResourceAllocator);
 
 		delete indexBufferData;

@@ -12,7 +12,7 @@ namespace Jerboa {
 		m_GPUResource = resourceAllocator.CreateVertexBuffer(bufferData);
 		m_Usage = bufferData.m_Usage;
 		m_Layout = bufferData.m_Layout;
-		m_Size = bufferData.m_Size;
+		m_Size = bufferData.GetDataByteSize();
 	}
 
 	VertexBuffer::VertexBuffer(uint32 size, VertexBufferUsage usage, VertexLayout layout)

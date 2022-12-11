@@ -64,7 +64,7 @@ namespace Jerboa
 			*vertexBufferObject = glObject;
 
 			glBindBuffer(GL_ARRAY_BUFFER, *vertexBufferObject);
-			glBufferData(GL_ARRAY_BUFFER, bufferData.m_Size, bufferData.m_Data, GetOpenGLUsage(bufferData.m_Usage));
+			glBufferData(GL_ARRAY_BUFFER, bufferData.GetDataByteSize(), bufferData.m_Data.data(), GetOpenGLUsage(bufferData.m_Usage));
 
 			VertexLayout layout = bufferData.m_Layout;
 			for (auto& elem : layout)

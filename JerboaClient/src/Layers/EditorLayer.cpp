@@ -231,7 +231,7 @@ namespace JerboaClient {
         Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, 1.0f, glm::vec2(1.0), sphereVertices, sphereIndices);
        
         int verticesSize = sphereVertices.size() * sizeof(sphereVertices[0]);
-        auto sphereVertexData = Jerboa::VertexBufferData(sphereVertices.data(), verticesSize, Jerboa::VertexBufferUsage::Static,
+        auto sphereVertexData = Jerboa::VertexBufferData(
             {
                 Jerboa::VertexAttributeType::Position,
                 Jerboa::VertexAttributeType::TextureCoordinates1,
@@ -239,6 +239,8 @@ namespace JerboaClient {
                 Jerboa::VertexAttributeType::Tangent
             }
         );
+        sphereVertexData.m_Data = sphereVertices;
+
 
         int indicesSize = sphereIndices.size() * sizeof(sphereIndices[0]);
         auto sphereIndexData = Jerboa::IndexBufferData(sphereIndices.data(), indicesSize);
