@@ -3,7 +3,7 @@
 
 #include "Jerboa/Core/EventBus.h"
 #include "Jerboa/Rendering/Events/ShaderDestroyedEvent.h"
-#include "Jerboa/Resource/Data/ShaderDataGLSL.h"
+#include "Jerboa/Rendering/Resource/Data/ShaderDataGLSL.h"
 #include "Jerboa/Rendering/Resource/Internal/GPUResourceAllocator.h"
 
 namespace Jerboa {
@@ -12,7 +12,7 @@ namespace Jerboa {
 		EventBus::Publish(ShaderDestroyedEvent(*this));
 	}
 
-	void Shader::Create(ShaderDataGLSL data, GPUResourceAllocator& allocator)
+	void Shader::Create(const ShaderDataGLSL& data, GPUResourceAllocator& allocator)
 	{
 		m_GPUResource = allocator.CreateShader(data);
 	}

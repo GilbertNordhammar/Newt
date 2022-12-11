@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Jerboa/Resource/Data/TextureData.h"
+#include "Jerboa/Rendering/Resource/Data/TextureData.h"
 #include "Jerboa/Rendering/Resource/Internal/GPUResource.h"
 #include "Jerboa/Rendering/Resource/Config/TextureConfig.h"
 

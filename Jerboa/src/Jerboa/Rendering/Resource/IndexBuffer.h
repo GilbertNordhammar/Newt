@@ -2,21 +2,12 @@
 
 #include <memory>
 #include "Jerboa/Core/Types.h"
+#include "Jerboa/Rendering/Resource/Data/IndexBufferData.h"
 #include "Jerboa/Rendering/Resource/Internal/GPUResource.h"
-
 
 namespace Jerboa {
 	class GPUResourceAllocator;
-
-	struct IndexBufferData
-	{
-		uint32 GetDataByteSize() const
-		{
-			return m_Data.size() * sizeof(uint32);
-		}
-
-		std::vector<uint32> m_Data;
-	};
+	struct IndexBufferData;
 
 	class IndexBuffer
 	{

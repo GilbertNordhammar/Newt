@@ -5,7 +5,8 @@
 
 #include <memory>
 
-namespace Jerboa {
+namespace Jerboa
+{
     class ShaderDataGLSL;
     class GPUResourceAllocator;
 
@@ -13,8 +14,9 @@ namespace Jerboa {
     {
     public:
         ~Shader();
-        void Create(ShaderDataGLSL data, GPUResourceAllocator& allocator);
-        const GPUResource& GetGPUResource() const { return m_GPUResource; }
+        void Create(const ShaderDataGLSL& data, GPUResourceAllocator &allocator);
+        const GPUResource &GetGPUResource() const { return m_GPUResource; }
+
     private:
         GPUResource m_GPUResource;
     };

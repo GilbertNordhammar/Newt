@@ -2,6 +2,7 @@
 
 #include "Jerboa/Debug.h"
 #include "Jerboa/Core/Types.h"
+#include "Jerboa/Rendering/Resource/Data/VertexBufferData.h"
 #include "Jerboa/Rendering/Resource/Internal/GPUResource.h"
 #include "Jerboa/Rendering/Types.h"
 
@@ -11,23 +12,6 @@
 
 namespace Jerboa {
 	class GPUResourceAllocator;
-
-	struct VertexBufferData
-	{
-		VertexBufferData(VertexLayout layout)
-			: m_Layout(layout)
-		{
-		}
-
-		uint32 GetDataByteSize() const
-		{ 
-			return m_Data.size() * sizeof(float);
-		}
-
-		std::vector<float> m_Data;
-		VertexBufferUsage m_Usage = VertexBufferUsage::Static;
-		VertexLayout m_Layout;
-	};
 	
 	class VertexBuffer
 	{

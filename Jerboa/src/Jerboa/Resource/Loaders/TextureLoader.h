@@ -2,7 +2,7 @@
 
 #include "Jerboa/Core/Types.h"
 #include "Jerboa/Rendering/Types.h"
-#include "Jerboa/Resource/Data/TextureData.h"
+#include "Jerboa/Rendering/Resource/Data/TextureData.h"
 
 namespace Jerboa
 {

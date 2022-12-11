@@ -7,8 +7,8 @@
 #include "Jerboa/Rendering/Resource/Config/FrameBufferConfig.h"
 #include "Jerboa/Rendering/Resource/Config/TextureConfig.h"
 #include "Jerboa/Rendering/Resource/Internal/GPUResource.h"
-#include "Jerboa/Resource/Data/TextureData.h"
-#include "Jerboa/Resource/Data/ShaderDataGLSL.h"
+#include "Jerboa/Rendering/Resource/Data/TextureData.h"
+#include "Jerboa/Rendering/Resource/Data/ShaderDataGLSL.h"
 
 #include <array>
 

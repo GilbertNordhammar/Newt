@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Jerboa/Resource/Data/ShaderDataGLSL.h"
+#include "Jerboa/Rendering/Resource/Data/ShaderDataGLSL.h"
 
 #include <string>
 #include <vector>
