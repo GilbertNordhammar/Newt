@@ -100,7 +100,7 @@ namespace Jerboa
 			*indexBufferObject = glObject;
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *indexBufferObject);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferData.m_Size, bufferData.m_Data, GL_STATIC_DRAW); // Might make usage a variable in the future
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferData.GetDataByteSize(), bufferData.m_Data.data(), GL_STATIC_DRAW); // Might make usage a variable in the future
 			
 		};
 

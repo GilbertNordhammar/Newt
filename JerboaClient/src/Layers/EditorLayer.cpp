@@ -226,11 +226,10 @@ namespace JerboaClient {
             mPointLights.push_back(Jerboa::PointLight(glm::vec3(1.0f), 1.0f, posPointLight));
         }
 
-        std::vector<float> sphereVertices;
-        std::vector<uint32> sphereIndices;
-        Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, 1.0f, glm::vec2(1.0), sphereVertices, sphereIndices);
+        /*std::vector<float> sphereVertices;
+        std::vector<uint32> sphereIndices;*/
+        //Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, 1.0f, glm::vec2(1.0), sphereVertices, sphereIndices);
        
-        int verticesSize = sphereVertices.size() * sizeof(sphereVertices[0]);
         auto sphereVertexData = Jerboa::VertexBufferData(
             {
                 Jerboa::VertexAttributeType::Position,
@@ -239,11 +238,9 @@ namespace JerboaClient {
                 Jerboa::VertexAttributeType::Tangent
             }
         );
-        sphereVertexData.m_Data = sphereVertices;
+        Jerboa::IndexBufferData sphereIndexData;
 
-
-        int indicesSize = sphereIndices.size() * sizeof(sphereIndices[0]);
-        auto sphereIndexData = Jerboa::IndexBufferData(sphereIndices.data(), indicesSize);
+        Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, 1.0f, glm::vec2(1.0), sphereVertexData.m_Data, sphereIndexData.m_Data);
 
         // Create meshes
         Jerboa::MeshLoader meshLoader(m_ResourceAllocator);

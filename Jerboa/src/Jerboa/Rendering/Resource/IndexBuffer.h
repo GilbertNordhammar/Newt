@@ -10,19 +10,18 @@ namespace Jerboa {
 
 	struct IndexBufferData
 	{
-		IndexBufferData(const uint32* data, uint32_t size)
-			: m_Data(data), m_Size(size)
+		uint32 GetDataByteSize() const
 		{
+			return m_Data.size() * sizeof(uint32);
 		}
 
-		const uint32* m_Data;
-		uint32 m_Size;
+		std::vector<uint32> m_Data;
 	};
 
 	class IndexBuffer
 	{
 	public:
-		void Create(IndexBufferData bufferData, const GPUResourceAllocator& resourceAllocator);
+		void Create(const IndexBufferData& bufferData, const GPUResourceAllocator& resourceAllocator);
 
 		const GPUResource&		GetGPUResource() const { return m_GPUResource; }
 		const uint32			GetSize() const { return m_Size; };

@@ -171,28 +171,21 @@ namespace Jerboa
 			}
 		}
 		
-		std::vector<uint32> indexBuffer = std::vector<uint32>();
+		IndexBufferData indexBufferData;
 		if (aiMesh->HasFaces())
 		{
 			for (int i = 0; i < aiMesh->mNumFaces; i++)
 			{
 				for (int j = 0; j < aiMesh->mFaces[i].mNumIndices; j++)
 				{
-					indexBuffer.push_back(aiMesh->mFaces[i].mIndices[j]);
+					indexBufferData.m_Data.push_back(aiMesh->mFaces[i].mIndices[j]);
 				}
 			}
 		}
 
-		IndexBufferData* indexBufferData = nullptr;
-		if (indexBuffer.size() > 0)
-		{
-			indexBufferData = new IndexBufferData(indexBuffer.data(), indexBuffer.size() * sizeof(indexBuffer[0]));
-		}
-
 		SubMesh subMesh;
-		subMesh.Create(vertexBufferData, indexBufferData, PrimitiveType::Triangle, m_ResourceAllocator);
+		subMesh.Create(vertexBufferData, &indexBufferData, PrimitiveType::Triangle, m_ResourceAllocator);
 
-		delete indexBufferData;
 		return subMesh;
 	}
 }
