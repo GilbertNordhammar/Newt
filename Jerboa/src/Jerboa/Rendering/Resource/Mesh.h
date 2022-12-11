@@ -25,8 +25,7 @@ namespace Jerboa
 	class SubMesh
 	{
 	public:
-		void Create(const SubMeshData& subMeshData, PrimitiveType primitiveType, const GPUResourceAllocator& resourceAllocator);
-
+		void						Create(const SubMeshData& subMeshData, PrimitiveType primitiveType, const GPUResourceAllocator& resourceAllocator);
 		bool						IsIndexed() const;
 		PrimitiveType				GetPrimitiveType() const { return m_PrimitiveType; }
 		const VertexBuffer*			GetVertexBuffer() const { return &m_VertexBuffer; }
@@ -44,7 +43,7 @@ namespace Jerboa
 	{
 	public:
 		~Mesh();
-
+		void						Create(const MeshData& meshData, const GPUResourceAllocator& resourceAllocator);
 		void						AddSubMesh(const SubMeshData& subMeshData, PrimitiveType primitiveType, const GPUResourceAllocator& resourceAllocator);
 		void						AddSubMesh(SubMesh&& subMesh);
 		void						RemoveSubMeshAtIndex(int i);

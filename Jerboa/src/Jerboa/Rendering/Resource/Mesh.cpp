@@ -26,6 +26,16 @@ namespace Jerboa
 		return m_IndexBuffer.GetSize() > 0;
 	}
 
+	void Mesh::Create(const MeshData& meshData, const GPUResourceAllocator& resourceAllocator)
+	{
+		m_SubMeshes.resize(meshData.m_SubMeshData.size());
+
+		for (int i = 0; i < m_SubMeshes.size(); i++)
+		{
+			m_SubMeshes[i].Create(meshData.m_SubMeshData[i], PrimitiveType::Triangle, resourceAllocator); // TODO: Don't hard code primtive type
+		}
+	}
+
 	void Mesh::AddSubMesh(const SubMeshData& subMeshData, PrimitiveType primitiveType, const GPUResourceAllocator& resourceAllocator)
 	{
 		m_SubMeshes.emplace_back();

@@ -180,7 +180,7 @@ namespace JerboaClient {
             modelMatrix = modelMatrix * glm::toMat4(trans.GetOrientation());
             m_ShaderState.SetMat4("mat_model", modelMatrix);
 
-            m_Renderer.Draw(*m_TestMesh);
+            m_Renderer.Draw(m_TestMesh);
             //m_Renderer.Draw(m_SphereMesh);
         }
 
@@ -227,8 +227,8 @@ namespace JerboaClient {
         }
 
         // Create meshes
-        Jerboa::MeshLoader meshLoader(m_ResourceAllocator);
-        m_TestMesh = std::unique_ptr<Jerboa::Mesh>(meshLoader.Load("assets/meshes/monkey.fbx", Jerboa::MeshLoader::LoadConfig::CalculateTangents));
+        Jerboa::MeshLoader meshLoader;
+        m_TestMesh.Create(meshLoader.Load("assets/meshes/monkey.fbx", Jerboa::MeshLoader::LoadConfig::CalculateTangents), m_ResourceAllocator);
         m_SphereMesh.AddSubMesh(Jerboa::PrimitiveFactory::GenerateUVSphere(32, 16, 1.0f, glm::vec2(1.0)), Jerboa::PrimitiveType::Triangle, m_Renderer.GetAllocator());
 
         // Create shaders

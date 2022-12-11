@@ -54,7 +54,7 @@ namespace JerboaClient {
 
 		std::vector<Jerboa::Transform> mTransforms;
 
-		std::unique_ptr<Jerboa::Mesh> m_TestMesh;
+		Jerboa::Mesh m_TestMesh;
 		Jerboa::Mesh m_SphereMesh;
 		Jerboa::FrameBuffer m_FrameBuffer1;
 		Jerboa::FrameBuffer m_FrameBuffer2;

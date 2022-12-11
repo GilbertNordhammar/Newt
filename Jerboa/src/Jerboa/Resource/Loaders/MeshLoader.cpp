@@ -7,14 +7,9 @@
 
 namespace Jerboa
 {
-	MeshLoader::MeshLoader(const GPUResourceAllocator& resourceAllocator)
-		: m_ResourceAllocator(resourceAllocator)
+	MeshData MeshLoader::Load(std::string path, LoadConfig config)
 	{
-	}
-
-	Mesh* MeshLoader::Load(std::string path, LoadConfig config)
-	{
-		Mesh* mesh = new Mesh();
+		MeshData meshData;
 
 		unsigned int flags = aiProcess_Triangulate | aiProcess_FlipUVs;
 		if (EnumHasFlags(config, LoadConfig::CalculateTangents))
@@ -26,36 +21,36 @@ namespace Jerboa
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
 			JERBOA_LOG_ERROR("Error while loading mesh: {0}", importer.GetErrorString());
-			return mesh;
+			return meshData;
 		}
 		else
 		{
 			JERBOA_LOG_INFO("Loading mesh '{0}'", path);
 			m_PathToMeshGettingLoaded = path;
-			ProcessNode(scene->mRootNode, scene, *mesh);
+			ProcessNode(scene->mRootNode, scene, meshData);
 			m_PathToMeshGettingLoaded.clear();
 		}
 
-		return mesh;
+		return meshData;
 	}
 
-	void MeshLoader::ProcessNode(aiNode* node, const aiScene* scene, Mesh& mesh)
+	void MeshLoader::ProcessNode(aiNode* node, const aiScene* scene, MeshData& meshData)
 	{
 		// Process all the node's meshes (if any)
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)
 		{
 			aiMesh* aiMesh = scene->mMeshes[node->mMeshes[i]];
-			mesh.AddSubMesh(CreateSubMesh(aiMesh));
+			meshData.m_SubMeshData.push_back(CreateSubMeshData(aiMesh));
 		}
 
 		// Then do the same for each of its children
 		for (unsigned int i = 0; i < node->mNumChildren; i++)
 		{
-			ProcessNode(node->mChildren[i], scene, mesh);
+			ProcessNode(node->mChildren[i], scene, meshData);
 		}
 	}
 
-	SubMesh MeshLoader::CreateSubMesh(aiMesh* aiMesh)
+	SubMeshData MeshLoader::CreateSubMeshData(aiMesh* aiMesh)
 	{
 		std::vector<VertexAttribute> vertexAttributes;
 		uint32 vertexStride = 0;
@@ -182,9 +177,6 @@ namespace Jerboa
 			}
 		}
 
-		SubMesh subMesh;
-		subMesh.Create(subMeshData, PrimitiveType::Triangle, m_ResourceAllocator);
-
-		return subMesh;
+		return subMeshData;
 	}
 }

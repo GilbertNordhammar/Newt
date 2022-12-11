@@ -1,5 +1,4 @@
-#include "Jerboa/Rendering/Resource/Mesh.h"
-#include "Jerboa/Rendering/Resource/Internal/GPUResourceAllocator.h"
+#include "Jerboa/Rendering/Resource/Data/MeshData.h"
 
 #include "Jerboa/Core/Bit.h"
 #include "Jerboa/Core/Enum.h"
@@ -19,14 +18,12 @@ namespace Jerboa
 			CalculateTangents = BITMASK_1
 		};
 
-		MeshLoader(const GPUResourceAllocator& resourceAllocator);
-		Mesh* Load(std::string path, LoadConfig config = LoadConfig::None);
+		MeshData Load(std::string path, LoadConfig config = LoadConfig::None);
 		
 	private:
-		void ProcessNode(aiNode* node, const aiScene* scene, Mesh& mesh);
-		SubMesh CreateSubMesh(aiMesh* aiMesh);
+		void ProcessNode(aiNode* node, const aiScene* scene, MeshData& mesh);
+		SubMeshData CreateSubMeshData(aiMesh* aiMesh);
 
-		const GPUResourceAllocator& m_ResourceAllocator;
 		std::string m_PathToMeshGettingLoaded = "";
 	};
 
